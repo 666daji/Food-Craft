@@ -1,0 +1,45 @@
+package org.foodcraft.integration.dfood;
+
+import net.minecraft.block.BlockState;
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.util.ActionResult;
+import org.dfood.block.entity.SuspiciousStewBlockEntity;
+import org.dfood.block.foodBlock;
+import org.dfood.block.foodBlocks;
+
+public class FoodBlocksModifier {
+    /**
+     * 能够让玩家像使用蛋糕那样使用炖菜。
+     */
+    protected static final foodBlock.onUseHook stewEatHook = (state, world, pos, player, hand, hit) -> {
+        if (player.canConsume(false)) {
+            BlockEntity currentBlockEntity = world.getBlockEntity(pos);
+            NbtCompound blockEntityData = null;
+            // 如果是迷之炖菜方块实体，保存其数据
+            if (currentBlockEntity instanceof SuspiciousStewBlockEntity) {
+                blockEntityData = currentBlockEntity.createNbt();
+            }
+            BlockState blockState = CrippledStewBlock.getStewState(state);
+            // 设置新的方块状态
+            world.setBlockState(pos, blockState);
+            // 如果有方块实体数据需要传递，将其应用到新的方块实体
+            if (blockEntityData != null) {
+                BlockEntity newBlockEntity = world.getBlockEntity(pos);
+                if (newBlockEntity instanceof SuspiciousStewBlockEntity) {
+                    newBlockEntity.readNbt(blockEntityData);
+                }
+            }
+            blockState.onUse(world, player, hand, hit);
+            return ActionResult.SUCCESS;
+        }
+        return ActionResult.PASS;
+    };
+
+    public static void FoodBlockAdd() {
+        ((foodBlock)foodBlocks.RABBIT_STEW).setOnUseHook(stewEatHook);
+        ((foodBlock)foodBlocks.MUSHROOM_STEW).setOnUseHook(stewEatHook);
+        ((foodBlock)foodBlocks.BEETROOT_SOUP).setOnUseHook(stewEatHook);
+        ((foodBlock)foodBlocks.SUSPICIOUS_STEW).setOnUseHook(stewEatHook);
+    }
+}

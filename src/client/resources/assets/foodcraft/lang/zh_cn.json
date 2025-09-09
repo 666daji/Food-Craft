@@ -1,0 +1,9 @@
+{
+  "item.foodcraft.wheat_flour": "小麦粉",
+
+  "block.foodcraft.grinding_stone": "石磨",
+
+  "grinding_stone.add.refused": "这东西可不能磨哦",
+  "grinding_stone.add.full": "已经满了!",
+  "grinding_stone.energy.full": "现在不需要推动石磨..."
+}

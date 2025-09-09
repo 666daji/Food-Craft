@@ -1,0 +1,9 @@
+{
+  "item.foodcraft.wheat_flour": "Wheat Flour",
+
+  "block.foodcraft.grinding_stone": "Grinding Stone",
+
+  "grinding_stone.add.refused": "This cannot be ground",
+  "grinding_stone.add.full": "It's already full!",
+  "grinding_stone.energy.full": "No need to push the grinding stone now..."
+}

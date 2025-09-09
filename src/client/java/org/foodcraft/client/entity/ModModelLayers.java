@@ -1,0 +1,30 @@
+package org.foodcraft.client.entity;
+
+import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
+import net.minecraft.client.render.entity.model.EntityModelLayer;
+import net.minecraft.util.Identifier;
+import org.foodcraft.FoodCraft;
+import org.foodcraft.client.blockentity.BracketBlockEntityRenderer;
+import org.foodcraft.client.blockentity.GrindingStoneBlockEntityRenderer;
+
+public class ModModelLayers {
+    public static final EntityModelLayer BRACKET_BLOCK = registerMain("bracket_block", BracketBlockEntityRenderer::getTexturedModelData);
+    public static final EntityModelLayer GRINDING_STONE = registerMain("grinding_stone", GrindingStoneBlockEntityRenderer::getTexturedModelData);
+
+    private static EntityModelLayer registerMain(String id, EntityModelLayerRegistry.TexturedModelDataProvider provider) {
+        return register(id, "main", provider);
+    }
+
+    private static EntityModelLayer register(String id, String layer, EntityModelLayerRegistry.TexturedModelDataProvider provider) {
+        EntityModelLayer entityModelLayer = create(id, layer);
+        EntityModelLayerRegistry.registerModelLayer(entityModelLayer, provider);
+        return entityModelLayer;
+    }
+
+    private static EntityModelLayer create(String id, String layer) {
+        return new EntityModelLayer(new Identifier(FoodCraft.MOD_ID, id), layer);
+    }
+
+    public static void register() {
+    }
+}

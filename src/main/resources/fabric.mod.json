@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "id": "food-craft",
+  "version": "${version}",
+  "name": "Food Craft",
+  "description": "",
+  "authors": [],
+  "contact": {},
+  "license": "MIT",
+  "icon": "assets/foodcraft/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "fabric-datagen": [
+      "org.foodcraft.client.FoodCraftDataGenerator"
+    ],
+    "client": [
+      "org.foodcraft.client.FoodCraftClient"
+    ],
+    "main": [
+      "org.foodcraft.FoodCraft"
+    ]
+  },
+  "mixins": [
+    "foodcraft.mixins.json",
+    {
+      "config": "foodcraft.client.mixins.json",
+      "environment": "client"
+    }
+  ],
+  "depends": {
+    "fabricloader": ">=0.16.10",
+    "fabric": "*",
+    "minecraft": "~${minecraft_version}",
+    "fabric-api": "*",
+    "decorative-food": ">=1.20.1-1.0.3"
+  }
+}
