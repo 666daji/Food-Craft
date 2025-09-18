@@ -1,7 +1,18 @@
 {
   "item.foodcraft.wheat_flour": "小麦粉",
+  "item.foodcraft.lapis_lazuli_flour": "青金石粉",
+  "item.foodcraft.cocoa_flour": "可可粉",
+  "item.foodcraft.amethyst_flour": "紫水晶粉",
+  "item.foodcraft.flour_sack": "粉尘袋",
+  "item.foodcraft.wheat_flour_sack": "小麦粉袋",
+  "item.foodcraft.lapis_lazuli_flour_sack": "青金石粉袋",
+  "item.foodcraft.cocoa_flour_sack": "可可粉袋",
+  "item.foodcraft.amethyst_flour_sack": "紫水晶粉袋",
+  "item.foodcraft.sugar_sack": "糖袋",
 
   "block.foodcraft.grinding_stone": "石磨",
+
+  "block.foodcraft.iron_dishes": "铁饰餐盘",
 
   "grinding_stone.add.refused": "这东西可不能磨哦",
   "grinding_stone.add.full": "已经满了!",

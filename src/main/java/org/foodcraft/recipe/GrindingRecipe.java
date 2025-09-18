@@ -10,6 +10,8 @@ import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.world.World;
+import org.foodcraft.registry.ModRecipeSerializers;
+import org.foodcraft.registry.ModRecipeTypes;
 
 public class GrindingRecipe implements Recipe<Inventory> {
     protected final Identifier id;

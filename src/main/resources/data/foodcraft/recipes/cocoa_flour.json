@@ -1,0 +1,9 @@
+{
+  "type": "foodcraft:grinding",
+  "ingredient": {
+    "item": "minecraft:cocoa_beans"
+  },
+  "result": "foodcraft:cocoa_flour",
+  "experience": 1.0,
+  "grindingtime": 200
+}

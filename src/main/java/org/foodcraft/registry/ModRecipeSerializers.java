@@ -1,4 +1,4 @@
-package org.foodcraft.recipe;
+package org.foodcraft.registry;
 
 import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeSerializer;
@@ -6,6 +6,8 @@ import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
 import org.foodcraft.FoodCraft;
+import org.foodcraft.recipe.GrindingRecipe;
+import org.foodcraft.recipe.GrindingRecipeSerializer;
 
 public class ModRecipeSerializers {
     public static final RecipeSerializer<GrindingRecipe> GRINDING = register("grinding", new GrindingRecipeSerializer<>(GrindingRecipe::new));

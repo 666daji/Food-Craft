@@ -1,4 +1,4 @@
-package org.foodcraft.recipe;
+package org.foodcraft.registry;
 
 import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeType;
@@ -6,6 +6,7 @@ import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
 import org.foodcraft.FoodCraft;
+import org.foodcraft.recipe.GrindingRecipe;
 
 public class ModRecipeTypes {
     public static final RecipeType<GrindingRecipe> GRINDING = register("grinding");

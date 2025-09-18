@@ -15,7 +15,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.RotationAxis;
 import net.minecraft.world.World;
 import org.foodcraft.FoodCraft;
-import org.foodcraft.block.ModBlocks;
+import org.foodcraft.registry.ModBlocks;
 import org.foodcraft.block.entity.GrindingStoneBlockEntity;
 import org.foodcraft.client.entity.ModModelLayers;
 

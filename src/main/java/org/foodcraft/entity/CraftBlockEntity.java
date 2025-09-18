@@ -5,6 +5,7 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.decoration.AbstractDecorationEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import org.foodcraft.registry.ModEntityTypes;
 import org.jetbrains.annotations.Nullable;
 
 public class CraftBlockEntity extends AbstractDecorationEntity {

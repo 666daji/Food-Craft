@@ -1,11 +1,8 @@
 package org.foodcraft;
 
 import net.fabricmc.api.ModInitializer;
-import org.foodcraft.block.ModBlocks;
-import org.foodcraft.block.entity.ModBlockEntityTypes;
+import org.foodcraft.registry.*;
 import org.foodcraft.integration.dfood.dfoodInit;
-import org.foodcraft.item.ModItems;
-import org.foodcraft.recipe.ModRecipeTypes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,10 +13,7 @@ public class FoodCraft implements ModInitializer {
     @Override
     public void onInitialize() {
         dfoodInit.init();
-        ModBlocks.registerModBlocks();
-        ModItems.registerModItems();
-        ModBlockEntityTypes.registerAllBlockEntityTypes();
-        ModRecipeTypes.initialize();
+        RegistryInit.init();
         LOGGER.info("FoodCraft mod is initializing");
     }
 }

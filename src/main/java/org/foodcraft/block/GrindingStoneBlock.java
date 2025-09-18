@@ -9,8 +9,11 @@ import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.DirectionProperty;
+import net.minecraft.state.property.Properties;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
+import net.minecraft.util.BlockMirror;
+import net.minecraft.util.BlockRotation;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
@@ -20,11 +23,11 @@ import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import org.foodcraft.block.entity.GrindingStoneBlockEntity;
-import org.foodcraft.block.entity.ModBlockEntityTypes;
+import org.foodcraft.registry.ModBlockEntityTypes;
 import org.jetbrains.annotations.Nullable;
 
 public class GrindingStoneBlock extends BlockWithEntity {
-    public static final DirectionProperty FACING = HorizontalFacingBlock.FACING;
+    public static final DirectionProperty FACING = Properties.HORIZONTAL_FACING;
     protected static final VoxelShape TOP = Block.createCuboidShape(0.0,0.0,0.0,16.0,5.0,16.0);
     protected static final VoxelShape BOTTOM = Block.createCuboidShape(1.0,5.0,1.0,15.0,14.0,15.0);
 
@@ -51,7 +54,7 @@ public class GrindingStoneBlock extends BlockWithEntity {
 
     @Override
     public @Nullable <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
-        return world.isClient ? null : checkType(type, (BlockEntityType<? extends GrindingStoneBlockEntity>) ModBlockEntityTypes.GrindingStone, GrindingStoneBlockEntity::tick);
+        return world.isClient ? null : checkType(type, (BlockEntityType<? extends GrindingStoneBlockEntity>) ModBlockEntityTypes.GRINDING_STONE, GrindingStoneBlockEntity::tick);
     }
 
     @Override
@@ -102,6 +105,16 @@ public class GrindingStoneBlock extends BlockWithEntity {
     public @Nullable BlockState getPlacementState(ItemPlacementContext ctx) {
         return this.getDefaultState()
                 .with(FACING, ctx.getHorizontalPlayerFacing());
+    }
+
+    @Override
+    public BlockState rotate(BlockState state, BlockRotation rotation) {
+        return state.with(FACING, rotation.rotate(state.get(FACING)));
+    }
+
+    @Override
+    public BlockState mirror(BlockState state, BlockMirror mirror) {
+        return state.rotate(mirror.getRotation(state.get(FACING)));
     }
 
     @Override

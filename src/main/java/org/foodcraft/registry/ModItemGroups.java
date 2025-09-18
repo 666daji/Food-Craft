@@ -1,0 +1,62 @@
+package org.foodcraft.registry;
+
+import net.minecraft.item.ItemGroup;
+import net.minecraft.item.ItemStack;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
+import org.foodcraft.FoodCraft;
+
+public class ModItemGroups {
+    public static final RegistryKey<ItemGroup> DEMO_GROUP = register("demogroup");
+
+    // 注册物品组
+    private static RegistryKey<ItemGroup> register(String id) {
+        return RegistryKey.of(RegistryKeys.ITEM_GROUP, Identifier.of(FoodCraft.MOD_ID, id));
+    }
+
+    // 自定义物品组
+    private static void ModItemGroup(){
+        Registry.register(
+                Registries.ITEM_GROUP,
+                DEMO_GROUP,
+                ItemGroup.create(ItemGroup.Row.TOP, -1)
+                        // 设置物品组名称
+                        .displayName(Text.translatable("ItemGroup.foodcraft.itemgroup"))
+                        // 设置物品组图标
+                        .icon(() -> new ItemStack(ModItems.GRINDING_STONE))
+                        // 设置物品组物品
+                        .entries(((displayContext, entries) -> {
+                            // 工作方块
+                            entries.add(ModItems.BRACKET);
+                            entries.add(ModItems.GRINDING_STONE);
+
+                            // 工具
+                            entries.add(ModItems.IRON_DISHES);
+                            entries.add(ModItems.WOODEN_SHELF);
+
+                            // 粉尘
+                            entries.add(ModItems.WHEAT_FLOUR);
+                            entries.add(ModItems.LAPIS_LAZULI_FLOUR);
+                            entries.add(ModItems.COCOA_FLOUR);
+                            entries.add(ModItems.AMETHYST_FLOUR);
+
+                            // 粉尘袋
+                            entries.add(ModItems.FLOUR_SACK);
+                            entries.add(ModItems.WHEAT_FLOUR_SACK);
+                            entries.add(ModItems.LAPIS_LAZULI_FLOUR_SACK);
+                            entries.add(ModItems.COCOA_FLOUR_SACK);
+                            entries.add(ModItems.AMETHYST_FLOUR_SACK);
+                            entries.add(ModItems.SUGAR_SACK);
+                        }))
+                        .build()
+        );
+    }
+
+    public static void RegistryModItemGroups(){
+        ModItemGroup();
+    }
+}

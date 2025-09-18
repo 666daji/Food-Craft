@@ -1,0 +1,9 @@
+{
+  "type": "foodcraft:grinding",
+  "ingredient": {
+    "item": "minecraft:sugar_cane"
+  },
+  "result": "minecraft:sugar",
+  "experience": 1.0,
+  "grindingtime": 100
+}

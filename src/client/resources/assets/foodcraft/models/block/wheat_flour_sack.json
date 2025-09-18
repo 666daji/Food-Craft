@@ -1,0 +1,7 @@
+{
+	"parent": "foodcraft:block/flour_sack",
+	"textures": {
+      "0": "foodcraft:block/wheat_flour_sack",
+      "particle": "foodcraft:item/wheat_flour_sack"
+    }
+}

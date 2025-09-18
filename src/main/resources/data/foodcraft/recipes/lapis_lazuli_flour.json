@@ -1,0 +1,9 @@
+{
+  "type": "foodcraft:grinding",
+  "ingredient": {
+    "item": "minecraft:lapis_lazuli"
+  },
+  "result": "foodcraft:lapis_lazuli_flour",
+  "experience": 1.0,
+  "grindingtime": 200
+}

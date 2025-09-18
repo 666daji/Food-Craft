@@ -1,0 +1,9 @@
+{
+  "type": "foodcraft:grinding",
+  "ingredient": {
+    "item": "minecraft:amethyst_shard"
+  },
+  "result": "foodcraft:amethyst_flour",
+  "experience": 1.0,
+  "grindingtime": 400
+}

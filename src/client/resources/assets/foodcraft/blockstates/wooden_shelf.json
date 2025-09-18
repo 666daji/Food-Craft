@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "foodcraft:block/wooden_shelf",
+      "y": 270
+    },
+    "facing=south": {
+      "model": "foodcraft:block/wooden_shelf",
+      "y": 90
+    },
+    "facing=east": {
+      "model": "foodcraft:block/wooden_shelf"
+    },
+    "facing=west": {
+      "model": "foodcraft:block/wooden_shelf",
+      "y": 180
+    }
+  }
+}

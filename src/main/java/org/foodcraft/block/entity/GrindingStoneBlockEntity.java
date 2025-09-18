@@ -22,7 +22,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 import org.foodcraft.recipe.GrindingRecipe;
-import org.foodcraft.recipe.ModRecipeTypes;
+import org.foodcraft.registry.ModRecipeTypes;
+import org.foodcraft.registry.ModBlockEntityTypes;
 import org.foodcraft.util.ModAnimationState;
 import org.jetbrains.annotations.Nullable;
 
@@ -49,7 +50,7 @@ public class GrindingStoneBlockEntity extends BlockEntity implements SidedInvent
     private Recipe<?> lastRecipe;
 
     public GrindingStoneBlockEntity(BlockPos pos, BlockState state) {
-        super(ModBlockEntityTypes.GrindingStone, pos, state);
+        super(ModBlockEntityTypes.GRINDING_STONE, pos, state);
         this.matchGetter = RecipeManager.createCachedMatchGetter(ModRecipeTypes.GRINDING);
     }
 
@@ -132,6 +133,11 @@ public class GrindingStoneBlockEntity extends BlockEntity implements SidedInvent
         }
     }
 
+    @Override
+    public int getMaxCountPerStack() {
+        return 16;
+    }
+
     public Item getExpectedOutput(){
         GrindingRecipe recipe = this.matchGetter.getFirstMatch(this, this.world).orElse(null);
         if (recipe != null) {
@@ -144,7 +150,7 @@ public class GrindingStoneBlockEntity extends BlockEntity implements SidedInvent
      * 尝试将物品添加到输入槽
      *
      * @param stack 要添加的物品堆
-     * @return 添加物品的结果
+     * @return {@link addInputResult}添加物品的结果
      */
     public addInputResult addInput(ItemStack stack) {
         if (!isValidGrindingInput(stack)) {
