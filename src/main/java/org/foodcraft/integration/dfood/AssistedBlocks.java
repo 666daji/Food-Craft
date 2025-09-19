@@ -9,7 +9,7 @@ import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.util.Identifier;
-import org.dfood.block.foodBlocks;
+import org.dfood.block.FoodBlocks;
 import org.foodcraft.FoodCraft;
 
 import java.util.HashSet;
@@ -22,25 +22,25 @@ public class AssistedBlocks {
             new CrippledStewBlock(AbstractBlock.Settings.create()
                     .mapColor(MapColor.BROWN).strength(0.1F, 0.1F).nonOpaque()
                     .sounds(BlockSoundGroup.DECORATED_POT).pistonBehavior(PistonBehavior.DESTROY),
-                    FoodComponents.RABBIT_STEW, foodBlocks.RABBIT_STEW));
+                    FoodComponents.RABBIT_STEW, FoodBlocks.RABBIT_STEW));
 
     public static final Block CRIPPLED_MUSHROOM_STEW = registerBlock("crippled_mushroom_stew",
             new CrippledStewBlock(AbstractBlock.Settings.create()
                     .mapColor(MapColor.BROWN).strength(0.1F, 0.1F).nonOpaque()
                     .sounds(BlockSoundGroup.DECORATED_POT).pistonBehavior(PistonBehavior.DESTROY),
-                    FoodComponents.MUSHROOM_STEW, foodBlocks.MUSHROOM_STEW));
+                    FoodComponents.MUSHROOM_STEW, FoodBlocks.MUSHROOM_STEW));
 
     public static final Block CRIPPLED_BEETROOT_SOUP = registerBlock("crippled_beetroot_soup",
             new CrippledStewBlock(AbstractBlock.Settings.create()
                     .mapColor(MapColor.BROWN).strength(0.1F, 0.1F).nonOpaque()
                     .sounds(BlockSoundGroup.DECORATED_POT).pistonBehavior(PistonBehavior.DESTROY),
-                    FoodComponents.BEETROOT_SOUP, foodBlocks.BEETROOT_SOUP));
+                    FoodComponents.BEETROOT_SOUP, FoodBlocks.BEETROOT_SOUP));
 
     public static final Block CRIPPLED_SUSPICIOUS_STEW = registerBlock("crippled_suspicious_stew",
             new CrippledSuspiciousStewBlock(AbstractBlock.Settings.create()
                     .mapColor(MapColor.BROWN).strength(0.1F, 0.1F).nonOpaque()
                     .sounds(BlockSoundGroup.DECORATED_POT).pistonBehavior(PistonBehavior.DESTROY),
-                    FoodComponents.SUSPICIOUS_STEW, foodBlocks.SUSPICIOUS_STEW));
+                    FoodComponents.SUSPICIOUS_STEW, FoodBlocks.SUSPICIOUS_STEW));
 
     public static Block registerBlock(String name, Block block) {
         assistedBlocks.add(block);

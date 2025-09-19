@@ -1,23 +1,23 @@
 {
   "variants": {
-    "facing=north,number_of_eat=1": { "model": "foodcraft:block/suspicious_stew", "y": 180 },
-    "facing=north,number_of_eat=2": { "model": "foodcraft:block/suspicious_stew_2", "y": 180 },
-    "facing=north,number_of_eat=3": { "model": "foodcraft:block/suspicious_stew_3", "y": 180 },
-    "facing=north,number_of_eat=4": { "model": "foodcraft:block/suspicious_stew_4", "y": 180 },
+    "facing=north,number_of_use=1": { "model": "foodcraft:block/suspicious_stew", "y": 180 },
+    "facing=north,number_of_use=2": { "model": "foodcraft:block/suspicious_stew_2", "y": 180 },
+    "facing=north,number_of_use=3": { "model": "foodcraft:block/suspicious_stew_3", "y": 180 },
+    "facing=north,number_of_use=4": { "model": "foodcraft:block/suspicious_stew_4", "y": 180 },
 
-    "facing=south,number_of_eat=1": { "model": "foodcraft:block/suspicious_stew" },
-    "facing=south,number_of_eat=2": { "model": "foodcraft:block/suspicious_stew_2" },
-    "facing=south,number_of_eat=3": { "model": "foodcraft:block/suspicious_stew_3" },
-    "facing=south,number_of_eat=4": { "model": "foodcraft:block/suspicious_stew_4" },
+    "facing=south,number_of_use=1": { "model": "foodcraft:block/suspicious_stew" },
+    "facing=south,number_of_use=2": { "model": "foodcraft:block/suspicious_stew_2" },
+    "facing=south,number_of_use=3": { "model": "foodcraft:block/suspicious_stew_3" },
+    "facing=south,number_of_use=4": { "model": "foodcraft:block/suspicious_stew_4" },
 
-    "facing=east,number_of_eat=1": { "model": "foodcraft:block/suspicious_stew", "y": 270 },
-    "facing=east,number_of_eat=2": { "model": "foodcraft:block/suspicious_stew_2", "y": 270 },
-    "facing=east,number_of_eat=3": { "model": "foodcraft:block/suspicious_stew_3", "y": 270 },
-    "facing=east,number_of_eat=4": { "model": "foodcraft:block/suspicious_stew_4", "y": 270 },
+    "facing=east,number_of_use=1": { "model": "foodcraft:block/suspicious_stew", "y": 270 },
+    "facing=east,number_of_use=2": { "model": "foodcraft:block/suspicious_stew_2", "y": 270 },
+    "facing=east,number_of_use=3": { "model": "foodcraft:block/suspicious_stew_3", "y": 270 },
+    "facing=east,number_of_use=4": { "model": "foodcraft:block/suspicious_stew_4", "y": 270 },
 
-    "facing=west,number_of_eat=1": { "model": "foodcraft:block/suspicious_stew", "y": 90 },
-    "facing=west,number_of_eat=2": { "model": "foodcraft:block/suspicious_stew_2", "y": 90 },
-    "facing=west,number_of_eat=3": { "model": "foodcraft:block/suspicious_stew_3", "y": 90 },
-    "facing=west,number_of_eat=4": { "model": "foodcraft:block/suspicious_stew_4", "y": 90 }
+    "facing=west,number_of_use=1": { "model": "foodcraft:block/suspicious_stew", "y": 90 },
+    "facing=west,number_of_use=2": { "model": "foodcraft:block/suspicious_stew_2", "y": 90 },
+    "facing=west,number_of_use=3": { "model": "foodcraft:block/suspicious_stew_3", "y": 90 },
+    "facing=west,number_of_use=4": { "model": "foodcraft:block/suspicious_stew_4", "y": 90 }
   }
 }

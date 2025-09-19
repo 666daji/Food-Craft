@@ -5,14 +5,14 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.ActionResult;
 import org.dfood.block.entity.SuspiciousStewBlockEntity;
-import org.dfood.block.foodBlock;
-import org.dfood.block.foodBlocks;
+import org.dfood.block.FoodBlock;
+import org.dfood.block.FoodBlocks;
 
 public class FoodBlocksModifier {
     /**
      * 能够让玩家像使用蛋糕那样使用炖菜。
      */
-    protected static final foodBlock.onUseHook stewEatHook = (state, world, pos, player, hand, hit) -> {
+    protected static final FoodBlock.onUseHook stewEatHook = (state, world, pos, player, hand, hit) -> {
         if (player.canConsume(false)) {
             BlockEntity currentBlockEntity = world.getBlockEntity(pos);
             NbtCompound blockEntityData = null;
@@ -37,9 +37,9 @@ public class FoodBlocksModifier {
     };
 
     public static void FoodBlockAdd() {
-        ((foodBlock)foodBlocks.RABBIT_STEW).setOnUseHook(stewEatHook);
-        ((foodBlock)foodBlocks.MUSHROOM_STEW).setOnUseHook(stewEatHook);
-        ((foodBlock)foodBlocks.BEETROOT_SOUP).setOnUseHook(stewEatHook);
-        ((foodBlock)foodBlocks.SUSPICIOUS_STEW).setOnUseHook(stewEatHook);
+        ((FoodBlock)FoodBlocks.RABBIT_STEW).setOnUseHook(stewEatHook);
+        ((FoodBlock)FoodBlocks.MUSHROOM_STEW).setOnUseHook(stewEatHook);
+        ((FoodBlock)FoodBlocks.BEETROOT_SOUP).setOnUseHook(stewEatHook);
+        ((FoodBlock)FoodBlocks.SUSPICIOUS_STEW).setOnUseHook(stewEatHook);
     }
 }

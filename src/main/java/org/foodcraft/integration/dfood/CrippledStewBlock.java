@@ -12,7 +12,6 @@ import net.minecraft.loot.context.LootContextParameterSet;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.DirectionProperty;
-import net.minecraft.state.property.IntProperty;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
@@ -23,8 +22,8 @@ import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
 import net.minecraft.world.event.GameEvent;
-import org.dfood.block.foodBlock;
-import org.dfood.block.foodBlocks;
+import org.dfood.block.FoodBlock;
+import org.dfood.block.FoodBlocks;
 import org.dfood.shape.FoodShapeHandle;
 
 import java.util.List;
@@ -32,53 +31,36 @@ import java.util.List;
 /**
  * 该类的实例是一个过渡方块，表示被食用过的汤
  */
-public class CrippledStewBlock extends Block {
+public class CrippledStewBlock extends CrippledBlock {
     public final FoodComponent foodComponent;
     public static final DirectionProperty FACING = Properties.FACING;
-    public static final IntProperty NUMBER_OF_EAT = IntProperty.of("number_of_eat", 1, 4);
+
     private static final FoodShapeHandle foodShapeHandle = FoodShapeHandle.getInstance();
-    private final Block baseBlock;
 
     public CrippledStewBlock(Settings settings, FoodComponent foodComponent, Block baseBlock) {
-        super(settings);
+        super(settings, baseBlock);
         this.foodComponent = foodComponent;
-        this.baseBlock = baseBlock;
     }
 
     @Override
     public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
-        return foodShapeHandle.getShape(state, NUMBER_OF_EAT);
+        return foodShapeHandle.getShape(state, NUMBER_OF_USE);
     }
 
     @Override
-    public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
-        ItemStack itemStack = player.getStackInHand(hand);
-        if (world.isClient) {
-            if (tryEat(world, pos, state, player).isAccepted()) {
-                return ActionResult.SUCCESS;
-            }
-
-            if (itemStack.isEmpty()) {
-                return ActionResult.CONSUME;
-            }
-        }
-
-        return tryEat(world, pos, state, player);
-    }
-
-    protected ActionResult tryEat(WorldAccess world, BlockPos pos, BlockState state, PlayerEntity player) {
+    protected ActionResult tryUse(WorldAccess world, BlockPos pos, BlockState state, PlayerEntity player) {
         if (!player.canConsume(false)) {
             return ActionResult.PASS;
         } else {
             world.playSound(player, pos, SoundEvents.ENTITY_GENERIC_DRINK, player.getSoundCategory(), 1.0F, 1.0F);
             player.getHungerManager().add(foodComponent.getHunger() / 4, foodComponent.getSaturationModifier() / 4.0F);
-            int i = state.get(NUMBER_OF_EAT);
+            int i = state.get(NUMBER_OF_USE);
             world.emitGameEvent(player, GameEvent.EAT, pos);
             if (i < 4) {
-                world.setBlockState(pos, state.with(NUMBER_OF_EAT, i + 1), Block.NOTIFY_ALL);
+                world.setBlockState(pos, state.with(NUMBER_OF_USE, i + 1), Block.NOTIFY_ALL);
             } else {
-                world.setBlockState(pos, foodBlocks.BOWL.getDefaultState()
-                        .with(foodBlock.NUMBER_OF_FOOD, 1).with(FACING, state.get(FACING)), Block.NOTIFY_ALL);
+                world.setBlockState(pos, FoodBlocks.BOWL.getDefaultState()
+                        .with(FACING, state.get(FACING)), Block.NOTIFY_ALL);
             }
 
             return ActionResult.SUCCESS;
@@ -93,10 +75,10 @@ public class CrippledStewBlock extends Block {
     @Override
     public void onBreak(World world, BlockPos pos, BlockState state, PlayerEntity player) {
         super.onBreak(world,pos, state, player);
-        if (!world.isClient && state.get(NUMBER_OF_EAT) > 0) {
+        if (!world.isClient && state.get(NUMBER_OF_USE) > 0) {
             int hunger = foodComponent.getHunger() / 4;
             float saturation = foodComponent.getSaturationModifier() / 4.0F;
-            int numberOfEat = state.get(NUMBER_OF_EAT);
+            int numberOfEat = state.get(NUMBER_OF_USE);
             player.getHungerManager().add(hunger * numberOfEat, saturation * numberOfEat);
             world.emitGameEvent(player, GameEvent.EAT, pos);
         }
@@ -108,28 +90,20 @@ public class CrippledStewBlock extends Block {
                 if (crippledStewBlock.isBaseBlock(state)) {
                     return crippledStewBlock.getDefaultState()
                             .with(CrippledStewBlock.FACING, state.get(Properties.FACING))
-                            .with(CrippledStewBlock.NUMBER_OF_EAT, 1);
+                            .with(NUMBER_OF_USE, 1);
                 }
             }
         }
         return Blocks.AIR.getDefaultState();
     }
 
-    public boolean isBaseBlock(BlockState state) {
-        return state.getBlock() == baseBlock;
-    }
-
     @Override
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
         builder.add(FACING);
-        builder.add(NUMBER_OF_EAT);
+        builder.add(NUMBER_OF_USE);
     }
 
     public boolean isSuspiciousStew() {
         return this instanceof CrippledSuspiciousStewBlock;
-    }
-
-    public Block getBaseBlock() {
-        return baseBlock;
     }
 }

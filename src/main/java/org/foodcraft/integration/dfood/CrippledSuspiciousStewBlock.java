@@ -43,7 +43,7 @@ public class CrippledSuspiciousStewBlock extends CrippledStewBlock implements Bl
     }
 
     @Override
-    protected ActionResult tryEat(WorldAccess world, BlockPos pos, BlockState state, PlayerEntity player) {
+    protected ActionResult tryUse(WorldAccess world, BlockPos pos, BlockState state, PlayerEntity player) {
         if (!player.canConsume(false)) {
             return ActionResult.PASS;
         }
@@ -61,13 +61,13 @@ public class CrippledSuspiciousStewBlock extends CrippledStewBlock implements Bl
             }
         }
         // 调用父类的食用逻辑
-        return super.tryEat(world, pos, state, player);
+        return super.tryUse(world, pos, state, player);
     }
 
     @Override
     public void onBreak(World world, BlockPos pos, BlockState state, PlayerEntity player) {
         // 在破坏方块时也应用效果
-        if (!world.isClient && state.get(NUMBER_OF_EAT) > 0) {
+        if (!world.isClient && state.get(NUMBER_OF_USE) > 0) {
             BlockEntity blockEntity = world.getBlockEntity(pos);
             if (blockEntity instanceof SuspiciousStewBlockEntity suspiciousStewBlockEntity) {
                 // 应用所有存储的效果
@@ -75,7 +75,7 @@ public class CrippledSuspiciousStewBlock extends CrippledStewBlock implements Bl
                     StatusEffect effect = StatusEffect.byRawId(effectId);
                     if (effect != null) {
                         int Duration = duration / 4;
-                        int numberOfEat = state.get(NUMBER_OF_EAT);
+                        int numberOfEat = state.get(NUMBER_OF_USE);
                         player.addStatusEffect(new StatusEffectInstance(effect, Duration * numberOfEat));
                     }
                 });

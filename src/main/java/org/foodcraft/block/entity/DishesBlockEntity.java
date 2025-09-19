@@ -16,7 +16,7 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.world.BlockView;
-import org.dfood.block.foodBlock;
+import org.dfood.block.FoodBlock;
 import org.dfood.item.DoubleBlockItem;
 import org.dfood.shape.FoodShapeHandle;
 import org.foodcraft.block.DishesBlock;
@@ -24,7 +24,7 @@ import org.foodcraft.registry.ModBlockEntityTypes;
 
 /**
  * 盘子方块实体，用于存储食物物品
- * 注意：item.getBlock()返回的Block必须是{@link foodBlock}的实例，否则无法放入物品栏
+ * 注意：item.getBlock()返回的Block必须是{@link FoodBlock}的实例，否则无法放入物品栏
  */
 public class DishesBlockEntity extends UpPlaceBlockEntity {
     private static final int INVENTORY_SIZE = 1;
@@ -38,8 +38,11 @@ public class DishesBlockEntity extends UpPlaceBlockEntity {
     @Override
     public VoxelShape getContentShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
         BlockState itemState = this.getInventoryBlockState();
-        return FoodShapeHandle.getInstance().getShape(itemState, foodBlock.NUMBER_OF_FOOD)
-                .offset(0.0, FOOD_OFFSET_Y, 0.0);
+        if (state.getBlock() instanceof FoodBlock foodBlock) {
+            return FoodShapeHandle.getInstance().getShape(itemState, foodBlock.NUMBER_OF_FOOD)
+                    .offset(0.0, FOOD_OFFSET_Y, 0.0);
+        }
+        return FoodShapeHandle.shapes.ALL.getShape();
     }
 
     @Override
@@ -55,9 +58,9 @@ public class DishesBlockEntity extends UpPlaceBlockEntity {
 
         Item item = stack.getItem();
         if (item instanceof DoubleBlockItem doubleBlockItem) {
-            return doubleBlockItem.getSecondBlock() instanceof foodBlock;
+            return doubleBlockItem.getSecondBlock() instanceof FoodBlock;
         } else if (item instanceof BlockItem blockItem) {
-            return blockItem.getBlock() instanceof foodBlock;
+            return blockItem.getBlock() instanceof FoodBlock;
         }
         return false;
     }
@@ -74,9 +77,9 @@ public class DishesBlockEntity extends UpPlaceBlockEntity {
             return Blocks.CAKE.getDefaultState();
         }
 
-        if (item instanceof DoubleBlockItem doubleBlockItem && doubleBlockItem.getSecondBlock() instanceof foodBlock) {
+        if (item instanceof DoubleBlockItem doubleBlockItem && doubleBlockItem.getSecondBlock() instanceof FoodBlock) {
             return createFoodBlockState(doubleBlockItem.getSecondBlock().getDefaultState(), stack.getCount());
-        } else if (item instanceof BlockItem blockItem && blockItem.getBlock() instanceof foodBlock) {
+        } else if (item instanceof BlockItem blockItem && blockItem.getBlock() instanceof FoodBlock) {
             return createFoodBlockState(blockItem.getBlock().getDefaultState(), stack.getCount());
         }
 
@@ -87,9 +90,12 @@ public class DishesBlockEntity extends UpPlaceBlockEntity {
      * 创建食物方块状态
      */
     private BlockState createFoodBlockState(BlockState state, int foodCount) {
-        return state
-                .with(foodBlock.FACING, this.getCachedState().get(DishesBlock.FACING))
-                .with(foodBlock.NUMBER_OF_FOOD, foodCount);
+        if (state.getBlock() instanceof FoodBlock foodBlock) {
+            return state
+                    .with(FoodBlock.FACING, this.getCachedState().get(DishesBlock.FACING))
+                    .with(foodBlock.NUMBER_OF_FOOD, foodCount);
+        }
+        return Blocks.AIR.getDefaultState();
     }
 
     public ActionResult tryAddItem(ItemStack stack) {
@@ -107,7 +113,7 @@ public class DishesBlockEntity extends UpPlaceBlockEntity {
             this.markDirtyAndSync();
             return ActionResult.SUCCESS;
         } else if (currentStack.getItem() == item) {
-            foodBlock block = (foodBlock) getInventoryBlockState().getBlock();
+            FoodBlock block = (FoodBlock) getInventoryBlockState().getBlock();
             if (currentStack.getCount() < block.MAX_FOOD) {
                 currentStack.increment(1);
                 this.markDirtyAndSync();
