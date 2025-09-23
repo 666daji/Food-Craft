@@ -25,7 +25,7 @@ public class ModItemGroups {
                 DEMO_GROUP,
                 ItemGroup.create(ItemGroup.Row.TOP, -1)
                         // 设置物品组名称
-                        .displayName(Text.translatable("ItemGroup.foodcraft.itemgroup"))
+                        .displayName(Text.translatable("itemgroup.foodcraft"))
                         // 设置物品组图标
                         .icon(() -> new ItemStack(ModItems.GRINDING_STONE))
                         // 设置物品组物品
@@ -33,6 +33,7 @@ public class ModItemGroups {
                             // 工作方块
                             entries.add(ModItems.BRACKET);
                             entries.add(ModItems.GRINDING_STONE);
+                            entries.add(ModItems.HEAT_RESISTANT_SLATE);
 
                             // 工具
                             entries.add(ModItems.IRON_DISHES);
@@ -51,6 +52,16 @@ public class ModItemGroups {
                             entries.add(ModItems.COCOA_FLOUR_SACK);
                             entries.add(ModItems.AMETHYST_FLOUR_SACK);
                             entries.add(ModItems.SUGAR_SACK);
+
+                            // 面食
+                            entries.add(ModItems.DOUGH);
+                            entries.add(ModItems.CAKE_EMBRYO);
+                            entries.add(ModItems.CAKE_EMBRYO_MOLD);
+                            entries.add(ModItems.BAGUETTE);
+                            entries.add(ModItems.BAGUETTE_EMBRYO);
+
+                            // 调味料
+                            entries.add(ModItems.SALT_SHAKER);
                         }))
                         .build()
         );

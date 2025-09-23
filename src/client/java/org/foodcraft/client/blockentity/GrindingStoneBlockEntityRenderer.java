@@ -99,7 +99,7 @@ public class GrindingStoneBlockEntityRenderer extends WithAnimationBlockEntityRe
             // 应用动画
             alwaysUpdateAnimation(
                     entity.grindingAnimationState,
-                    BlockAnimations.GRINDINGSTONESPIN,
+                    BlockAnimations.GRINDING_STONE_SPIN,
                     getAnimationProgress(entity.getAge(), tickDelta),
                     1.0F,
                     1.0F

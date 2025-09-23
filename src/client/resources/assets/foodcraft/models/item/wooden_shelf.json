@@ -1,0 +1,4 @@
+{
+  "parent": "foodcraft:block/wooden_shelf",
+  "gui_light": "front"
+}

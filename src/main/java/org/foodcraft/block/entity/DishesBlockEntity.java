@@ -38,7 +38,7 @@ public class DishesBlockEntity extends UpPlaceBlockEntity {
     @Override
     public VoxelShape getContentShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
         BlockState itemState = this.getInventoryBlockState();
-        if (state.getBlock() instanceof FoodBlock foodBlock) {
+        if (itemState.getBlock() instanceof FoodBlock foodBlock) {
             return FoodShapeHandle.getInstance().getShape(itemState, foodBlock.NUMBER_OF_FOOD)
                     .offset(0.0, FOOD_OFFSET_Y, 0.0);
         }

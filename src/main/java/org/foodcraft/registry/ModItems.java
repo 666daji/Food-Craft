@@ -13,6 +13,7 @@ public class ModItems {
     // 工作方块
     public static final Item BRACKET = registerItem(ModBlocks.BRACKET);
     public static final Item GRINDING_STONE = registerItem(ModBlocks.GRINDING_STONE);
+    public static final Item HEAT_RESISTANT_SLATE = registerItem(ModBlocks.HEAT_RESISTANT_SLATE);
 
     // 工具
     public static final Item IRON_DISHES = registerItem(ModBlocks.IRON_DISHES);
@@ -36,6 +37,8 @@ public class ModItems {
     public static final Item DOUGH = registerItem(ModBlocks.DOUGH);
     public static final Item CAKE_EMBRYO = registerItem(ModBlocks.CAKE_EMBRYO);
     public static final Item CAKE_EMBRYO_MOLD = registerItem(ModBlocks.CAKE_EMBRYO_MOLD);
+    public static final Item BAGUETTE = registerItem(ModBlocks.BAGUETTE);
+    public static final Item BAGUETTE_EMBRYO = registerItem(ModBlocks.BAGUETTE_EMBRYO);
 
     // 调味料
     public static final Item SALT_SHAKER = registerItem(ModBlocks.SALT_SHAKER);

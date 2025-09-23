@@ -8,7 +8,7 @@ import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Nullable;
 
 public class HeatResistantSlateBlock extends BlockWithEntity {
-    protected HeatResistantSlateBlock(Settings settings) {
+    public HeatResistantSlateBlock(Settings settings) {
         super(settings);
     }
 

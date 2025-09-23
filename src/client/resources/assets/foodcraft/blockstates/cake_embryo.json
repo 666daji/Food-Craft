@@ -1,18 +1,18 @@
 {
   "variants": {
     "facing=north": {
-      "model": "minecraft:block/cake_embryo",
+      "model": "foodcraft:block/cake_embryo",
       "y": 180
     },
     "facing=south": {
-      "model": "minecraft:block/cake_embryo"
+      "model": "foodcraft:block/cake_embryo"
     },
     "facing=east": {
-      "model": "minecraft:block/cake_embryo",
+      "model": "foodcraft:block/cake_embryo",
       "y": 270
     },
     "facing=west": {
-      "model": "minecraft:block/cake_embryo",
+      "model": "foodcraft:block/cake_embryo",
       "y": 90
     }
   }
