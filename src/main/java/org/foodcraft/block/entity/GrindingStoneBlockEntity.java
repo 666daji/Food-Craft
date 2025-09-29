@@ -256,9 +256,11 @@ public class GrindingStoneBlockEntity extends BlockEntity implements SidedInvent
     }
 
     public static void tick(World world, BlockPos pos, BlockState state, GrindingStoneBlockEntity blockEntity) {
-
         // 每tick增加方块寿命
         blockEntity.age++;
+        if (blockEntity.age == Integer.MAX_VALUE) {
+            blockEntity.age = 0;
+        }
 
         // 如果当前有能量且可以研磨，则继续或开始研磨
         if (blockEntity.energy > 0 && blockEntity.canGrind()) {

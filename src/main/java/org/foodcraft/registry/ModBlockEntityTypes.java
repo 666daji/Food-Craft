@@ -6,10 +6,7 @@ import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
 import org.foodcraft.FoodCraft;
-import org.foodcraft.block.entity.BracketBlockEntity;
-import org.foodcraft.block.entity.DishesBlockEntity;
-import org.foodcraft.block.entity.GrindingStoneBlockEntity;
-import org.foodcraft.block.entity.ShelfBlockEntity;
+import org.foodcraft.block.entity.*;
 
 public class ModBlockEntityTypes {
     public static final BlockEntityType<BracketBlockEntity> BRACKET = create("bracket",
@@ -22,6 +19,12 @@ public class ModBlockEntityTypes {
             BlockEntityType.Builder.create(
                     GrindingStoneBlockEntity::new,
                     ModBlocks.GRINDING_STONE
+            )
+    );
+    public static final BlockEntityType<HeatResistantSlateBlockEntity> HEAT_RESISTANT_SLATE = create("heat_resistant_slate",
+            BlockEntityType.Builder.create(
+                    HeatResistantSlateBlockEntity::new,
+                    ModBlocks.HEAT_RESISTANT_SLATE
             )
     );
     public static final BlockEntityType<DishesBlockEntity> DISHES = create("dishes",
