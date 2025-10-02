@@ -22,7 +22,7 @@ public class MultiBlockHelper {
     public static void onCoreBlockPlaced(World world, BlockPos pos, Block coreBlock) {
         LOGGER.debug("Core block placed at {}", pos);
 
-        // 1. 首先检查该位置是否已经有方块堆
+        // 检查该位置是否已经有方块堆
         MultiBlock existing = MultiBlockManager.findMultiBlock(world, pos);
         if (existing != null && !existing.isDisposed()) {
             // 位置已有方块堆，检查完整性
@@ -33,17 +33,17 @@ public class MultiBlockHelper {
             return;
         }
 
-        // 2. 创建新的单方块堆
+        // 创建新的单方块堆
         MultiBlock newMultiBlock = createSingleBlockMultiBlock(world, pos, coreBlock);
         if (newMultiBlock == null) {
             LOGGER.error("Failed to create single block MultiBlock at {}", pos);
             return;
         }
 
-        // 3. 更新当前方块的引用
+        // 更新当前方块的引用
         updateBlockEntityReference(world, pos, newMultiBlock);
 
-        // 4. 尝试与相邻的方块堆合并（多轮合并直到无法再合并）
+        // 尝试与相邻的方块堆合并
         performMultiRoundMerging(newMultiBlock);
     }
 
@@ -53,24 +53,24 @@ public class MultiBlockHelper {
     public static void onCoreBlockBroken(World world, BlockPos pos, Block coreBlock) {
         LOGGER.debug("Core block broken at {}", pos);
 
-        // 1. 找到包含该位置的方块堆
+        // 找到包含该位置的方块堆
         MultiBlock multiBlock = MultiBlockManager.findMultiBlock(world, pos);
         if (multiBlock == null || multiBlock.isDisposed()) {
             LOGGER.debug("No MultiBlock found at {}", pos);
             return;
         }
 
-        // 2. 检查并拆分方块堆
+        // 检查并拆分方块堆
         LOGGER.info("Breaking block at {} in MultiBlock {}, checking integrity",
                 pos, multiBlock.getMasterPos());
         List<MultiBlock> newBlocks = multiBlock.checkAndSplitIntegrity();
 
-        // 3. 更新所有新方块堆的引用
+        // 更新所有新方块堆的引用
         updateBlockEntityReferences(world, newBlocks);
 
         LOGGER.info("After breaking, created {} new MultiBlocks", newBlocks.size());
 
-        // 4. 尝试合并新创建的方块堆（多轮合并）
+        // 尝试合并新创建的方块堆（多轮合并）
         for (MultiBlock newBlock : newBlocks) {
             performMultiRoundMerging(newBlock);
         }
@@ -134,20 +134,28 @@ public class MultiBlockHelper {
                             current.getMasterPos(), neighbor.getMasterPos());
                     MultiBlock merged = MultiBlock.combine(current, neighbor);
 
-                    // 合并成功，更新引用
-                    updateBlockEntityReferences((World) merged.getWorld(), List.of(merged));
+                    if (merged != null) {
+                        // 合并成功，更新引用
+                        updateBlockEntityReferences((World) merged.getWorld(), List.of(merged));
 
-                    current = merged;
-                    mergedInThisRound = true;
-                    LOGGER.info("Successfully merged MultiBlocks into new MultiBlock at {}",
-                            merged.getMasterPos());
+                        current = merged;
+                        mergedInThisRound = true;
+                        LOGGER.info("Successfully merged MultiBlocks into new MultiBlock at {}",
+                                merged.getMasterPos());
 
-                    // 合并后重新查找邻居，因为情况可能发生了变化
-                    break;
+                        // 合并后重新查找邻居，因为情况可能发生了变化
+                        break;
+                    } else {
+                        LOGGER.warn("Merge operation returned null, merge failed");
+                    }
 
                 } catch (IllegalArgumentException e) {
                     LOGGER.debug("Cannot merge MultiBlocks: {}", e.getMessage());
                     // 继续尝试与其他邻居合并
+                } catch (Exception e) {
+                    LOGGER.error("Unexpected error during merge: {}", e.getMessage());
+                    // 发生意外错误，停止合并
+                    break;
                 }
             }
 
@@ -201,11 +209,15 @@ public class MultiBlockHelper {
      * 更新单个方块实体的引用
      */
     public static void updateBlockEntityReference(World world, BlockPos pos, MultiBlock multiBlock) {
+        if (world.isClient){
+            return;
+        }
+
         BlockEntity blockEntity = world.getBlockEntity(pos);
         if (blockEntity instanceof HeatResistantSlateBlockEntity slateEntity) {
 
             // 创建新的引用
-            MultiBlockReference newRef = MultiBlockReference.fromWorldPos(multiBlock, pos);
+            ServerMultiBlockReference newRef = ServerMultiBlockReference.fromWorldPos(multiBlock, pos);
             if (newRef != null) {
                 slateEntity.setMultiBlockReference(newRef);
                 LOGGER.debug("Updated MultiBlock reference for block entity at {}", pos);

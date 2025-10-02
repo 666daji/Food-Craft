@@ -16,14 +16,13 @@ public class MultiBlock implements AutoCloseable {
     // 最大方块堆大小限制
     public static final int MAX_SIZE = 10;
 
-    private final WorldView world;
-    private final Block baseBlock;
-    private final PatternRange range;
-    private final BlockPos masterPos;
-    private boolean disposed = false;
+    protected final WorldView world;
+    protected final Block baseBlock;
+    protected final PatternRange range;
+    protected final BlockPos masterPos;
+    protected boolean disposed = false;
 
-    // 私有构造函数，通过建造者创建实例
-    private MultiBlock(WorldView world, Block baseBlock, PatternRange range) {
+    protected MultiBlock(WorldView world, Block baseBlock, PatternRange range) {
         this.world = Objects.requireNonNull(world, "World cannot be null");
         this.baseBlock = Objects.requireNonNull(baseBlock, "Base block cannot be null");
         this.range = Objects.requireNonNull(range, "Range cannot be null");
@@ -40,8 +39,16 @@ public class MultiBlock implements AutoCloseable {
 
         // 注册到管理器
         if (!MultiBlockManager.registerMultiBlock(this)) {
-            throw new IllegalStateException("Failed to register MultiBlock at position " + masterPos +
-                    ". Position already occupied by another MultiBlock.");
+            // 提供更详细的错误信息
+            MultiBlock existing = MultiBlockManager.findMultiBlock(world, masterPos);
+            String errorMsg;
+            if (existing != null) {
+                errorMsg = String.format("Failed to register MultiBlock at position %s. Position already occupied by MultiBlock with base block %s",
+                        masterPos, existing.getBaseBlock());
+            } else {
+                errorMsg = String.format("Failed to register MultiBlock at position %s for unknown reason", masterPos);
+            }
+            throw new IllegalStateException(errorMsg);
         }
 
         LOGGER.debug("Created new MultiBlock at {} with base block {} and size {}x{}x{}",
@@ -586,15 +593,20 @@ public class MultiBlock implements AutoCloseable {
         // 计算合并后的新范围
         PatternRange newRange = new PatternRange(newStart, newWidth, newHeight, newDepth);
 
-        // 创建新的合并后的MultiBlock
-        MultiBlock combined = new MultiBlock(first.world, first.baseBlock, newRange);
-
-        // 注销原来的两个MultiBlock
         first.dispose();
         second.dispose();
 
-        LOGGER.info("Successfully combined MultiBlocks at {} and {} into new MultiBlock at {}",
-                first.masterPos, second.masterPos, combined.masterPos);
+        // 创建新的合并后的MultiBlock
+        MultiBlock combined;
+        try {
+            combined = new MultiBlock(first.world, first.baseBlock, newRange);
+            LOGGER.info("Successfully combined MultiBlocks at {} and {} into new MultiBlock at {}",
+                    first.masterPos, second.masterPos, combined.masterPos);
+        } catch (Exception e) {
+            // 如果创建失败，记录错误并返回null
+            LOGGER.error("Failed to create combined MultiBlock: {}", e.getMessage());
+            return null;
+        }
 
         return combined;
     }
@@ -672,7 +684,7 @@ public class MultiBlock implements AutoCloseable {
      * 为当前方块堆中的特定相对位置创建引用
      */
     public MultiBlockReference createReference(BlockPos relativePos) {
-        return MultiBlockReference.fromRelativePos(this, relativePos);
+        return ServerMultiBlockReference.fromRelativePos(this, relativePos);
     }
 
     /**
@@ -687,7 +699,7 @@ public class MultiBlock implements AutoCloseable {
      */
     @Nullable
     public MultiBlockReference createReferenceFromWorldPos(BlockPos worldPos) {
-        return MultiBlockReference.fromWorldPos(this, worldPos);
+        return ServerMultiBlockReference.fromWorldPos(this, worldPos);
     }
 
     /**

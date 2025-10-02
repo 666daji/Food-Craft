@@ -4,11 +4,8 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactories;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
-import org.foodcraft.client.blockentity.DishesBlockEntityRenderer;
-import org.foodcraft.client.blockentity.ShelfBlockEntityRenderer;
+import org.foodcraft.client.blockentity.*;
 import org.foodcraft.registry.ModBlockEntityTypes;
-import org.foodcraft.client.blockentity.BracketBlockEntityRenderer;
-import org.foodcraft.client.blockentity.GrindingStoneBlockEntityRenderer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -27,5 +24,6 @@ public abstract class BlockEntityRendererFactoriesMixin {
         register(ModBlockEntityTypes.GRINDING_STONE, GrindingStoneBlockEntityRenderer::new);
         register(ModBlockEntityTypes.DISHES, DishesBlockEntityRenderer::new);
         register(ModBlockEntityTypes.SHELF, ShelfBlockEntityRenderer::new);
+        register(ModBlockEntityTypes.HEAT_RESISTANT_SLATE, HeatResistantSlateBlockEntityRenderer::new);
     }
 }

@@ -4,16 +4,25 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.pattern.BlockPattern;
 import net.minecraft.block.pattern.BlockPatternBuilder;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.network.listener.ClientPlayPacketListener;
+import net.minecraft.network.packet.Packet;
+import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.foodcraft.block.HeatResistantSlateBlock;
+import org.foodcraft.block.multi.ClientMultiBlockReference;
 import org.foodcraft.block.multi.MultiBlock;
 import org.foodcraft.block.multi.MultiBlockReference;
+import org.foodcraft.block.multi.ServerMultiBlockReference;
 import org.foodcraft.registry.ModBlockEntityTypes;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class HeatResistantSlateBlockEntity extends BlockEntity {
     private static final int MIN_CHECK_INTERVAL = 10;
+
+    private static final String MULTIBLOCK_REF_KEY = "MultiBlockRef";
 
     private BlockPattern stove1x1;
     private BlockPattern stove1x2;
@@ -33,7 +42,76 @@ public class HeatResistantSlateBlockEntity extends BlockEntity {
         this.initStovePattern();
     }
 
-    public static void tick(World world, BlockPos pos, BlockState state, HeatResistantSlateBlockEntity blockEntity) {
+    @Override
+    public void writeNbt(NbtCompound nbt) {
+        super.writeNbt(nbt);
+
+        // 保存多方块引用信息
+        if (multiBlockRef != null && !multiBlockRef.isDisposed()) {
+            nbt.put(MULTIBLOCK_REF_KEY, multiBlockRef.toNbt());
+        }
+
+        nbt.putBoolean("IsStoveValid", isValidStove);
+        nbt.putInt("StoveStructureType", stoveStructureType);
+    }
+
+    @Override
+    public void readNbt(NbtCompound nbt) {
+        super.readNbt(nbt);
+
+        // 只在服务端重建功能性的MultiBlockReference
+        if (world != null && !world.isClient) {
+            if (nbt.contains(MULTIBLOCK_REF_KEY)) {
+                NbtCompound refNbt = nbt.getCompound(MULTIBLOCK_REF_KEY);
+                MultiBlockReference ref = ServerMultiBlockReference.fromNbt(world, refNbt);
+                if (ref != null) {
+                    this.multiBlockRef = ref;
+                }
+            }
+        } else {
+            // 在客户端，只重建显示信息
+            if (nbt.contains(MULTIBLOCK_REF_KEY)) {
+                NbtCompound refNbt = nbt.getCompound(MULTIBLOCK_REF_KEY);
+                this.multiBlockRef = new ClientMultiBlockReference(refNbt);
+            }
+        }
+
+        // 读取其他同步的数据
+        this.isValidStove = nbt.getBoolean("IsStoveValid");
+        this.stoveStructureType = nbt.getInt("StoveStructureType");
+    }
+
+    /**
+     * 设置多方块引用，并标记需要同步
+     */
+    public void setMultiBlockReference(@Nullable MultiBlockReference ref) {
+        // 客户端不允许直接设置引用
+        if (world != null && (world.isClient || ref instanceof ClientMultiBlockReference)) {
+            return;
+        }
+
+        // 先清理旧的引用
+        if (this.multiBlockRef != null) {
+            this.multiBlockRef.dispose();
+        }
+
+        this.multiBlockRef = ref;
+
+        // 重置结构检查状态
+        this.currentStoveResult = null;
+        this.stoveStructureType = -1;
+        this.isValidStove = false;
+
+        // 标记需要保存和同步
+        this.markDirty();
+
+        if (world != null) {
+            // 通知客户端更新
+            world.updateListeners(pos, getCachedState(), getCachedState(), 3);
+        }
+    }
+
+    public static void tick(World world, BlockPos pos, BlockState state, @NotNull HeatResistantSlateBlockEntity blockEntity) {
         // 每tick增加方块寿命
         blockEntity.age++;
         if (blockEntity.age == Integer.MAX_VALUE) {
@@ -130,22 +208,25 @@ public class HeatResistantSlateBlockEntity extends BlockEntity {
         if (multiBlockRef == null || multiBlockRef.isDisposed()) {
             return false;
         }
+        if (multiBlockRef instanceof ServerMultiBlockReference multiBlockReference){
+            MultiBlock.PatternRange range = multiBlockReference.getMultiBlock().getRange();
 
-        MultiBlock.PatternRange range = multiBlockRef.getMultiBlock().getRange();
-        int width = range.getWidth();
-        int height = range.getHeight();
-        int depth = range.getDepth();
+            int width = range.getWidth();
+            int height = range.getHeight();
+            int depth = range.getDepth();
 
-        // 炉子结构要求：水平方向，高度为1
-        if (height != 1) {
-            return false;
+            // 炉子结构要求：水平方向，高度为1
+            if (height != 1) {
+                return false;
+            }
+
+            // 检查是否为有效尺寸：1x1, 1x2, 2x2, 2x3
+            return (width == 1 && depth == 1) ||  // 1x1
+                    (width == 1 && depth == 2) ||  // 1x2
+                    (width == 2 && depth == 2) ||  // 2x2
+                    (width == 2 && depth == 3);    // 2x3
         }
-
-        // 检查是否为有效尺寸：1x1, 1x2, 2x2, 2x3
-        return (width == 1 && depth == 1) ||  // 1x1
-                (width == 1 && depth == 2) ||  // 1x2
-                (width == 2 && depth == 2) ||  // 2x2
-                (width == 2 && depth == 3);    // 2x3
+        return false;
     }
 
     /**
@@ -156,33 +237,17 @@ public class HeatResistantSlateBlockEntity extends BlockEntity {
             return -1;
         }
 
-        MultiBlock.PatternRange range = multiBlockRef.getMultiBlock().getRange();
-        int width = range.getWidth();
-        int depth = range.getDepth();
+        if (multiBlockRef instanceof ServerMultiBlockReference multiBlockReference){
+            MultiBlock.PatternRange range = multiBlockReference.getMultiBlock().getRange();
+            int width = range.getWidth();
+            int depth = range.getDepth();
 
-        if (width == 1 && depth == 1) return 1;  // 1x1
-        if (width == 1 && depth == 2) return 2;  // 1x2
-        if (width == 2 && depth == 2) return 3;  // 2x2
-        if (width == 2 && depth == 3) return 4;  // 2x3
-
-        return -1;
-    }
-
-    /**
-     * 设置多方块引用
-     */
-    public void setMultiBlockReference(@Nullable MultiBlockReference ref) {
-        // 先清理旧的引用
-        if (this.multiBlockRef != null) {
-            this.multiBlockRef.dispose();
+            if (width == 1 && depth == 1) return 1;  // 1x1
+            if (width == 1 && depth == 2) return 2;  // 1x2
+            if (width == 2 && depth == 2) return 3;  // 2x2
+            if (width == 2 && depth == 3) return 4;  // 2x3
         }
-
-        this.multiBlockRef = ref;
-
-        // 重置结构检查状态
-        this.currentStoveResult = null;
-        this.stoveStructureType = -1;
-        this.isValidStove = false;
+        return -1;
     }
 
     /**
@@ -259,38 +324,52 @@ public class HeatResistantSlateBlockEntity extends BlockEntity {
         this.stove1x1 = BlockPatternBuilder.start()
                 .aisle("###", "###")
                 .aisle("#^#","#~#")
-                .aisle("#-#", "#|#")
+                .aisle("###", "#|#")
                 .where('^', cachedBlockPosition -> cachedBlockPosition.getBlockState().isAir())
                 .where('#', cachedBlockPosition -> !cachedBlockPosition.getBlockState().isAir())
                 .where('|', cachedBlockPosition -> cachedBlockPosition.getBlockState().getBlock() instanceof HeatResistantSlateBlock)
+                .where('~', cachedBlockPosition -> true)
                 .build();
         this.stove1x2 = BlockPatternBuilder.start()
                 .aisle("###", "###")
                 .aisle("#^#","#~#")
-                .aisle("#-#", "#|#")
-                .aisle("#-#", "#|#")
+                .aisle("###", "#|#")
+                .aisle("###", "#|#")
                 .where('^', cachedBlockPosition -> cachedBlockPosition.getBlockState().isAir())
                 .where('#', cachedBlockPosition -> !cachedBlockPosition.getBlockState().isAir())
                 .where('|', cachedBlockPosition -> cachedBlockPosition.getBlockState().getBlock() instanceof HeatResistantSlateBlock)
+                .where('~', cachedBlockPosition -> true)
                 .build();
         this.stove2x2 = BlockPatternBuilder.start()
                 .aisle("####", "####")
                 .aisle("#^^#","#~~#")
-                .aisle("#--#", "#||#")
-                .aisle("#--#", "#||#")
+                .aisle("####", "#||#")
+                .aisle("####", "#||#")
                 .where('^', cachedBlockPosition -> cachedBlockPosition.getBlockState().isAir())
                 .where('#', cachedBlockPosition -> !cachedBlockPosition.getBlockState().isAir())
                 .where('|', cachedBlockPosition -> cachedBlockPosition.getBlockState().getBlock() instanceof HeatResistantSlateBlock)
+                .where('~', cachedBlockPosition -> true)
                 .build();
         this.stove2x3 = BlockPatternBuilder.start()
                 .aisle("####", "####")
                 .aisle("#^^#","#~~#")
-                .aisle("#--#", "#||#")
-                .aisle("#--#", "#||#")
-                .aisle("#--#", "#||#")
+                .aisle("####", "#||#")
+                .aisle("####", "#||#")
+                .aisle("####", "#||#")
                 .where('^', cachedBlockPosition -> cachedBlockPosition.getBlockState().isAir())
                 .where('#', cachedBlockPosition -> !cachedBlockPosition.getBlockState().isAir())
                 .where('|', cachedBlockPosition -> cachedBlockPosition.getBlockState().getBlock() instanceof HeatResistantSlateBlock)
+                .where('~', cachedBlockPosition -> true)
                 .build();
+    }
+
+    @Override
+    public NbtCompound toInitialChunkDataNbt() {
+        return this.createNbt();
+    }
+
+    @Override
+    public Packet<ClientPlayPacketListener> toUpdatePacket() {
+        return BlockEntityUpdateS2CPacket.create(this);
     }
 }

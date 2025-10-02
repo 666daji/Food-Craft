@@ -1,7 +1,9 @@
 package org.foodcraft.block.multi;
 
 import net.minecraft.block.Block;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraft.world.WorldView;
 import org.foodcraft.FoodCraft;
 import org.jetbrains.annotations.Nullable;
@@ -27,22 +29,30 @@ public class MultiBlockManager {
             return false;
         }
 
+        if (multiBlock.getWorld() instanceof World world) {
+            if (world.isClient) {
+                LOGGER.error("Attempted to register MultiBlock on client world at {}", multiBlock.getMasterPos());
+                multiBlock.dispose();
+                return false;
+            }
+        }
+
         if (multiBlock.isDisposed()) {
             LOGGER.error("Attempted to register disposed MultiBlock at {}", multiBlock.getMasterPos());
             return false;
         }
 
-        WorldView world = multiBlock.getWorld();
+        WorldView worldView = multiBlock.getWorld();
         BlockPos masterPos = multiBlock.getMasterPos();
 
         synchronized (lock) {
-            Map<BlockPos, MultiBlock> worldMap = multiBlockRegistry.computeIfAbsent(world, k -> new ConcurrentHashMap<>());
+            Map<BlockPos, MultiBlock> worldMap = multiBlockRegistry.computeIfAbsent(worldView, k -> new ConcurrentHashMap<>());
 
             if (worldMap.containsKey(masterPos)) {
                 MultiBlock existing = worldMap.get(masterPos);
                 if (!existing.isDisposed()) {
                     LOGGER.warn("Position {} in world {} is already occupied by MultiBlock with base block {}",
-                            masterPos, world, existing.getBaseBlock());
+                            masterPos, worldView, existing.getBaseBlock());
                     return false;
                 } else {
                     // 清理已销毁的MultiBlock
@@ -53,6 +63,14 @@ public class MultiBlockManager {
 
             worldMap.put(masterPos, multiBlock);
             LOGGER.debug("Registered MultiBlock at {} in world", masterPos);
+
+            // 持久化到存档
+            if (worldView instanceof ServerWorld serverWorld) {
+                MultiBlockPersistentState persistentState = MultiBlockPersistentState.getOrCreate(serverWorld);
+                persistentState.addMultiBlock(serverWorld, multiBlock);
+                LOGGER.debug("Persisted MultiBlock at {} to world storage", masterPos);
+            }
+
             return true;
         }
     }
@@ -66,11 +84,11 @@ public class MultiBlockManager {
             return false;
         }
 
-        WorldView world = multiBlock.getWorld();
+        WorldView worldView = multiBlock.getWorld();
         BlockPos masterPos = multiBlock.getMasterPos();
 
         synchronized (lock) {
-            Map<BlockPos, MultiBlock> worldMap = multiBlockRegistry.get(world);
+            Map<BlockPos, MultiBlock> worldMap = multiBlockRegistry.get(worldView);
             if (worldMap == null) {
                 LOGGER.debug("No MultiBlocks registered for world");
                 return false;
@@ -81,9 +99,16 @@ public class MultiBlockManager {
                 worldMap.remove(masterPos);
                 LOGGER.debug("Unregistered MultiBlock at {} from world", masterPos);
 
+                // 从持久化存储中移除
+                if (worldView instanceof ServerWorld serverWorld) {
+                    MultiBlockPersistentState persistentState = MultiBlockPersistentState.getOrCreate(serverWorld);
+                    persistentState.removeMultiBlock(serverWorld, masterPos);
+                    LOGGER.debug("Removed MultiBlock at {} from persistent storage", masterPos);
+                }
+
                 // 如果这个世界没有其他MultiBlock了，清理世界映射
                 if (worldMap.isEmpty()) {
-                    multiBlockRegistry.remove(world);
+                    multiBlockRegistry.remove(worldView);
                     LOGGER.debug("Removed empty world mapping");
                 }
                 return true;
@@ -91,6 +116,82 @@ public class MultiBlockManager {
                 LOGGER.warn("MultiBlock at {} was not the registered instance", masterPos);
                 return false;
             }
+        }
+    }
+
+    /**
+     * 加载世界时恢复多方块数据
+     */
+    public static void loadWorldMultiBlocks(ServerWorld world) {
+        synchronized (lock) {
+            MultiBlockPersistentState persistentState = MultiBlockPersistentState.getOrCreate(world);
+            Collection<MultiBlockPersistentState.MultiBlockData> multiBlockDataList = persistentState.getMultiBlocksForWorld(world);
+
+            LOGGER.info("Loading {} MultiBlocks for world {}", multiBlockDataList.size(), world.getRegistryKey().getValue());
+
+            int loadedCount = 0;
+            for (MultiBlockPersistentState.MultiBlockData data : multiBlockDataList) {
+                try {
+                    // 重建MultiBlock
+                    MultiBlock multiBlock = rebuildMultiBlockFromData(world, data);
+                    if (multiBlock != null) {
+                        // 注册到内存中（不重复持久化）
+                        Map<BlockPos, MultiBlock> worldMap = multiBlockRegistry.computeIfAbsent(world, k -> new ConcurrentHashMap<>());
+                        worldMap.put(data.masterPos(), multiBlock);
+                        loadedCount++;
+                        LOGGER.debug("Reloaded MultiBlock at {}", data.masterPos());
+                    }
+                } catch (Exception e) {
+                    LOGGER.error("Failed to reload MultiBlock at {}: {}", data.masterPos(), e.getMessage());
+                }
+            }
+
+            LOGGER.info("Successfully reloaded {}/{} MultiBlocks for world {}", loadedCount, multiBlockDataList.size(), world.getRegistryKey().getValue());
+        }
+    }
+
+    /**
+     * 从持久化数据重建MultiBlock
+     */
+    private static MultiBlock rebuildMultiBlockFromData(ServerWorld world, MultiBlockPersistentState.MultiBlockData data) {
+        try {
+            // 获取基础方块
+            net.minecraft.util.Identifier blockId = new net.minecraft.util.Identifier(data.baseBlockId());
+            net.minecraft.block.Block baseBlock = net.minecraft.registry.Registries.BLOCK.get(blockId);
+
+            // 创建PatternRange
+            MultiBlock.PatternRange range = new MultiBlock.PatternRange(data.start(), data.width(), data.height(), data.depth());
+
+            // 重建MultiBlock
+            return MultiBlock.builder()
+                    .world(world)
+                    .baseBlock(baseBlock)
+                    .range(range)
+                    .build();
+
+        } catch (Exception e) {
+            LOGGER.error("Failed to rebuild MultiBlock from data: {}", e.getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * 服务器关闭时清理
+     */
+    public static void onServerStopping(net.minecraft.server.MinecraftServer server) {
+        synchronized (lock) {
+            LOGGER.info("Server stopping, clearing MultiBlock registry");
+            multiBlockRegistry.clear();
+        }
+    }
+
+    /**
+     * 手动备份多方块数据
+     */
+    public static void backupMultiBlockData(net.minecraft.server.MinecraftServer server) {
+        for (ServerWorld world : server.getWorlds()) {
+            MultiBlockPersistentState persistentState = MultiBlockPersistentState.getOrCreate(world);
+            persistentState.saveToFile(server);
         }
     }
 
