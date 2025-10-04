@@ -11,7 +11,25 @@ import org.slf4j.Logger;
 import java.util.*;
 
 /**
- * 提供方块堆操作的辅助类，专门用于处理核心方块的放置和破坏逻辑
+ * 多方块操作助手 - 处理方块放置和破坏时的多方块逻辑
+ *
+ * <h2>主要功能</h2>
+ * <ul>
+ * <li><strong>事件处理</strong> - 处理方块放置、破坏和邻居更新事件</li>
+ * <li><strong>自动合并</strong> - 执行多轮合并，最大化多方块结构</li>
+ * <li><strong>引用更新</strong> - 更新方块实体中的多方块引用</li>
+ * <li><strong>调试工具</strong> - 提供强制更新和修复功能</li>
+ * </ul>
+ *
+ * <h2>使用说明</h2>
+ * <p>通常在方块的{@code onBlockAdded}和{@code onStateReplaced}方法中调用此类的方法：
+ * <pre>{@code
+ * @Override
+ * public void onBlockAdded(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack itemStack) {
+ *     super.onPlaced(world, pos, state, placer, itemStack);
+ *     MultiBlockHelper.onCoreBlockPlaced(world, pos, this);
+ * }
+ * }</pre>
  */
 public class MultiBlockHelper {
     private static final Logger LOGGER = FoodCraft.LOGGER;
@@ -146,7 +164,7 @@ public class MultiBlockHelper {
                         // 合并后重新查找邻居，因为情况可能发生了变化
                         break;
                     } else {
-                        LOGGER.warn("Merge operation returned null, merge failed");
+                        LOGGER.debug("Merge operation returned null, merge failed");
                     }
 
                 } catch (IllegalArgumentException e) {
@@ -316,7 +334,7 @@ public class MultiBlockHelper {
     public static void forceUpdateReferencesInArea(World world, BlockPos center, int radius) {
         LOGGER.info("Forcing update of MultiBlock references in area around {}", center);
 
-        // 获取区域内的所有核心方块
+        // 获取区域内的所有方块
         List<BlockPos> coreBlocks = new ArrayList<>();
         for (int x = center.getX() - radius; x <= center.getX() + radius; x++) {
             for (int y = center.getY() - radius; y <= center.getY() + radius; y++) {
@@ -332,7 +350,7 @@ public class MultiBlockHelper {
 
         LOGGER.debug("Found {} core blocks in area", coreBlocks.size());
 
-        // 为每个核心方块重新创建引用
+        // 为每个方块重新创建引用
         for (BlockPos pos : coreBlocks) {
             MultiBlock multiBlock = MultiBlockManager.findMultiBlock(world, pos);
             if (multiBlock != null && !multiBlock.isDisposed()) {

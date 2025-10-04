@@ -10,6 +10,41 @@ import org.slf4j.Logger;
 
 import java.util.*;
 
+/**
+ * 多方块结构实例 - 管理由同种方块组成的立方体区域
+ *
+ * <p>该类代表世界中一个具体的多方块结构，可以自动处理结构的完整性检查、拆分和合并。
+ * 当结构中的方块被破坏时，会自动拆分成更小的完整结构；当相邻结构满足条件时，会自动合并。
+ *
+ * <h2>核心特性</h2>
+ * <ul>
+ * <li><strong>自动完整性维护</strong> - 当方块缺失时自动拆分，相邻时自动合并</li>
+ * <li><strong>坐标转换</strong> - 支持相对坐标与世界坐标的相互转换</li>
+ * <li><strong>大小限制</strong> - 最大支持{@value #MAX_SIZE}×{@value #MAX_SIZE}×{@value #MAX_SIZE}的方块堆</li>
+ * <li><strong>资源管理</strong> - 实现{@link AutoCloseable}，确保正确释放资源</li>
+ * </ul>
+ *
+ * <h2>注意</h2>
+ * <p>方块堆一般用于带有方块实体的方块，如果使用没有方块实体的方块创建方块堆可能无法完整地使用该类的功能</p>
+ *
+ * <h2>使用示例</h2>
+ * <pre>{@code
+ * // 创建3x3x3的石头方块堆
+ * MultiBlock stonePile = MultiBlock.builder()
+ *     .world(world)
+ *     .baseBlock(Blocks.STONE)
+ *     .range(startPos, 3, 3, 3)
+ *     .build();
+ *
+ * // 检查完整性
+ * if (!stonePile.checkIntegrity()) {
+ *     List<MultiBlock> newPiles = stonePile.checkAndSplitIntegrity();
+ * }
+ * }</pre>
+ *
+ * @see MultiBlockManager
+ * @see MultiBlockHelper
+ */
 public class MultiBlock implements AutoCloseable {
     private static final Logger LOGGER = FoodCraft.LOGGER;
 
@@ -39,7 +74,6 @@ public class MultiBlock implements AutoCloseable {
 
         // 注册到管理器
         if (!MultiBlockManager.registerMultiBlock(this)) {
-            // 提供更详细的错误信息
             MultiBlock existing = MultiBlockManager.findMultiBlock(world, masterPos);
             String errorMsg;
             if (existing != null) {
@@ -108,7 +142,7 @@ public class MultiBlock implements AutoCloseable {
 
         List<BlockPos> validBlocks = findValidBlocks();
 
-        // 如果所有方块都有效，返回空列表（不需要拆分）
+        // 如果所有方块都有效，返回空
         if (validBlocks.size() == getVolume()) {
             LOGGER.debug("MultiBlock at {} is intact, no need to split", masterPos);
             return Collections.emptyList();
@@ -117,11 +151,11 @@ public class MultiBlock implements AutoCloseable {
         LOGGER.info("MultiBlock at {} is incomplete. Valid blocks: {}/{}. Splitting...",
                 masterPos, validBlocks.size(), getVolume());
 
-        // 拆分方块堆
-        List<MultiBlock> newMultiBlocks = splitMultiBlock(validBlocks);
-
         // 注销当前方块堆
         this.dispose();
+
+        // 拆分方块堆
+        List<MultiBlock> newMultiBlocks = splitMultiBlock(validBlocks);
 
         LOGGER.info("Split MultiBlock at {} into {} new MultiBlocks",
                 masterPos, newMultiBlocks.size());
@@ -160,6 +194,21 @@ public class MultiBlock implements AutoCloseable {
             return Collections.emptyList();
         }
 
+        List<MultiBlock> result = splitMultiBlockOptimized(validBlocks);
+
+        // 如果优化算法失败，回退到原来的算法
+        if (result.isEmpty()) {
+            LOGGER.warn("Optimized decomposition failed, falling back to original algorithm");
+            return splitMultiBlockFallback(validBlocks);
+        }
+
+        return result;
+    }
+
+    /**
+     * 回退算法
+     */
+    private List<MultiBlock> splitMultiBlockFallback(List<BlockPos> validBlocks) {
         // 使用三维连通组件算法找到连续的方块区域
         List<List<BlockPos>> connectedComponents = findConnectedComponents(validBlocks);
 
@@ -250,7 +299,6 @@ public class MultiBlock implements AutoCloseable {
         }
 
         // 检查矩形区域内的所有方块是否都是有效的
-        // 如果不是，我们需要进一步拆分或者只创建包含实际方块的矩形
         if (!isRectangularRegionValid(component, minX, minY, minZ, maxX, maxY, maxZ)) {
             // 如果不是完整的矩形，创建包含所有方块的最小矩形
             return createMinimalMultiBlock(component);
@@ -340,6 +388,270 @@ public class MultiBlock implements AutoCloseable {
             LOGGER.error("Failed to create minimal MultiBlock: {}", e.getMessage());
             return null;
         }
+    }
+
+    /**
+     * 使用三维立方体分解算法将不完整的方块堆拆分成多个完整的立方体
+     */
+    private List<MultiBlock> splitMultiBlockOptimized(List<BlockPos> validBlocks) {
+        if (validBlocks.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        LOGGER.debug("Starting optimized cube decomposition for {} valid blocks", validBlocks.size());
+        List<CubeDecomposition> decomposedCubes = decomposeIntoSolidCubes(validBlocks);
+        List<MultiBlock> result = new ArrayList<>();
+
+        for (CubeDecomposition cube : decomposedCubes) {
+            if (cube.isValid()) {
+                MultiBlock newMultiBlock = createMultiBlockFromCube(cube);
+                if (newMultiBlock != null) {
+                    result.add(newMultiBlock);
+                    LOGGER.debug("Created optimized MultiBlock: {} with size {}x{}x{}",
+                            cube.start, cube.width, cube.height, cube.depth);
+                }
+            }
+        }
+
+        LOGGER.info("Optimized decomposition created {} MultiBlocks from {} blocks",
+                result.size(), validBlocks.size());
+
+        return result;
+    }
+
+    /**
+     * 三维立方体分解结果
+     */
+    private static class CubeDecomposition {
+        public final BlockPos start;
+        public final int width;
+        public final int height;
+        public final int depth;
+        public final int volume;
+
+        public CubeDecomposition(BlockPos start, int width, int height, int depth) {
+            this.start = start;
+            this.width = width;
+            this.height = height;
+            this.depth = depth;
+            this.volume = width * height * depth;
+        }
+
+        public boolean isValid() {
+            return width > 0 && height > 0 && depth > 0;
+        }
+    }
+
+    /**
+     * 将连通区域分解为实心立方体（使用贪心算法）
+     */
+    private List<CubeDecomposition> decomposeIntoSolidCubes(List<BlockPos> blocks) {
+        if (blocks.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        // 将方块转换为集合以便快速查找
+        Set<BlockPos> blockSet = new HashSet<>(blocks);
+
+        // 找出区域边界
+        BlockPos min = findMinBounds(blocks);
+        BlockPos max = findMaxBounds(blocks);
+
+        // 创建覆盖标记
+        Set<BlockPos> covered = new HashSet<>();
+        List<CubeDecomposition> cubes = new ArrayList<>();
+
+        // 使用优先级队列按体积从大到小处理
+        PriorityQueue<CubeCandidate> candidateQueue = new PriorityQueue<>(
+                (a, b) -> Integer.compare(b.volume, a.volume) // 最大体积优先
+        );
+
+        // 生成所有可能的立方体候选
+        generateCubeCandidates(blockSet, min, max, candidateQueue);
+
+        // 贪心选择：总是选择当前最大的可用立方体
+        while (!candidateQueue.isEmpty() && covered.size() < blocks.size()) {
+            CubeCandidate candidate = candidateQueue.poll();
+
+            // 检查这个立方体是否完全未被覆盖
+            if (isCubeAvailable(blockSet, covered, candidate)) {
+                // 使用这个立方体
+                CubeDecomposition cube = new CubeDecomposition(
+                        candidate.start, candidate.size, candidate.size, candidate.size
+                );
+                cubes.add(cube);
+
+                // 标记为已覆盖
+                markCubeAsCovered(covered, candidate);
+
+                LOGGER.trace("Selected cube: {} size {} (volume: {})",
+                        candidate.start, candidate.size, candidate.volume);
+            }
+        }
+
+        // 确保所有方块都被覆盖（使用1x1x1立方体作为保底）
+        coverRemainingBlocks(blocks, covered, cubes);
+
+        return cubes;
+    }
+
+    /**
+     * 立方体候选
+     */
+    private static class CubeCandidate {
+        public final BlockPos start;
+        public final int size;
+        public final int volume;
+
+        public CubeCandidate(BlockPos start, int size) {
+            this.start = start;
+            this.size = size;
+            this.volume = size * size * size;
+        }
+    }
+
+    /**
+     * 生成所有可能的立方体候选（按体积从大到小）
+     */
+    private void generateCubeCandidates(Set<BlockPos> blockSet, BlockPos min, BlockPos max,
+                                        PriorityQueue<CubeCandidate> queue) {
+        int maxPossibleSize = Math.min(
+                max.getX() - min.getX() + 1,
+                Math.min(
+                        max.getY() - min.getY() + 1,
+                        max.getZ() - min.getZ() + 1
+                )
+        );
+
+        // 从最大尺寸到1生成候选
+        for (int size = maxPossibleSize; size >= 1; size--) {
+            for (int x = min.getX(); x <= max.getX() - size + 1; x++) {
+                for (int y = min.getY(); y <= max.getY() - size + 1; y++) {
+                    for (int z = min.getZ(); z <= max.getZ() - size + 1; z++) {
+                        BlockPos start = new BlockPos(x, y, z);
+                        if (isSolidCube(blockSet, start, size)) {
+                            queue.offer(new CubeCandidate(start, size));
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * 检查给定区域是否是实心立方体
+     */
+    private boolean isSolidCube(Set<BlockPos> blockSet, BlockPos start, int size) {
+        for (int dx = 0; dx < size; dx++) {
+            for (int dy = 0; dy < size; dy++) {
+                for (int dz = 0; dz < size; dz++) {
+                    BlockPos pos = new BlockPos(
+                            start.getX() + dx,
+                            start.getY() + dy,
+                            start.getZ() + dz
+                    );
+                    if (!blockSet.contains(pos)) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
+    /**
+     * 检查立方体是否可用（所有方块都未被覆盖）
+     */
+    private boolean isCubeAvailable(Set<BlockPos> blockSet, Set<BlockPos> covered, CubeCandidate candidate) {
+        for (int dx = 0; dx < candidate.size; dx++) {
+            for (int dy = 0; dy < candidate.size; dy++) {
+                for (int dz = 0; dz < candidate.size; dz++) {
+                    BlockPos pos = new BlockPos(
+                            candidate.start.getX() + dx,
+                            candidate.start.getY() + dy,
+                            candidate.start.getZ() + dz
+                    );
+                    if (covered.contains(pos)) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
+    /**
+     * 将立方体标记为已覆盖
+     */
+    private void markCubeAsCovered(Set<BlockPos> covered, CubeCandidate candidate) {
+        for (int dx = 0; dx < candidate.size; dx++) {
+            for (int dy = 0; dy < candidate.size; dy++) {
+                for (int dz = 0; dz < candidate.size; dz++) {
+                    BlockPos pos = new BlockPos(
+                            candidate.start.getX() + dx,
+                            candidate.start.getY() + dy,
+                            candidate.start.getZ() + dz
+                    );
+                    covered.add(pos);
+                }
+            }
+        }
+    }
+
+    /**
+     * 覆盖剩余的未覆盖方块（使用1x1x1立方体）
+     */
+    private void coverRemainingBlocks(List<BlockPos> blocks, Set<BlockPos> covered,
+                                      List<CubeDecomposition> cubes) {
+        for (BlockPos block : blocks) {
+            if (!covered.contains(block)) {
+                cubes.add(new CubeDecomposition(block, 1, 1, 1));
+                covered.add(block);
+                LOGGER.trace("Added 1x1x1 cube for remaining block: {}", block);
+            }
+        }
+    }
+
+    /**
+     * 从立方体分解创建MultiBlock
+     */
+    private MultiBlock createMultiBlockFromCube(CubeDecomposition cube) {
+        try {
+            return MultiBlock.builder()
+                    .world(world)
+                    .baseBlock(baseBlock)
+                    .range(cube.start, cube.width, cube.height, cube.depth)
+                    .build();
+        } catch (Exception e) {
+            LOGGER.error("Failed to create MultiBlock from cube {}: {}", cube.start, e.getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * 查找最小边界坐标
+     */
+    private BlockPos findMinBounds(List<BlockPos> blocks) {
+        int minX = Integer.MAX_VALUE, minY = Integer.MAX_VALUE, minZ = Integer.MAX_VALUE;
+        for (BlockPos pos : blocks) {
+            minX = Math.min(minX, pos.getX());
+            minY = Math.min(minY, pos.getY());
+            minZ = Math.min(minZ, pos.getZ());
+        }
+        return new BlockPos(minX, minY, minZ);
+    }
+
+    /**
+     * 查找最大边界坐标
+     */
+    private BlockPos findMaxBounds(List<BlockPos> blocks) {
+        int maxX = Integer.MIN_VALUE, maxY = Integer.MIN_VALUE, maxZ = Integer.MIN_VALUE;
+        for (BlockPos pos : blocks) {
+            maxX = Math.max(maxX, pos.getX());
+            maxY = Math.max(maxY, pos.getY());
+            maxZ = Math.max(maxZ, pos.getZ());
+        }
+        return new BlockPos(maxX, maxY, maxZ);
     }
 
     /**
@@ -513,7 +825,7 @@ public class MultiBlock implements AutoCloseable {
     }
 
     /**
-     * 实例方法：将当前方块堆与另一个方块堆拼接
+     * 将当前方块堆与另一个方块堆拼接
      */
     public MultiBlock combineWith(@NotNull MultiBlock other) {
         if (disposed) {
@@ -582,10 +894,10 @@ public class MultiBlock implements AutoCloseable {
         // 检查是否相邻或重叠，并确定合并方向
         MergeDirection direction = findMergeDirection(firstRange, secondRange);
         if (direction == null) {
-            String errorMsg = String.format("MultiBlocks are not adjacent or overlapping in a valid way. " +
+            String debugMsg = String.format("MultiBlocks are not adjacent or overlapping in a valid way. " +
                     "First: %s, Second: %s", firstRange, secondRange);
-            LOGGER.error(errorMsg);
-            throw new IllegalArgumentException(errorMsg);
+            LOGGER.debug(debugMsg);
+            return null;
         }
 
         LOGGER.debug("Merging MultiBlocks in direction: {}", direction);
@@ -654,7 +966,6 @@ public class MultiBlock implements AutoCloseable {
         return disposed ? 0 : range.getVolume();
     }
 
-    // Getter方法
     public WorldView getWorld() {
         if (disposed) {
             throw new IllegalStateException("MultiBlock at " + masterPos + " has been disposed");
@@ -725,7 +1036,6 @@ public class MultiBlock implements AutoCloseable {
         );
     }
 
-    // 内部辅助方法
     private static MergeDirection findMergeDirection(PatternRange first, PatternRange second) {
         BlockPos firstEnd = first.getEnd();
         BlockPos secondEnd = second.getEnd();
@@ -820,7 +1130,6 @@ public class MultiBlock implements AutoCloseable {
                     worldPos.getZ() >= start.getZ() && worldPos.getZ() <= end.getZ();
         }
 
-        // Getter 方法
         public BlockPos getStart() { return start; }
         public int getWidth() { return width; }
         public int getHeight() { return height; }

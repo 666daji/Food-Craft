@@ -13,6 +13,34 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
+/**
+ * 多方块结构管理器 - 全局的多方块注册和查找服务
+ *
+ * <p>该类负责管理世界中所有的多方块结构实例，提供注册、查找、持久化和生命周期管理功能。
+ * 使用弱引用映射来管理世界实例，防止内存泄漏。
+ *
+ * <h2>主要功能</h2>
+ * <ul>
+ * <li><strong>注册管理</strong> - 注册和注销多方块实例</li>
+ * <li><strong>位置查找</strong> - 根据坐标快速找到对应的多方块结构</li>
+ * <li><strong>数据持久化</strong> - 游戏重启时自动恢复多方块数据</li>
+ * <li><strong>内存管理</strong> - 自动清理已销毁的多方块引用</li>
+ * </ul>
+ *
+ * <h2>注意</h2>
+ * <p>该类以{@link World}作为一集键来区分不同维度中的方块堆，因此不得注册客户端世界的{@link MultiBlock}</p>
+ *
+ * <h2>使用示例</h2>
+ * <pre>{@code
+ * // 查找指定位置的多方块
+ * MultiBlock multiBlock = MultiBlockManager.findMultiBlock(world, pos);
+ *
+ * // 获取世界中的所有多方块
+ * Collection<MultiBlock> allMultiBlocks = MultiBlockManager.getMultiBlocksInWorld(world);
+ * }</pre>
+ *
+ * @see MultiBlockPersistentState
+ */
 public class MultiBlockManager {
     private static final Logger LOGGER = FoodCraft.LOGGER;
 
@@ -76,7 +104,8 @@ public class MultiBlockManager {
     }
 
     /**
-     * 注销一个MultiBlock
+     * 注销一个MultiBlock。
+     * 请不要直接调用该方法，如果需要注销方块堆，请直接调用MultiBlock.dispose()
      */
     public static boolean unregisterMultiBlock(MultiBlock multiBlock) {
         if (multiBlock == null) {
