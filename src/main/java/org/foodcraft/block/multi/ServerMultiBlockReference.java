@@ -5,6 +5,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtHelper;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.WorldView;
 import org.foodcraft.FoodCraft;
@@ -118,7 +119,7 @@ public class ServerMultiBlockReference implements MultiBlockReference {
 
             // 读取基础方块
             String blockId = nbt.getString(BASE_BLOCK_KEY);
-            Block baseBlock = net.minecraft.registry.Registries.BLOCK.get(new net.minecraft.util.Identifier(blockId));
+            Block baseBlock = net.minecraft.registry.Registries.BLOCK.get(new Identifier(blockId));
 
             // 查找对应的MultiBlock
             MultiBlock multiBlock = MultiBlockManager.findMultiBlock(world, masterPos);

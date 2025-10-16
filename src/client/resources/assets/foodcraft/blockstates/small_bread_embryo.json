@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "foodcraft:block/small_bread_embryo",
+      "y": 180
+    },
+    "facing=south": {
+      "model": "foodcraft:block/small_bread_embryo"
+    },
+    "facing=east": {
+      "model": "foodcraft:block/small_bread_embryo",
+      "y": 270
+    },
+    "facing=west": {
+      "model": "foodcraft:block/small_bread_embryo",
+      "y": 90
+    }
+  }
+}

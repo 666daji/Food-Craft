@@ -1,0 +1,116 @@
+{
+  "variants": {
+    "combustion_state=first_ignited,facing=east": {
+      "model": "foodcraft:block/first_ignited",
+      "y": 90
+    },
+    "combustion_state=first_ignited,facing=north": {
+      "model": "foodcraft:block/first_ignited",
+      "y": 0
+    },
+    "combustion_state=first_ignited,facing=south": {
+      "model": "foodcraft:block/first_ignited",
+      "y": 180
+    },
+    "combustion_state=first_ignited,facing=west": {
+      "model": "foodcraft:block/first_ignited",
+      "y": 270
+    },
+    "combustion_state=first_half,facing=east": {
+      "model": "foodcraft:block/first_half",
+      "y": 90
+    },
+    "combustion_state=first_half,facing=north": {
+      "model": "foodcraft:block/first_half",
+      "y": 0
+    },
+    "combustion_state=first_half,facing=south": {
+      "model": "foodcraft:block/first_half",
+      "y": 180
+    },
+    "combustion_state=first_half,facing=west": {
+      "model": "foodcraft:block/first_half",
+      "y": 270
+    },
+    "combustion_state=first_extinguished,facing=east": {
+      "model": "foodcraft:block/first_extinguished",
+      "y": 90
+    },
+    "combustion_state=first_extinguished,facing=north": {
+      "model": "foodcraft:block/first_extinguished",
+      "y": 0
+    },
+    "combustion_state=first_extinguished,facing=south": {
+      "model": "foodcraft:block/first_extinguished",
+      "y": 180
+    },
+    "combustion_state=first_extinguished,facing=west": {
+      "model": "foodcraft:block/first_extinguished",
+      "y": 270
+    },
+    "combustion_state=again_ignited,facing=east": {
+      "model": "foodcraft:block/again_ignited",
+      "y": 90
+    },
+    "combustion_state=again_ignited,facing=north": {
+      "model": "foodcraft:block/again_ignited",
+      "y": 0
+    },
+    "combustion_state=again_ignited,facing=south": {
+      "model": "foodcraft:block/again_ignited",
+      "y": 180
+    },
+    "combustion_state=again_ignited,facing=west": {
+      "model": "foodcraft:block/again_ignited",
+      "y": 270
+    },
+    "combustion_state=again_half,facing=east": {
+      "model": "foodcraft:block/again_half",
+      "y": 90
+    },
+    "combustion_state=again_half,facing=north": {
+      "model": "foodcraft:block/again_half",
+      "y": 0
+    },
+    "combustion_state=again_half,facing=south": {
+      "model": "foodcraft:block/again_half",
+      "y": 180
+    },
+    "combustion_state=again_half,facing=west": {
+      "model": "foodcraft:block/again_half",
+      "y": 270
+    },
+    "combustion_state=reignited,facing=east": {
+      "model": "foodcraft:block/reignited",
+      "y": 90
+    },
+    "combustion_state=reignited,facing=north": {
+      "model": "foodcraft:block/reignited",
+      "y": 0
+    },
+    "combustion_state=reignited,facing=south": {
+      "model": "foodcraft:block/reignited",
+      "y": 180
+    },
+    "combustion_state=reignited,facing=west": {
+      "model": "foodcraft:block/reignited",
+      "y": 270
+    },
+    "combustion_state=again_extinguished,facing=east": {
+      "model": "foodcraft:block/again_extinguished",
+      "y": 90
+    },
+    "combustion_state=again_extinguished,facing=north": {
+      "model": "foodcraft:block/again_extinguished",
+      "y": 0
+    },
+    "combustion_state=again_extinguished,facing=south": {
+      "model": "foodcraft:block/again_extinguished",
+      "y": 180
+    },
+    "combustion_state=again_extinguished,facing=west": {
+      "model": "foodcraft:block/again_extinguished",
+      "y": 270
+    }
+  }
+}

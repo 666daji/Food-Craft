@@ -14,6 +14,7 @@ import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.world.BlockView;
 import org.dfood.block.FoodBlock;
@@ -21,6 +22,7 @@ import org.dfood.item.DoubleBlockItem;
 import org.dfood.shape.FoodShapeHandle;
 import org.foodcraft.block.DishesBlock;
 import org.foodcraft.registry.ModBlockEntityTypes;
+import org.foodcraft.util.FoodCraftUtils;
 
 /**
  * 盘子方块实体，用于存储食物物品
@@ -42,7 +44,7 @@ public class DishesBlockEntity extends UpPlaceBlockEntity {
             return FoodShapeHandle.getInstance().getShape(itemState, foodBlock.NUMBER_OF_FOOD)
                     .offset(0.0, FOOD_OFFSET_Y, 0.0);
         }
-        return FoodShapeHandle.shapes.ALL.getShape();
+        return FoodShapeHandle.shapes.ALL.getShape().offset(0.0, FOOD_OFFSET_Y, 0.0);
     }
 
     @Override
@@ -77,24 +79,14 @@ public class DishesBlockEntity extends UpPlaceBlockEntity {
             return Blocks.CAKE.getDefaultState();
         }
 
+        Direction facing = this.getCachedState().get(DishesBlock.FACING);
+
         if (item instanceof DoubleBlockItem doubleBlockItem && doubleBlockItem.getSecondBlock() instanceof FoodBlock) {
-            return createFoodBlockState(doubleBlockItem.getSecondBlock().getDefaultState(), stack.getCount());
+            return FoodCraftUtils.createFoodBlockState(doubleBlockItem.getSecondBlock().getDefaultState(), stack.getCount(), facing);
         } else if (item instanceof BlockItem blockItem && blockItem.getBlock() instanceof FoodBlock) {
-            return createFoodBlockState(blockItem.getBlock().getDefaultState(), stack.getCount());
+            return FoodCraftUtils.createFoodBlockState(blockItem.getBlock().getDefaultState(), stack.getCount(), facing);
         }
 
-        return Blocks.AIR.getDefaultState();
-    }
-
-    /**
-     * 创建食物方块状态
-     */
-    private BlockState createFoodBlockState(BlockState state, int foodCount) {
-        if (state.getBlock() instanceof FoodBlock foodBlock) {
-            return state
-                    .with(FoodBlock.FACING, this.getCachedState().get(DishesBlock.FACING))
-                    .with(foodBlock.NUMBER_OF_FOOD, foodCount);
-        }
         return Blocks.AIR.getDefaultState();
     }
 
@@ -146,13 +138,6 @@ public class DishesBlockEntity extends UpPlaceBlockEntity {
 
         this.markDirtyAndSync();
         return ActionResult.SUCCESS;
-    }
-
-    @Override
-    public void validateSlotIndex(int slot) {
-        if (slot < 0 || slot >= this.size()) {
-            throw new IllegalArgumentException("Slot " + slot + " not in valid range - [0," + this.size() + ")");
-        }
     }
 
     @Override

@@ -36,7 +36,7 @@ public class GrindingStoneBlockEntity extends BlockEntity implements SidedInvent
     protected DefaultedList<ItemStack> inventory = DefaultedList.ofSize(2, ItemStack.EMPTY);
     private int lastEnergyAddTime = 0;
     int energy;
-    int maxEnergy = 1000;
+    static final int MAX_ENERGY = 1000;
     int grindingTime;
     int grindingTimeTotal;
 
@@ -388,11 +388,11 @@ public class GrindingStoneBlockEntity extends BlockEntity implements SidedInvent
     }
 
     public int getMaxEnergy() {
-        return maxEnergy;
+        return MAX_ENERGY;
     }
 
     public void setEnergy(int energy) {
-        this.energy = Math.min(energy, maxEnergy);
+        this.energy = Math.min(energy, MAX_ENERGY);
         markDirty();
     }
 
@@ -426,7 +426,7 @@ public class GrindingStoneBlockEntity extends BlockEntity implements SidedInvent
     }
 
     public void addEnergy(int energy) {
-        this.energy = Math.min(this.energy + energy, maxEnergy);
+        this.energy = Math.min(this.energy + energy, MAX_ENERGY);
         markDirty();
     }
 

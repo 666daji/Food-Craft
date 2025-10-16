@@ -94,7 +94,7 @@ public abstract class UpPlaceBlockEntity extends BlockEntity implements Inventor
     /**
      * 限制堆叠大小不超过最大值
      */
-    private void limitStackSizeIfNeeded(ItemStack stack) {
+    protected void limitStackSizeIfNeeded(ItemStack stack) {
         if (stack.getCount() > this.getMaxCountPerStack()) {
             stack.setCount(this.getMaxCountPerStack());
         }
@@ -103,7 +103,11 @@ public abstract class UpPlaceBlockEntity extends BlockEntity implements Inventor
     /**
      * 验证槽位索引是否有效
      */
-    public abstract void validateSlotIndex(int slot);
+    public void validateSlotIndex(int slot){
+        if (slot < 0 || slot >= this.size()) {
+            throw new IllegalArgumentException("Slot " + slot + " not in valid range - [0," + this.size() + ")");
+        }
+    };
 
     /**
      * 获取容器中物品的形状

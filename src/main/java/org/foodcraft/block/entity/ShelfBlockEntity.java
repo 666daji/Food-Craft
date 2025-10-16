@@ -22,6 +22,7 @@ import org.foodcraft.block.FlourSackBlock;
 import org.foodcraft.block.ShelfBlock;
 import org.foodcraft.registry.ModBlockEntityTypes;
 import org.foodcraft.registry.ModItems;
+import org.foodcraft.util.FoodCraftUtils;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -41,13 +42,6 @@ public class ShelfBlockEntity extends UpPlaceBlockEntity{
         CanPlaceItem.add(stack -> stack.getItem() instanceof BlockItem blockItem && blockItem.getBlock() instanceof FlowerPotBlock);
         // 盐罐
         CanPlaceItem.add(stack -> stack.getItem() == ModItems.SALT_SHAKER);
-    }
-
-    @Override
-    public void validateSlotIndex(int slot) {
-        if (slot < 0 || slot >= this.size()) {
-            throw new IllegalArgumentException("Slot " + slot + " not in valid range - [0," + this.size() + ")");
-        }
     }
 
     @Override
@@ -100,22 +94,6 @@ public class ShelfBlockEntity extends UpPlaceBlockEntity{
     }
 
     /**
-     * 检查一个Block实例是否注册了指定的属性
-     * @param block 要检查的Block实例
-     * @param property 要检查的属性
-     * @return 如果注册了该属性则返回true，否则返回false
-     */
-    public static boolean hasProperty(Block block, Property<?> property) {
-        if (block == null || property == null) {
-            return false;
-        }
-
-        StateManager<Block, BlockState> stateManager = block.getStateManager();
-        Property<?> foundProperty = stateManager.getProperty(property.getName());
-        return foundProperty != null && foundProperty.equals(property);
-    }
-
-    /**
      * 获取当前物品栏中的物品对应的方块状态
      * @return 物品对应的方块状态
      */
@@ -124,7 +102,7 @@ public class ShelfBlockEntity extends UpPlaceBlockEntity{
         Item item = stack.getItem();
 
         if (item instanceof BlockItem blockItem){
-            if (hasProperty(blockItem.getBlock(), Properties.HORIZONTAL_FACING)){
+            if (FoodCraftUtils.hasProperty(blockItem.getBlock(), Properties.HORIZONTAL_FACING)){
                 return blockItem.getBlock().getDefaultState()
                         .with(Properties.HORIZONTAL_FACING, this.getCachedState().get(ShelfBlock.FACING));
             }

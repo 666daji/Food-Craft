@@ -69,11 +69,7 @@ public class DishesBlock extends UpPlaceBlock {
 
     @Override
     public boolean canPlace(UpPlaceBlockEntity blockEntity, ItemStack handStack) {
-        // 检查物品是否可以放入盘子
-        if (blockEntity instanceof DishesBlockEntity dishesBlockEntity) {
-            return dishesBlockEntity.isValidItem(handStack);
-        }
-        return false;
+        return blockEntity.isValidItem(handStack);
     }
 
     @Override

@@ -1,0 +1,9 @@
+{
+  "type": "foodcraft:stove",
+  "ingredient": {
+    "item": "foodcraft:dough"
+  },
+  "result": "foodcraft:hard_bread",
+  "experience": 1.0,
+  "stovetime": 21000
+}

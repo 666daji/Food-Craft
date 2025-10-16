@@ -2,6 +2,7 @@ package org.foodcraft.registry;
 
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
+import net.minecraft.block.ExperienceDroppingBlock;
 import net.minecraft.block.piston.PistonBehavior;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
@@ -26,6 +27,16 @@ public class ModBlocks {
     public static final Block HEAT_RESISTANT_SLATE = registerBlock("heat_resistant_slate",
             new HeatResistantSlateBlock(AbstractBlock.Settings.create()
                     .sounds(BlockSoundGroup.STONE).strength(1.5F, 6.0F)));
+    public static final Block COMBUSTION_FIREWOOD = registerBlock("combustion_firewood",
+            new CombustionFirewoodBlock(AbstractBlock.Settings.create()
+                    .sounds(BlockSoundGroup.STONE).strength(1.5F, 6.0F)
+                    .nonOpaque().requiresTool().pistonBehavior(PistonBehavior.BLOCK)
+                    .luminance(state -> state.get(CombustionFirewoodBlock.COMBUSTION_STATE).isBurning()? 15: 0)));
+    public static final Block FIREWOOD = registerFoodBlock("firewood", 6,
+            AbstractBlock.Settings.create()
+                    .sounds(BlockSoundGroup.STONE).strength(1.5F, 6.0F)
+                    .nonOpaque().requiresTool().pistonBehavior(PistonBehavior.BLOCK),
+            (settings, integer) -> new FirewoodBlock(settings, integer, ModBlocks.COMBUSTION_FIREWOOD));
 
     // 工具
     public static final Block IRON_DISHES = registerBlock("iron_dishes",
@@ -73,7 +84,15 @@ public class ModBlocks {
             new SimpleFoodBlock(AbstractBlock.Settings.create()
                     .sounds(BlockSoundGroup.WOOL).strength(0.2F)
                     .nonOpaque().pistonBehavior(PistonBehavior.DESTROY)));
-    public static final Block CAKE_EMBRYO = registerBlock("cake_embryo",
+    public static final Block HARD_BREAD = registerBlock("hard_bread",
+            new SimpleFoodBlock(AbstractBlock.Settings.create()
+                    .sounds(BlockSoundGroup.WOOL).strength(0.2F)
+                    .nonOpaque().pistonBehavior(PistonBehavior.DESTROY)));
+    public static final Block SMALL_BREAD_EMBRYO = registerBlock("small_bread_embryo",
+            new SimpleFoodBlock(AbstractBlock.Settings.create()
+                    .sounds(BlockSoundGroup.WOOL).strength(0.2F)
+                    .nonOpaque().pistonBehavior(PistonBehavior.DESTROY)));
+    public static final Block SMALL_BREAD = registerBlock("small_bread",
             new SimpleFoodBlock(AbstractBlock.Settings.create()
                     .sounds(BlockSoundGroup.WOOL).strength(0.2F)
                     .nonOpaque().pistonBehavior(PistonBehavior.DESTROY)));
@@ -85,12 +104,24 @@ public class ModBlocks {
             new SimpleFoodBlock(AbstractBlock.Settings.create()
                     .sounds(BlockSoundGroup.WOOL).strength(0.2F)
                     .nonOpaque().pistonBehavior(PistonBehavior.DESTROY)));
+    public static final Block CAKE_EMBRYO = registerBlock("cake_embryo",
+            new SimpleFoodBlock(AbstractBlock.Settings.create()
+                    .sounds(BlockSoundGroup.WOOL).strength(0.2F)
+                    .nonOpaque().pistonBehavior(PistonBehavior.DESTROY)));
 
     // 调味料
     public static final Block SALT_SHAKER = registerBlock("salt_shaker",
             new SimpleFoodBlock(AbstractBlock.Settings.create()
                     .sounds(BlockSoundGroup.STONE).strength(0.2F)
                     .nonOpaque().pistonBehavior(PistonBehavior.DESTROY)));
+
+    // 矿物
+    public static final Block SALT_ORE = registerBlock("salt_ore",
+            new ExperienceDroppingBlock(AbstractBlock.Settings.create()
+                    .sounds(BlockSoundGroup.STONE).strength(1.5F, 6.0F).requiresTool()));
+    public static final Block DEEPSLATE_SALT_ORE = registerBlock("deepslate_iron_ore",
+            new ExperienceDroppingBlock(AbstractBlock.Settings.create()
+                    .sounds(BlockSoundGroup.STONE).strength(2.0F, 6.0F).requiresTool()));
 
     public static Block registerBlock(String name, Block block) {
         return Registry.register(Registries.BLOCK, new Identifier(FoodCraft.MOD_ID, name), block);

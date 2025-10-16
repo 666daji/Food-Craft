@@ -40,6 +40,12 @@ public class ModBlockEntityTypes {
                     ModBlocks.WOODEN_SHELF
             )
     );
+    public static final BlockEntityType<CombustionFirewoodBlockEntity> COMBUSTION_FIREWOOD = create("combustion_firewood",
+            BlockEntityType.Builder.create(
+                    CombustionFirewoodBlockEntity::new,
+                    ModBlocks.COMBUSTION_FIREWOOD
+            )
+    );
 
     private static <T extends BlockEntity> BlockEntityType<T> create(String id, BlockEntityType.Builder<T> builder) {
         return Registry.register(Registries.BLOCK_ENTITY_TYPE, new Identifier(FoodCraft.MOD_ID, id), builder.build(null));

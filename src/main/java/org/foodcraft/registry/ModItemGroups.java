@@ -34,10 +34,12 @@ public class ModItemGroups {
                             entries.add(ModItems.BRACKET);
                             entries.add(ModItems.GRINDING_STONE);
                             entries.add(ModItems.HEAT_RESISTANT_SLATE);
+                            entries.add(ModItems.FIREWOOD);
 
                             // 工具
                             entries.add(ModItems.IRON_DISHES);
                             entries.add(ModItems.WOODEN_SHELF);
+                            entries.add(ModItems.CAKE_EMBRYO_MOLD);
 
                             // 粉尘
                             entries.add(ModItems.WHEAT_FLOUR);
@@ -55,10 +57,12 @@ public class ModItemGroups {
 
                             // 面食
                             entries.add(ModItems.DOUGH);
-                            entries.add(ModItems.CAKE_EMBRYO);
-                            entries.add(ModItems.CAKE_EMBRYO_MOLD);
+                            entries.add(ModItems.HARD_BREAD);
+                            entries.add(ModItems.SMALL_BREAD_EMBRYO);
+                            entries.add(ModItems.SMALL_BREAD);
                             entries.add(ModItems.BAGUETTE);
                             entries.add(ModItems.BAGUETTE_EMBRYO);
+                            entries.add(ModItems.CAKE_EMBRYO);
 
                             // 调味料
                             entries.add(ModItems.SALT_SHAKER);

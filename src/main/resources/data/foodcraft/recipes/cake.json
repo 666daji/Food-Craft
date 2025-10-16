@@ -1,0 +1,9 @@
+{
+  "type": "foodcraft:stove",
+  "ingredient": {
+    "item": "foodcraft:cake_embryo"
+  },
+  "result": "minecraft:cake",
+  "experience": 1.0,
+  "stovetime": 16000
+}

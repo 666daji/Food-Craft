@@ -7,6 +7,7 @@ import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
 import org.foodcraft.FoodCraft;
+import org.foodcraft.component.ModFoodComponents;
 import org.foodcraft.item.FlourItem;
 
 public class ModItems {
@@ -14,10 +15,12 @@ public class ModItems {
     public static final Item BRACKET = registerItem(ModBlocks.BRACKET);
     public static final Item GRINDING_STONE = registerItem(ModBlocks.GRINDING_STONE);
     public static final Item HEAT_RESISTANT_SLATE = registerItem(ModBlocks.HEAT_RESISTANT_SLATE);
+    public static final Item FIREWOOD = registerItem(ModBlocks.FIREWOOD);
 
     // 工具
     public static final Item IRON_DISHES = registerItem(ModBlocks.IRON_DISHES);
     public static final Item WOODEN_SHELF = registerItem(ModBlocks.WOODEN_SHELF);
+    public static final Item CAKE_EMBRYO_MOLD = registerItem(ModBlocks.CAKE_EMBRYO_MOLD);
 
     // 粉尘
     public static final Item WHEAT_FLOUR = registerItem("wheat_flour", new FlourItem(new Item.Settings()));
@@ -35,13 +38,20 @@ public class ModItems {
 
     // 面食
     public static final Item DOUGH = registerItem(ModBlocks.DOUGH);
-    public static final Item CAKE_EMBRYO = registerItem(ModBlocks.CAKE_EMBRYO);
-    public static final Item CAKE_EMBRYO_MOLD = registerItem(ModBlocks.CAKE_EMBRYO_MOLD);
+    public static final Item HARD_BREAD = registerItem(ModBlocks.HARD_BREAD, new Item.Settings().food(ModFoodComponents.HARD_BREAD));
+    public static final Item SMALL_BREAD_EMBRYO = registerItem(ModBlocks.SMALL_BREAD_EMBRYO);
+    public static final Item SMALL_BREAD = registerItem(ModBlocks.SMALL_BREAD);
     public static final Item BAGUETTE = registerItem(ModBlocks.BAGUETTE);
     public static final Item BAGUETTE_EMBRYO = registerItem(ModBlocks.BAGUETTE_EMBRYO);
+    public static final Item CAKE_EMBRYO = registerItem(ModBlocks.CAKE_EMBRYO);
 
     // 调味料
     public static final Item SALT_SHAKER = registerItem(ModBlocks.SALT_SHAKER);
+
+    // 矿物
+    public static final Item SALT_ORE = registerItem(ModBlocks.SALT_ORE);
+    public static final Item DEEPSLATE_SALT_ORE = registerItem(ModBlocks.DEEPSLATE_SALT_ORE);
+    public static final Item SALT_CUBES = registerItem("salt_cubes", new Item(new Item.Settings()));
 
     public static Item registerItem(String name, Item item) {
         if (item instanceof BlockItem) {

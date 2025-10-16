@@ -13,11 +13,15 @@
   "block.foodcraft.grinding_stone": "石磨",
   "block.foodcraft.cake_embryo_mold": "蛋糕胚模具",
   "block.foodcraft.heat_resistant_slate": "耐热石板",
+  "block.foodcraft.firewood": "柴火",
 
   "block.foodcraft.iron_dishes": "铁饰餐盘",
   "block.foodcraft.wooden_shelf": "木架子",
 
   "item.foodcraft.dough": "面团",
+  "item.foodcraft.hard_bread": "硬面包",
+  "item.foodcraft.small_bread_embryo": "小面包胚",
+  "item.foodcraft.small_bread": "小面包",
   "item.foodcraft.cake_embryo": "蛋糕胚",
   "item.foodcraft.baguette": " 长棍面包",
   "item.foodcraft.baguette_embryo": "长棍面包胚",

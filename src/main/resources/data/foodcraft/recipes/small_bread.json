@@ -1,0 +1,9 @@
+{
+  "type": "foodcraft:stove",
+  "ingredient": {
+    "item": "foodcraft:small_bread_embryo"
+  },
+  "result": "foodcraft:small_bread",
+  "experience": 1.0,
+  "stovetime": 14000
+}

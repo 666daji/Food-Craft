@@ -1,0 +1,31 @@
+{
+  "variants": {
+    "facing=north,number_of_food=1": { "model": "foodcraft:block/firewood", "y": 180 },
+    "facing=north,number_of_food=2": { "model": "foodcraft:block/firewood_2", "y": 180 },
+    "facing=north,number_of_food=3": { "model": "foodcraft:block/firewood_3", "y": 180 },
+    "facing=north,number_of_food=4": { "model": "foodcraft:block/firewood_4", "y": 180 },
+    "facing=north,number_of_food=5": { "model": "foodcraft:block/firewood_5", "y": 180 },
+    "facing=north,number_of_food=6": { "model": "foodcraft:block/firewood_6", "y": 180 },
+
+    "facing=south,number_of_food=1": { "model": "foodcraft:block/firewood" },
+    "facing=south,number_of_food=2": { "model": "foodcraft:block/firewood_2" },
+    "facing=south,number_of_food=3": { "model": "foodcraft:block/firewood_3" },
+    "facing=south,number_of_food=4": { "model": "foodcraft:block/firewood_4" },
+    "facing=south,number_of_food=5": { "model": "foodcraft:block/firewood_5" },
+    "facing=south,number_of_food=6": { "model": "foodcraft:block/firewood_6" },
+
+    "facing=east,number_of_food=1": { "model": "foodcraft:block/firewood", "y": 270 },
+    "facing=east,number_of_food=2": { "model": "foodcraft:block/firewood_2", "y": 270 },
+    "facing=east,number_of_food=3": { "model": "foodcraft:block/firewood_3", "y": 270 },
+    "facing=east,number_of_food=4": { "model": "foodcraft:block/firewood_4", "y": 270 },
+    "facing=east,number_of_food=5": { "model": "foodcraft:block/firewood_5", "y": 270 },
+    "facing=east,number_of_food=6": { "model": "foodcraft:block/firewood_6", "y": 270 },
+
+    "facing=west,number_of_food=1": { "model": "foodcraft:block/firewood", "y": 90 },
+    "facing=west,number_of_food=2": { "model": "foodcraft:block/firewood_2", "y": 90 },
+    "facing=west,number_of_food=3": { "model": "foodcraft:block/firewood_3", "y": 90 },
+    "facing=west,number_of_food=4": { "model": "foodcraft:block/firewood_4", "y": 90 },
+    "facing=west,number_of_food=5": { "model": "foodcraft:block/firewood_5", "y": 90 },
+    "facing=west,number_of_food=6": { "model": "foodcraft:block/firewood_6", "y": 90 }
+  }
+}

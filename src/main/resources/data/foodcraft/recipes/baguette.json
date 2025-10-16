@@ -1,0 +1,9 @@
+{
+  "type": "foodcraft:stove",
+  "ingredient": {
+    "item": "foodcraft:baguette_embryo"
+  },
+  "result": "foodcraft:baguette",
+  "experience": 1.0,
+  "stovetime": 18000
+}

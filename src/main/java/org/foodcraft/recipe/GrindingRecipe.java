@@ -12,6 +12,7 @@ import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.world.World;
 import org.foodcraft.registry.ModRecipeSerializers;
 import org.foodcraft.registry.ModRecipeTypes;
+import org.jetbrains.annotations.NotNull;
 
 public class GrindingRecipe implements Recipe<Inventory> {
     protected final Identifier id;
@@ -36,7 +37,7 @@ public class GrindingRecipe implements Recipe<Inventory> {
     }
 
     @Override
-    public boolean matches(Inventory inventory, World world) {
+    public boolean matches(@NotNull Inventory inventory, World world) {
         return this.input.test(inventory.getStack(0));
     }
 

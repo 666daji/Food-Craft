@@ -3,21 +3,47 @@ package org.foodcraft.block;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.BlockWithEntity;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityTicker;
 import net.minecraft.block.entity.BlockEntityType;
+import net.minecraft.block.pattern.BlockPattern;
+import net.minecraft.block.pattern.BlockPatternBuilder;
+import net.minecraft.block.pattern.CachedBlockPosition;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.particle.ParticleTypes;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvents;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.Hand;
+import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.random.Random;
+import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.world.World;
+import org.foodcraft.FoodCraft;
+import org.foodcraft.block.entity.CombustionFirewoodBlockEntity;
 import org.foodcraft.block.entity.HeatResistantSlateBlockEntity;
+import org.foodcraft.block.entity.UpPlaceBlockEntity;
 import org.foodcraft.block.multi.MultiBlockHelper;
 import org.foodcraft.registry.ModBlockEntityTypes;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
 
-public class HeatResistantSlateBlock extends BlockWithEntity {
+import java.util.function.Predicate;
+
+public class HeatResistantSlateBlock extends UpPlaceBlock {
+    Logger LOGGER = FoodCraft.LOGGER;
+    protected static final VoxelShape BASE_SHAPE = Block.createCuboidShape(0,0,0,16,2,16);
+
+    public BlockPattern stove1x1;
+    public BlockPattern stove1x2;
+    public BlockPattern stove2x2;
+    public BlockPattern stove2x3;
 
     public HeatResistantSlateBlock(Settings settings) {
         super(settings);
+        initStovePattern();
     }
 
     @Override
@@ -44,6 +70,68 @@ public class HeatResistantSlateBlock extends BlockWithEntity {
     }
 
     @Override
+    public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
+        ActionResult result = super.onUse(state, world, pos, player, hand, hit);
+        if (!result.isAccepted()) {
+            // 如果交互失败，则尝试交互绑定的篝火
+            BlockEntity blockEntity = world.getBlockEntity(pos);
+            if (blockEntity instanceof HeatResistantSlateBlockEntity heatResistantSlateBlockEntity) {
+                for (CombustionFirewoodBlockEntity firewoodEntity : heatResistantSlateBlockEntity.getFirewoodEntities()) {
+                    ActionResult firewoodResult = firewoodEntity.getCachedState().onUse(world, player, hand, hit);
+                    if (firewoodResult.isAccepted()) {
+                        return firewoodResult;
+                    }
+                }
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public void randomDisplayTick(BlockState state, World world, BlockPos pos, Random random) {
+        BlockEntity blockEntity = world.getBlockEntity(pos);
+        if (blockEntity instanceof HeatResistantSlateBlockEntity heatResistantSlateBlockEntity
+                    && heatResistantSlateBlockEntity.isBaking()) {
+            if (random.nextInt(5) == 0) {
+                for(int i = 0; i < random.nextInt(1) + 1; ++i) {
+                    world.addParticle(ParticleTypes.CLOUD,
+                            pos.getX() + 0.5 + random.nextDouble() / 3.0 * (random.nextBoolean() ? 1 : -1),
+                            pos.getY() + random.nextDouble() + random.nextDouble(),
+                            pos.getZ() + 0.5 + random.nextDouble() / 3.0 * (random.nextBoolean() ? 1 : -1),
+                            0.0, 0.07, 0.0);
+                }
+            }
+            if (random.nextInt(10) == 0) {
+                world.playSound(
+                        pos.getX() + 0.5,
+                        pos.getY() + 0.5,
+                        pos.getZ() + 0.5,
+                        SoundEvents.BLOCK_CAMPFIRE_CRACKLE,
+                        SoundCategory.BLOCKS,
+                        0.5F + random.nextFloat(),
+                        random.nextFloat() * 0.7F + 0.6F,
+                        false
+                );
+            }
+        }
+    }
+
+    @Override
+    public VoxelShape getBaseShape() {
+        return BASE_SHAPE;
+    }
+
+    @Override
+    public boolean canFetched(UpPlaceBlockEntity blockEntity, ItemStack handStack) {
+        return !blockEntity.isEmpty();
+    }
+
+    @Override
+    public boolean canPlace(UpPlaceBlockEntity blockEntity, ItemStack handStack) {
+        return blockEntity.isValidItem(handStack);
+    }
+
+    @Override
     public void neighborUpdate(BlockState state, World world, BlockPos pos, Block sourceBlock, BlockPos fromPos, boolean notify) {
         super.neighborUpdate(state, world, pos, sourceBlock, fromPos, notify);
 
@@ -51,6 +139,73 @@ public class HeatResistantSlateBlock extends BlockWithEntity {
             // 处理相邻方块更新，检查多方块结构完整性
             MultiBlockHelper.onNeighborUpdate(world, pos, this);
         }
+    }
+
+    private void initStovePattern() {
+        Predicate<CachedBlockPosition> heatResistantSlatePredicate = cachedBlockPosition -> cachedBlockPosition.getBlockState().getBlock() instanceof HeatResistantSlateBlock;
+        Predicate<CachedBlockPosition> firewoodPredicate = cachedBlockPosition -> cachedBlockPosition.getBlockState().isAir() ||
+                cachedBlockPosition.getBlockState().getBlock() instanceof FirewoodBlock ||
+                cachedBlockPosition.getBlockState().getBlock() instanceof CombustionFirewoodBlock;
+
+        this.stove1x1 = BlockPatternBuilder.start()
+                .aisle("###", "#|#")
+                .aisle("#^#","#~#")
+                .aisle("###", "###")
+                .where('^', cachedBlockPosition -> cachedBlockPosition.getBlockState().isAir())
+                .where('#', cachedBlockPosition -> !cachedBlockPosition.getBlockState().isAir())
+                .where('|', heatResistantSlatePredicate)
+                .where('~', firewoodPredicate)
+                .build();
+        this.stove1x2 = BlockPatternBuilder.start()
+                .aisle("###", "#|#")
+                .aisle("###", "#|#")
+                .aisle("#^#","#~#")
+                .aisle("###", "###")
+                .where('^', cachedBlockPosition -> cachedBlockPosition.getBlockState().isAir())
+                .where('#', cachedBlockPosition -> !cachedBlockPosition.getBlockState().isAir())
+                .where('|', heatResistantSlatePredicate)
+                .where('~', firewoodPredicate)
+                .build();
+        this.stove2x2 = BlockPatternBuilder.start()
+                .aisle("####", "#||#")
+                .aisle("####", "#||#")
+                .aisle("#^^#","#~~#")
+                .aisle("####", "####")
+                .where('^', cachedBlockPosition -> cachedBlockPosition.getBlockState().isAir())
+                .where('#', cachedBlockPosition -> !cachedBlockPosition.getBlockState().isAir())
+                .where('|', heatResistantSlatePredicate)
+                .where('~', firewoodPredicate)
+                .build();
+        this.stove2x3 = BlockPatternBuilder.start()
+                .aisle("####", "#||#")
+                .aisle("####", "#||#")
+                .aisle("####", "#||#")
+                .aisle("#^^#","#~~#")
+                .aisle("####", "####")
+                .where('^', cachedBlockPosition -> cachedBlockPosition.getBlockState().isAir())
+                .where('#', cachedBlockPosition -> !cachedBlockPosition.getBlockState().isAir())
+                .where('|', heatResistantSlatePredicate)
+                .where('~', firewoodPredicate)
+                .build();
+    }
+
+    @Nullable
+    public BlockPattern getStovePattern(int index){
+        switch (index) {
+            case 1 -> {
+                return stove1x1;
+            }
+            case 2 -> {
+                return stove1x2;
+            }
+            case 3 -> {
+                return stove2x2;
+            }
+            case 4 -> {
+                return stove2x3;
+            }
+        }
+        return null;
     }
 
     @Override

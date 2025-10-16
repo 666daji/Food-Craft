@@ -1,16 +1,54 @@
 package org.foodcraft.client.blockentity;
 
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.ChestBlock;
 import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.render.RenderLayers;
 import net.minecraft.client.render.VertexConsumerProvider;
+import net.minecraft.client.render.block.BlockRenderManager;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
+import net.minecraft.client.render.item.ItemRenderer;
+import net.minecraft.client.render.model.json.ModelTransformationMode;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.util.math.RotationAxis;
+import net.minecraft.util.math.random.Random;
 import org.foodcraft.block.entity.HeatResistantSlateBlockEntity;
 import org.foodcraft.block.multi.MultiBlockReference;
 
 public class HeatResistantSlateBlockEntityRenderer extends MultiBlockDebugRenderer<HeatResistantSlateBlockEntity> {
+    private final BlockRenderManager blockRenderManager;
+    private final ItemRenderer itemRenderer;
 
     public HeatResistantSlateBlockEntityRenderer(BlockEntityRendererFactory.Context ctx) {
         super(ctx);
+        this.blockRenderManager = ctx.getRenderManager();
+        this.itemRenderer = ctx.getItemRenderer();
+    }
+
+    @Override
+    public void render(HeatResistantSlateBlockEntity entity, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay) {
+        super.render(entity, tickDelta, matrices, vertexConsumers, light, overlay);
+        if (!entity.isEmpty()) {
+            matrices.push();
+            BlockState blockState = entity.getInventoryBlockState();
+            matrices.translate(0.0, 0.125, 0.0);
+            if (blockState.getBlock() != Blocks.AIR){
+                blockRenderManager.renderBlock(blockState, entity.getPos(), entity.getWorld(), matrices,
+                        vertexConsumers.getBuffer(RenderLayers.getBlockLayer(blockState)), true, Random.create());
+            }else {
+                matrices.translate(0.5, 0, 0.5);
+                matrices.scale(0.7f, 0.7f, 0.7f);
+                matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(90));
+                if (entity.getResultDirection() != null) {
+                    float facing = entity.getResultDirection().asRotation();
+                    matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(-facing + 90));
+                }
+                itemRenderer.renderItem(entity.getStack(0), ModelTransformationMode.FIXED, light, overlay, matrices,
+                        vertexConsumers, entity.getWorld(), 0);
+            }
+            matrices.pop();
+        }
     }
 
     @Override

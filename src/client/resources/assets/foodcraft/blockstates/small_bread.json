@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "foodcraft:block/small_bread",
+      "y": 180
+    },
+    "facing=south": {
+      "model": "foodcraft:block/small_bread"
+    },
+    "facing=east": {
+      "model": "foodcraft:block/small_bread",
+      "y": 270
+    },
+    "facing=west": {
+      "model": "foodcraft:block/small_bread",
+      "y": 90
+    }
+  }
+}
