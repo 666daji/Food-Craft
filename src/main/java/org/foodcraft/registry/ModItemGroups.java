@@ -2,6 +2,8 @@ package org.foodcraft.registry;
 
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.potion.PotionUtil;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
@@ -9,6 +11,7 @@ import net.minecraft.registry.RegistryKeys;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.foodcraft.FoodCraft;
+import org.foodcraft.item.ModPotions;
 
 public class ModItemGroups {
     public static final RegistryKey<ItemGroup> DEMO_GROUP = register("demogroup");
@@ -71,6 +74,8 @@ public class ModItemGroups {
                             // 矿物
                             entries.add(ModItems.SALT_ORE);
                             entries.add(ModItems.DEEPSLATE_SALT_ORE);
+
+                            entries.add(PotionUtil.setPotion(new ItemStack(Items.POTION), ModPotions.MILK));
                         }))
                         .build()
         );

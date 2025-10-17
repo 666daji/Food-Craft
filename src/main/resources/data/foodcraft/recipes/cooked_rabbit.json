@@ -1,0 +1,9 @@
+{
+  "type": "foodcraft:stove",
+  "ingredient": {
+    "item": "minecraft:rabbit"
+  },
+  "result": "minecraft:cooked_rabbit",
+  "experience": 1.0,
+  "stoveTime": 19000
+}

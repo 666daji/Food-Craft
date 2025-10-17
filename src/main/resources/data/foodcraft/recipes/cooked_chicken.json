@@ -1,9 +1,9 @@
 {
   "type": "foodcraft:stove",
   "ingredient": {
-    "item": "foodcraft:baguette_embryo"
+    "item": "minecraft:chicken"
   },
-  "result": "foodcraft:baguette",
+  "result": "minecraft:cooked_chicken",
   "experience": 1.0,
   "stoveTime": 18000
 }

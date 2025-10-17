@@ -131,7 +131,7 @@ public class ModBlocks {
     public static final Block SALT_ORE = registerBlock("salt_ore",
             new ExperienceDroppingBlock(AbstractBlock.Settings.create()
                     .sounds(BlockSoundGroup.STONE).strength(1.5F, 6.0F).requiresTool()));
-    public static final Block DEEPSLATE_SALT_ORE = registerBlock("",
+    public static final Block DEEPSLATE_SALT_ORE = registerBlock("deepslate_salt_ore",
             new ExperienceDroppingBlock(AbstractBlock.Settings.create()
                     .sounds(BlockSoundGroup.STONE).strength(2.0F, 6.0F).requiresTool()));
 

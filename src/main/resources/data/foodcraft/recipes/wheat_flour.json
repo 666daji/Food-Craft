@@ -1,9 +1,10 @@
 {
   "type": "foodcraft:grinding",
-    "ingredient": {
-        "item": "minecraft:wheat"
-    },
-    "result": "foodcraft:wheat_flour",
+  "ingredient": {
+    "item": "minecraft:wheat"
+  },
+  "inputCount": 4,
+  "result": "foodcraft:wheat_flour",
   "experience": 1.0,
-  "grindingtime": 200
+  "grindingTime": 200
 }

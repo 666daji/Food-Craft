@@ -31,7 +31,7 @@ public class StoveRecipeSerializer<T extends StoveRecipe> implements RecipeSeria
         );
 
         float experience = JsonHelper.getFloat(json, "experience", 0.0F);
-        int brakingTime = JsonHelper.getInt(json, "stovetime", 200);
+        int brakingTime = JsonHelper.getInt(json, "stoveTime", 200);
 
         return this.recipeFactory.create(id, ingredient, result, experience, brakingTime);
     }

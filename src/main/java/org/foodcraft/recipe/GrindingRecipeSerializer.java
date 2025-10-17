@@ -24,7 +24,6 @@ public class GrindingRecipeSerializer<T extends GrindingRecipe> implements Recip
                 : JsonHelper.getObject(json, "ingredient");
         Ingredient ingredient = Ingredient.fromJson(ingredientElement, false);
 
-        // 添加 inputCount 的读取，默认为 1
         int inputCount = JsonHelper.getInt(json, "inputCount", 1);
 
         String resultId = JsonHelper.getString(json, "result");
@@ -34,7 +33,7 @@ public class GrindingRecipeSerializer<T extends GrindingRecipe> implements Recip
         );
 
         float experience = JsonHelper.getFloat(json, "experience", 0.0F);
-        int grindingTime = JsonHelper.getInt(json, "grindingtime", 200);
+        int grindingTime = JsonHelper.getInt(json, "grindingTime", 200);
 
         return this.recipeFactory.create(id, ingredient, inputCount, result, experience, grindingTime);
     }

@@ -2,16 +2,17 @@ package org.foodcraft.integration.dfood;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.ActionResult;
 import org.dfood.block.entity.SuspiciousStewBlockEntity;
 import org.dfood.block.FoodBlock;
 import org.dfood.block.FoodBlocks;
 
 public class FoodBlocksModifier {
-    /**
-     * 能够让玩家像使用蛋糕那样使用炖菜。
-     */
+    /** 能够让玩家像使用蛋糕那样使用炖菜。*/
     protected static final FoodBlock.onUseHook stewEatHook = (state, world, pos, player, hand, hit) -> {
         if (player.canConsume(false)) {
             BlockEntity currentBlockEntity = world.getBlockEntity(pos);
@@ -36,10 +37,42 @@ public class FoodBlocksModifier {
         return ActionResult.PASS;
     };
 
+    /** 可以使用空瓶子从水桶中盛出水 */
+    protected static final FoodBlock.onUseHook waterBucketHook = (state, world, pos, player, hand, hit) -> {
+        ItemStack handStack = player.getStackInHand(hand);
+
+        // 检查是否手持空瓶子
+        if (handStack.getItem() == Items.GLASS_BOTTLE) {
+            if (player.canConsume(false)) {
+                if (world.isClient) {
+                    // 客户端播放声音
+                    world.playSound(player, pos, SoundEvents.ITEM_BOTTLE_FILL, player.getSoundCategory(), 1.0F, 1.0F);
+                    return ActionResult.SUCCESS;
+                }
+
+                // 转换为残损水桶状态
+                BlockState newState = CrippledWaterBucketBlock.getWaterBucketState(state);
+                world.setBlockState(pos, newState, 3);
+
+                // 播放声音
+                world.playSound(player, pos, SoundEvents.ITEM_BOTTLE_FILL, player.getSoundCategory(), 1.0F, 1.0F);
+
+                // 调用新方块的使用方法
+                newState.onUse(world, player, hand, hit);
+                return ActionResult.SUCCESS;
+            }
+        }
+
+        return ActionResult.PASS;
+    };
+
     public static void FoodBlockAdd() {
         ((FoodBlock)FoodBlocks.RABBIT_STEW).setOnUseHook(stewEatHook);
         ((FoodBlock)FoodBlocks.MUSHROOM_STEW).setOnUseHook(stewEatHook);
         ((FoodBlock)FoodBlocks.BEETROOT_SOUP).setOnUseHook(stewEatHook);
         ((FoodBlock)FoodBlocks.SUSPICIOUS_STEW).setOnUseHook(stewEatHook);
+
+        ((FoodBlock)FoodBlocks.WATER_BUCKET).setOnUseHook(waterBucketHook);
+        ((FoodBlock)FoodBlocks.MILK_BUCKET).setOnUseHook(waterBucketHook);
     }
 }

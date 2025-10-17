@@ -40,8 +40,8 @@ public class ModItems {
     public static final Item DOUGH = registerItem(ModBlocks.DOUGH);
     public static final Item HARD_BREAD = registerItem(ModBlocks.HARD_BREAD, new Item.Settings().food(ModFoodComponents.HARD_BREAD));
     public static final Item SMALL_BREAD_EMBRYO = registerItem(ModBlocks.SMALL_BREAD_EMBRYO);
-    public static final Item SMALL_BREAD = registerItem(ModBlocks.SMALL_BREAD);
-    public static final Item BAGUETTE = registerItem(ModBlocks.BAGUETTE);
+    public static final Item SMALL_BREAD = registerItem(ModBlocks.SMALL_BREAD, new Item.Settings().food(ModFoodComponents.SMALL_BREAD));
+    public static final Item BAGUETTE = registerItem(ModBlocks.BAGUETTE, new Item.Settings().food(ModFoodComponents.BAGUETTE));
     public static final Item BAGUETTE_EMBRYO = registerItem(ModBlocks.BAGUETTE_EMBRYO);
     public static final Item CAKE_EMBRYO = registerItem(ModBlocks.CAKE_EMBRYO);
 
