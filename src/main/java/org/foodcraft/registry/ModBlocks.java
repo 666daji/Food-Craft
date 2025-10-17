@@ -51,6 +51,10 @@ public class ModBlocks {
             new MoldBlock(AbstractBlock.Settings.create()
                     .sounds(BlockSoundGroup.WOOL).strength(0.2F)
                     .nonOpaque().pistonBehavior(PistonBehavior.DESTROY)));
+    public static final Block TOAST_MOLD = registerBlock("toast_mold",
+            new MoldBlock(AbstractBlock.Settings.create()
+                    .sounds(BlockSoundGroup.WOOL).sounds(BlockSoundGroup.WOOL).strength(0.2F)
+                    .nonOpaque().pistonBehavior(PistonBehavior.DESTROY)));
 
     // 粉尘袋
     public static final Block WHEAT_FLOUR_SACK = registerFoodBlock("wheat_flour_sack", 2,
@@ -104,6 +108,14 @@ public class ModBlocks {
             new SimpleFoodBlock(AbstractBlock.Settings.create()
                     .sounds(BlockSoundGroup.WOOL).strength(0.2F)
                     .nonOpaque().pistonBehavior(PistonBehavior.DESTROY)));
+    public static final Block FLUFFY_BREAD_EMBRYO = registerBlock("fluffy_bread_embryo",
+            new SimpleFoodBlock(AbstractBlock.Settings.create()
+                    .sounds(BlockSoundGroup.WOOL).strength(0.2F)
+                    .nonOpaque().pistonBehavior(PistonBehavior.DESTROY)));
+    public static final Block TOAST = registerBlock("toast",
+            new SimpleFoodBlock(AbstractBlock.Settings.create()
+                    .sounds(BlockSoundGroup.WOOL).strength(0.2F)
+                    .nonOpaque().pistonBehavior(PistonBehavior.DESTROY)));
     public static final Block CAKE_EMBRYO = registerBlock("cake_embryo",
             new SimpleFoodBlock(AbstractBlock.Settings.create()
                     .sounds(BlockSoundGroup.WOOL).strength(0.2F)
@@ -119,7 +131,7 @@ public class ModBlocks {
     public static final Block SALT_ORE = registerBlock("salt_ore",
             new ExperienceDroppingBlock(AbstractBlock.Settings.create()
                     .sounds(BlockSoundGroup.STONE).strength(1.5F, 6.0F).requiresTool()));
-    public static final Block DEEPSLATE_SALT_ORE = registerBlock("deepslate_iron_ore",
+    public static final Block DEEPSLATE_SALT_ORE = registerBlock("",
             new ExperienceDroppingBlock(AbstractBlock.Settings.create()
                     .sounds(BlockSoundGroup.STONE).strength(2.0F, 6.0F).requiresTool()));
 

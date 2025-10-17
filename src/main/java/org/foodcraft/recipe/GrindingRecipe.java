@@ -17,13 +17,15 @@ import org.jetbrains.annotations.NotNull;
 public class GrindingRecipe implements Recipe<Inventory> {
     protected final Identifier id;
     protected final Ingredient input;
+    protected final int inputCount;
     protected final ItemStack output;
     protected final float experience;
     protected final int grindingTime;
 
-    public GrindingRecipe(Identifier id, Ingredient input, ItemStack output, float experience, int grindingTime) {
+    public GrindingRecipe(Identifier id, Ingredient input, int inputCount, ItemStack output, float experience, int grindingTime) {
         this.id = id;
         this.input = input;
+        this.inputCount = inputCount;
         this.output = output;
         this.experience = experience;
         this.grindingTime = grindingTime;
@@ -38,7 +40,9 @@ public class GrindingRecipe implements Recipe<Inventory> {
 
     @Override
     public boolean matches(@NotNull Inventory inventory, World world) {
-        return this.input.test(inventory.getStack(0));
+        ItemStack stack = inventory.getStack(0);
+        // 修改匹配逻辑，检查物品数量和类型
+        return this.input.test(stack) && stack.getCount() >= this.inputCount;
     }
 
     @Override
@@ -62,6 +66,10 @@ public class GrindingRecipe implements Recipe<Inventory> {
 
     public int getGrindingTime() {
         return this.grindingTime;
+    }
+
+    public int getInputCount() {
+        return this.inputCount;
     }
 
     @Override

@@ -2,7 +2,7 @@
 	"credit": "Made with Blockbench",
 	"textures": {
       "0": "foodcraft:block/baguette",
-      "particle": "foodcraft:block/baguette"
+      "particle": "minecraft:item/bread"
 	},
 	"elements": [
 		{

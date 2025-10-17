@@ -18,6 +18,7 @@ public class FoodCraft implements ModInitializer {
         dfoodInit.init();
         RegistryInit.init();
         multiBlockInit();
+        ModOreGeneration.registerOres();
         LOGGER.info("FoodCraft mod is initializing");
     }
 

@@ -32,25 +32,25 @@ public class RegistryInit {
 
         // 面包
         Shapes.shapeMap.put("foodcraft:small_bread_embryo",new int[][]{
-                {1, 1, 5}
+                {1, 1, 12}
         });
         Shapes.shapeMap.put("foodcraft:small_bread",new int[][]{
-                {1, 1, 5}
+                {1, 1, 12}
         });
         Shapes.shapeMap.put("foodcraft:baguette_embryo",new int[][]{
-                {1, 1, 16}
+                {1, 1, 2}
         });
         Shapes.shapeMap.put("foodcraft:baguette",new int[][]{
-                {1, 1, 16}
+                {1, 1, 2}
         });
         Shapes.shapeMap.put("foodcraft:hard_bread",new int[][]{
-                {5, 1, 5}
+                {1, 1, 12}
         });
         Shapes.shapeMap.put("foodcraft:dough",new int[][]{
-                {5, 1, 5}
+                {1, 1, 12}
         });
         Shapes.shapeMap.put("foodcraft:cake_embryo",new int[][]{
-                {7, 1, 7}
+                {1, 1, 1}
         });
     }
 }

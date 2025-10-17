@@ -4,6 +4,7 @@ import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityTicker;
 import net.minecraft.block.entity.BlockEntityType;
+import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
@@ -63,10 +64,19 @@ public class GrindingStoneBlock extends BlockWithEntity {
         if (world.isClient) {
             return ActionResult.SUCCESS;
         }
+
         BlockEntity blockEntity = world.getBlockEntity(pos);
         if (blockEntity instanceof GrindingStoneBlockEntity grindingEntity) {
-            // 空手时尝试为石磨增加能量
+            // 空手时检查
             if (handStack.isEmpty()) {
+                // 检查是否可以研磨当前物品
+                if (!grindingEntity.canGrindCurrentInput()) {
+                    // 如果不能研磨，返还物品给玩家
+                    grindingEntity.returnInputToPlayer(player);
+                    return ActionResult.SUCCESS;
+                }
+
+                // 如果可以研磨，尝试添加能量
                 if (grindingEntity.tryAddEnergy(40)) {
                     return ActionResult.SUCCESS;
                 } else {
@@ -76,9 +86,7 @@ public class GrindingStoneBlock extends BlockWithEntity {
             }
             // 手持物品时尝试添加物品
             else {
-                ItemStack addStack = handStack.copy();
-                addStack.setCount(1);
-                GrindingStoneBlockEntity.addInputResult result = grindingEntity.addInput(addStack);
+                GrindingStoneBlockEntity.AddInputResult result = grindingEntity.addInput(handStack, player);
                 return switch (result) {
                     case INVALID -> {
                         player.sendMessage(Text.translatable("grinding_stone.add.refused"), true);
@@ -88,17 +96,42 @@ public class GrindingStoneBlock extends BlockWithEntity {
                         player.sendMessage(Text.translatable("grinding_stone.add.full"), true);
                         yield ActionResult.FAIL;
                     }
-                    case SUCCESS -> {
-                        // 如果添加成功，消耗玩家手中的物品
-                        if (!player.isCreative()) {
-                            handStack.decrement(1);
-                        }
-                        yield ActionResult.SUCCESS;
+                    case NOT_ENOUGH -> {
+                        player.sendMessage(Text.translatable("grinding_stone.add.not_enough"), true);
+                        yield ActionResult.FAIL;
                     }
+                    case SUCCESS -> ActionResult.SUCCESS;
                 };
             }
         }
         return ActionResult.PASS;
+    }
+
+    @Override
+    public void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
+        if (!state.isOf(newState.getBlock())) {
+            BlockEntity blockEntity = world.getBlockEntity(pos);
+            if (blockEntity instanceof GrindingStoneBlockEntity grindingEntity) {
+                // 掉落所有物品
+                dropItems(grindingEntity, world, pos);
+            }
+            super.onStateReplaced(state, world, pos, newState, moved);
+        }
+    }
+
+    /**
+     * 掉落方块实体中的所有物品
+     */
+    private void dropItems(GrindingStoneBlockEntity blockEntity, World world, BlockPos pos) {
+        var items = blockEntity.getItemsToDrop();
+        for (ItemStack stack : items) {
+            if (!stack.isEmpty()) {
+                ItemEntity itemEntity = new ItemEntity(world,
+                        pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, stack);
+                itemEntity.setToDefaultPickupDelay();
+                world.spawnEntity(itemEntity);
+            }
+        }
     }
 
     @Override

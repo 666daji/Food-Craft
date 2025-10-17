@@ -555,8 +555,12 @@ public class HeatResistantSlateBlockEntity extends UpPlaceBlockEntity implements
         return Collections.unmodifiableSet(firewoodPos);
     }
 
+    /**
+     * 注意：尝试修改此集合是没有效果的
+     * @return 绑定的柴火堆方块实体的集合
+     */
     public Set<CombustionFirewoodBlockEntity> getFirewoodEntities() {
-        return Collections.unmodifiableSet(firewoodEntities);
+        return firewoodEntities;
     }
 
     public int getActiveFirewoodCount() {

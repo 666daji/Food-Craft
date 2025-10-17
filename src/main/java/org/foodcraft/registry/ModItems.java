@@ -46,12 +46,12 @@ public class ModItems {
     public static final Item CAKE_EMBRYO = registerItem(ModBlocks.CAKE_EMBRYO);
 
     // 调味料
+    public static final Item SALT_CUBES = registerItem("salt_cubes", new Item(new Item.Settings()));
     public static final Item SALT_SHAKER = registerItem(ModBlocks.SALT_SHAKER);
 
     // 矿物
     public static final Item SALT_ORE = registerItem(ModBlocks.SALT_ORE);
     public static final Item DEEPSLATE_SALT_ORE = registerItem(ModBlocks.DEEPSLATE_SALT_ORE);
-    public static final Item SALT_CUBES = registerItem("salt_cubes", new Item(new Item.Settings()));
 
     public static Item registerItem(String name, Item item) {
         if (item instanceof BlockItem) {

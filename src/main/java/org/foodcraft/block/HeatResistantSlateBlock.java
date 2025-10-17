@@ -21,19 +21,16 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.world.World;
-import org.foodcraft.FoodCraft;
 import org.foodcraft.block.entity.CombustionFirewoodBlockEntity;
 import org.foodcraft.block.entity.HeatResistantSlateBlockEntity;
 import org.foodcraft.block.entity.UpPlaceBlockEntity;
 import org.foodcraft.block.multi.MultiBlockHelper;
 import org.foodcraft.registry.ModBlockEntityTypes;
 import org.jetbrains.annotations.Nullable;
-import org.slf4j.Logger;
 
 import java.util.function.Predicate;
 
 public class HeatResistantSlateBlock extends UpPlaceBlock {
-    Logger LOGGER = FoodCraft.LOGGER;
     protected static final VoxelShape BASE_SHAPE = Block.createCuboidShape(0,0,0,16,2,16);
 
     public BlockPattern stove1x1;
@@ -77,7 +74,8 @@ public class HeatResistantSlateBlock extends UpPlaceBlock {
             BlockEntity blockEntity = world.getBlockEntity(pos);
             if (blockEntity instanceof HeatResistantSlateBlockEntity heatResistantSlateBlockEntity) {
                 for (CombustionFirewoodBlockEntity firewoodEntity : heatResistantSlateBlockEntity.getFirewoodEntities()) {
-                    ActionResult firewoodResult = firewoodEntity.getCachedState().onUse(world, player, hand, hit);
+                    BlockState firewoodState = firewoodEntity.getCachedState();
+                    ActionResult firewoodResult = firewoodState.getBlock().onUse(firewoodState, world, firewoodEntity.getPos(), player, hand, hit);
                     if (firewoodResult.isAccepted()) {
                         return firewoodResult;
                     }

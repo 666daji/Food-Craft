@@ -65,7 +65,12 @@ public class ModItemGroups {
                             entries.add(ModItems.CAKE_EMBRYO);
 
                             // 调味料
+                            entries.add(ModItems.SALT_CUBES);
                             entries.add(ModItems.SALT_SHAKER);
+
+                            // 矿物
+                            entries.add(ModItems.SALT_ORE);
+                            entries.add(ModItems.DEEPSLATE_SALT_ORE);
                         }))
                         .build()
         );
