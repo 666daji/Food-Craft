@@ -13,9 +13,9 @@ import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.SidedInventory;
 import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.network.listener.ClientPlayPacketListener;
 import net.minecraft.network.packet.Packet;
@@ -23,21 +23,23 @@ import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 import net.minecraft.recipe.*;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
-import net.minecraft.state.property.Properties;
 import net.minecraft.util.ActionResult;
+import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.collection.DefaultedList;
+import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import org.dfood.block.FoodBlock;
-import org.dfood.item.DoubleBlockItem;
 import org.dfood.shape.FoodShapeHandle;
 import org.foodcraft.FoodCraft;
 import org.foodcraft.block.CombustionFirewoodBlock;
 import org.foodcraft.block.FirewoodBlock;
 import org.foodcraft.block.HeatResistantSlateBlock;
+import org.foodcraft.block.MoldBlock;
 import org.foodcraft.block.multi.*;
 import org.foodcraft.recipe.StoveRecipe;
 import org.foodcraft.registry.ModBlockEntityTypes;
@@ -71,6 +73,8 @@ public class HeatResistantSlateBlockEntity extends UpPlaceBlockEntity implements
     /**@see HeatResistantSlateBlockEntity#getBakingSpeed() */
     protected int bakingTime;
     protected int bakingTimeTotal;
+    /** 用于在耐热石板上的叠加交互 */
+    protected DefaultedList<ItemStack> otherStack = DefaultedList.ofSize(1, ItemStack.EMPTY);
 
     protected final Object2IntOpenHashMap<Identifier> recipesUsed = new Object2IntOpenHashMap<>();
     protected final RecipeManager.MatchGetter<Inventory, ? extends StoveRecipe> matchGetter;
@@ -107,10 +111,13 @@ public class HeatResistantSlateBlockEntity extends UpPlaceBlockEntity implements
             }
             nbt.put("FirewoodPositions", firewoodList);
         }
-        // 删除 CombinedHeatLevel 的保存
+
         if (resultDirection != null) {
             nbt.putString("resultDirection", resultDirection.asString());
         }
+
+        // 写入额外物品栏
+        writeOtherStackNbt(nbt, otherStack, true);
 
         // 保存烘烤进度
         nbt.putInt("BakingTime", bakingTime);
@@ -161,9 +168,53 @@ public class HeatResistantSlateBlockEntity extends UpPlaceBlockEntity implements
         if (nbt.contains("resultDirection")){
             resultDirection = Direction.byName(nbt.getString("resultDirection"));
         }
+
+        // 读取额外物品栏
+        readOtherStackNbt(nbt, otherStack);
+
         // 读取烘烤进度
         bakingTime = nbt.getInt("BakingTime");
         bakingTimeTotal = nbt.getInt("BakingTimeTotal");
+    }
+
+    /**
+     * 将 otherStack 写入 NBT
+     */
+    private void writeOtherStackNbt(NbtCompound nbt, DefaultedList<ItemStack> stacks, boolean setIfEmpty) {
+        NbtList nbtList = new NbtList();
+
+        for (int i = 0; i < stacks.size(); i++) {
+            ItemStack itemStack = stacks.get(i);
+            if (!itemStack.isEmpty()) {
+                NbtCompound nbtCompound = new NbtCompound();
+                nbtCompound.putByte("OtherSlot", (byte)i); // 使用不同的键名避免冲突
+                itemStack.writeNbt(nbtCompound);
+                nbtList.add(nbtCompound);
+            }
+        }
+
+        if (!nbtList.isEmpty() || setIfEmpty) {
+            nbt.put("OtherItems", nbtList); // 使用不同的键名避免冲突
+        }
+    }
+
+    /**
+     * 从 NBT 读取 otherStack
+     */
+    private void readOtherStackNbt(NbtCompound nbt, DefaultedList<ItemStack> stacks) {
+        if (!nbt.contains("OtherItems", NbtElement.LIST_TYPE)) {
+            return;
+        }
+
+        NbtList nbtList = nbt.getList("OtherItems", NbtElement.COMPOUND_TYPE);
+
+        for (int i = 0; i < nbtList.size(); i++) {
+            NbtCompound nbtCompound = nbtList.getCompound(i);
+            int j = nbtCompound.getByte("OtherSlot") & 255; // 使用对应的键名
+            if (j < stacks.size()) {
+                stacks.set(j, ItemStack.fromNbt(nbtCompound));
+            }
+        }
     }
 
     @Override
@@ -180,15 +231,18 @@ public class HeatResistantSlateBlockEntity extends UpPlaceBlockEntity implements
     }
 
     @Override
-    public void setStack(int slot, ItemStack stack) {
-        validateSlotIndex(slot);
-        this.inventory.set(slot, stack);
-        limitStackSizeIfNeeded(stack);
-    }
-
-    @Override
     public boolean isValidItem(ItemStack stack) {
         return isValidGrindingInput(stack);
+    }
+
+    /**
+     * 验证物品是否是可放置的其他物品
+     * @param stack 待验证的物品堆栈
+     * @return 是否可以放置
+     */
+    protected boolean isCanPlaceMold(ItemStack stack) {
+        return stack.getItem() instanceof BlockItem blockItem
+                && blockItem.getBlock() instanceof MoldBlock moldBlock && moldBlock.canPlaceSlate;
     }
 
     @Override
@@ -199,6 +253,15 @@ public class HeatResistantSlateBlockEntity extends UpPlaceBlockEntity implements
 
         ItemStack newStack = stack.copy();
         newStack.setCount(1);
+
+        // 检查烘烤是否需要模具
+        StoveRecipe recipe = this.matchGetter.getFirstMatch(new SimpleInventory(newStack), this.world).orElse(null);
+        if (recipe != null && recipe.isNeedMold()) {
+            ItemStack moldStack = this.otherStack.get(0);
+            if ((moldStack.isEmpty() || !ItemStack.areItemsEqual(moldStack, recipe.getMold()))) {
+                return ActionResult.FAIL;
+            }
+        }
 
         if (isEmpty()){
             this.setStack(0, newStack);
@@ -229,31 +292,68 @@ public class HeatResistantSlateBlockEntity extends UpPlaceBlockEntity implements
         return ActionResult.SUCCESS;
     }
 
+    @Override
+    public void onPlace(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
+        if (otherStack.get(0).getItem() instanceof BlockItem blockItem
+                && blockItem.getBlock() instanceof MoldBlock moldBlock && moldBlock.canPlaceSlate){
+
+        }
+    }
+
     /**
      * 获取当前物品栏中的物品对应的方块状态
      * @return 物品对应的方块状态
      */
     public BlockState getInventoryBlockState() {
         ItemStack stack = this.inventory.get(0);
-        Item item = stack.getItem();
         Direction facing = Direction.EAST;
 
         if (resultDirection != null){
             facing = this.resultDirection;
         }
-        if (item instanceof DoubleBlockItem doubleBlockItem && doubleBlockItem.getSecondBlock() instanceof FoodBlock) {
-            return FoodCraftUtils.createFoodBlockState(doubleBlockItem.getSecondBlock().getDefaultState(), stack.getCount(), facing);
-        } else if (item instanceof BlockItem blockItem && blockItem.getBlock() instanceof FoodBlock) {
-            return FoodCraftUtils.createFoodBlockState(blockItem.getBlock().getDefaultState(), stack.getCount(), facing);
-        }else if (item instanceof BlockItem blockItem){
-            if (FoodCraftUtils.hasProperty(blockItem.getBlock(), Properties.HORIZONTAL_FACING)){
-                return blockItem.getBlock().getDefaultState()
-                        .with(Properties.HORIZONTAL_FACING, facing);
-            }
-            return blockItem.getBlock().getDefaultState();
-        }
+        return FoodCraftUtils.createCountBlockstate(stack, facing);
+    }
 
-        return Blocks.AIR.getDefaultState();
+    /**
+     * 获取当前额外物品栏中的方块状态
+     * @return 额外物品对应的方块状态
+     */
+    public BlockState getOtherBlockState(){
+        ItemStack stack = this.otherStack.get(0);
+        Direction facing = Direction.EAST;
+
+        if (resultDirection != null){
+            facing = this.resultDirection;
+        }
+        return FoodCraftUtils.createCountBlockstate(stack, facing);
+    }
+
+    /**
+     * 尝试在耐热石板上放置模具
+     * @param player 执行放置操作的玩家
+     * @param stack 要放置的物品堆栈
+     * @return 是否成功放置模具
+     */
+    public boolean tryPlaceMold(PlayerEntity player, ItemStack stack){
+        if (stack.getItem() instanceof BlockItem blockItem
+                && blockItem.getBlock() instanceof MoldBlock moldBlock && moldBlock.canPlaceSlate){
+
+            ItemStack moldStack = this.otherStack.get(0);
+            if (moldStack.isEmpty()){
+                ItemStack newStack = stack.copy();
+                newStack.setCount(1);
+                this.otherStack.set(0, newStack);
+
+                // 减少玩家手中的物品数量
+                if (!player.isCreative()) {
+                    stack.decrement(1);
+                }
+
+                this.markDirtyAndSync();
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -444,7 +544,7 @@ public class HeatResistantSlateBlockEntity extends UpPlaceBlockEntity implements
 
     private void bindFirewoodFromStructure(World world, BlockPattern.Result result, int patternType) {
         // 获取所有'~'字符对应的位置
-        Set<BlockPos> newFirewoodPositions = FoodCraftUtils.findTargetPositionsFromPattern(result, patternType, HeatResistantSlateBlockEntity::isFirewoodPositionPredicate);
+        Set<BlockPos> newFirewoodPositions = FoodCraftUtils.findTargetPositionsFromPattern(result, HeatResistantSlateBlockEntity::isFirewoodPositionPredicate);
 
         if (!newFirewoodPositions.isEmpty()) {
             this.firewoodPos = newFirewoodPositions;
@@ -587,6 +687,11 @@ public class HeatResistantSlateBlockEntity extends UpPlaceBlockEntity implements
             return;
         }
 
+        // 处理需要模具的配方
+        if (recipe.isNeedMold() && !(this.otherStack.get(0) == recipe.getMold())) {
+            return;
+        }
+
         // 初始化烘烤总时间
         if (bakingTimeTotal == 0) {
             bakingTimeTotal = Math.max(recipe.getBakingTime(), MIN_BAKING_TIME);
@@ -653,10 +758,11 @@ public class HeatResistantSlateBlockEntity extends UpPlaceBlockEntity implements
             return;
         }
 
-        // 消耗输入物品
-        setStack(0, outputStack.copy());
+        LOGGER.info("{},{}", inputStack, outputStack);
 
-        // 记录使用的配方（用于奖励经验）
+        // 消耗输入物品
+        setStack(0, recipe.craft(this, world.getRegistryManager()));
+
         setLastRecipe(recipe);
         recipesUsed.addTo(recipe.getId(), 1);
 
@@ -902,5 +1008,13 @@ public class HeatResistantSlateBlockEntity extends UpPlaceBlockEntity implements
     @Override
     public boolean canExtract(int slot, ItemStack stack, Direction dir) {
         return slot == 0;
+    }
+
+    public DefaultedList<ItemStack> getOtherStacks() {
+        DefaultedList<ItemStack> result = DefaultedList.ofSize(otherStack.size(), ItemStack.EMPTY);
+        for (int i = 0; i < otherStack.size(); i++) {
+            result.set(i, otherStack.get(i).copy());
+        }
+        return result;
     }
 }

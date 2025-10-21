@@ -15,6 +15,7 @@ import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.shape.VoxelShape;
+import net.minecraft.world.BlockView;
 import net.minecraft.world.WorldAccess;
 import net.minecraft.world.WorldView;
 import org.dfood.tag.ModTags;
@@ -55,7 +56,7 @@ public class DishesBlock extends UpPlaceBlock {
     }
 
     @Override
-    public VoxelShape getBaseShape() {
+    public VoxelShape getBaseShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
         return BASE_SHAPE;
     }
 

@@ -5,15 +5,21 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.pattern.BlockPattern;
 import net.minecraft.block.pattern.CachedBlockPosition;
+import net.minecraft.item.BlockItem;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.potion.PotionUtil;
 import net.minecraft.state.StateManager;
+import net.minecraft.state.property.Properties;
 import net.minecraft.state.property.Property;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+import net.minecraft.util.shape.VoxelShape;
+import net.minecraft.util.shape.VoxelShapes;
 import org.dfood.block.FoodBlock;
+import org.dfood.item.DoubleBlockItem;
 import org.foodcraft.FoodCraft;
 import org.foodcraft.item.ModPotions;
 import org.slf4j.Logger;
@@ -58,7 +64,13 @@ public class FoodCraftUtils {
         return foundProperty != null && foundProperty.equals(property);
     }
 
-    public static Set<BlockPos> findTargetPositionsFromPattern(BlockPattern.Result result, int patternType, Predicate<CachedBlockPosition> isTargetPositionPredicate) {
+    /**
+     * 从BlockPattern.Result中查找符合条件的方块位置
+     * @param result BlockPattern匹配结果
+     * @param isTargetPositionPredicate 用于判断是否为目标位置的谓词
+     * @return 符合条件的方块位置集合
+     */
+    public static Set<BlockPos> findTargetPositionsFromPattern(BlockPattern.Result result, Predicate<CachedBlockPosition> isTargetPositionPredicate) {
         Set<BlockPos> TargetPos = new HashSet<>();
         for (int depth = 0; depth < result.getDepth(); depth++) {
             for (int height = 0; height < result.getHeight(); height++) {
@@ -66,7 +78,6 @@ public class FoodCraftUtils {
                     // 获取该位置的缓存方块
                     CachedBlockPosition cachedPos = result.translate(width, height, depth);
 
-                    // 检查该位置是否匹配'~'字符的谓词条件
                     if (isTargetPositionPredicate.test(cachedPos)) {
                         // 找到匹配的位置，返回对应的世界坐标
                         TargetPos.add(cachedPos.getBlockPos());
@@ -105,5 +116,94 @@ public class FoodCraftUtils {
         ItemStack milkPotion = PotionUtil.setPotion(new ItemStack(Items.POTION), ModPotions.MILK);
         milkPotion.getOrCreateNbt().putInt("CustomPotionColor", 15792383);
         return milkPotion;
+    }
+
+    /**
+     * 根据物品堆和朝向创建对应的方块状态
+     * @param stack 物品堆栈
+     * @param facing 方块朝向
+     * @return 对应的方块状态 如果返回值为{@linkplain Blocks#AIR}，则说明该物品没有对应的方块状态
+     */
+    public static BlockState createCountBlockstate(ItemStack stack, Direction facing) {
+        Item item = stack.getItem();
+
+        // 处理双块物品
+        if (item instanceof DoubleBlockItem doubleBlockItem && doubleBlockItem.getSecondBlock() instanceof FoodBlock) {
+            return FoodCraftUtils.createFoodBlockState(doubleBlockItem.getSecondBlock().getDefaultState(), stack.getCount(), facing);
+        } // 处理食物方块
+        else if (item instanceof BlockItem blockItem && blockItem.getBlock() instanceof FoodBlock) {
+            return FoodCraftUtils.createFoodBlockState(blockItem.getBlock().getDefaultState(), stack.getCount(), facing);
+        } // 处理其他方块物品
+        else if (item instanceof BlockItem blockItem){
+            if (FoodCraftUtils.hasProperty(blockItem.getBlock(), Properties.HORIZONTAL_FACING)){
+                return blockItem.getBlock().getDefaultState()
+                        .with(Properties.HORIZONTAL_FACING, facing);
+            }
+            return blockItem.getBlock().getDefaultState();
+        }
+
+        return Blocks.AIR.getDefaultState();
+    }
+
+    /**
+     * 按中心点缩放VoxelShape
+     * @param shape 待缩放的形状
+     * @param scale 缩放比例 只能为正数
+     * @return 缩放后的形状
+     */
+    public static VoxelShape scale(VoxelShape shape, double scale) {
+        if (shape.isEmpty()) {
+            return VoxelShapes.empty();
+        }
+
+        VoxelShape[] result = new VoxelShape[]{VoxelShapes.empty()};
+
+        shape.forEachBox((minX, minY, minZ, maxX, maxY, maxZ) -> {
+            // 计算中心点
+            double centerX = (minX + maxX) / 2;
+            double centerY = (minY + maxY) / 2;
+            double centerZ = (minZ + maxZ) / 2;
+
+            // 相对于中心点进行缩放
+            double newMinX = centerX + (minX - centerX) * scale;
+            double newMinY = centerY + (minY - centerY) * scale;
+            double newMinZ = centerZ + (minZ - centerZ) * scale;
+            double newMaxX = centerX + (maxX - centerX) * scale;
+            double newMaxY = centerY + (maxY - centerY) * scale;
+            double newMaxZ = centerZ + (maxZ - centerZ) * scale;
+
+            VoxelShape scaledBox = VoxelShapes.cuboid(newMinX, newMinY, newMinZ, newMaxX, newMaxY, newMaxZ);
+            result[0] = VoxelShapes.union(result[0], scaledBox);
+        });
+
+        return result[0];
+    }
+
+    /**
+     * 按原点缩放VoxelShape
+     * @param shape 待缩放的形状
+     * @param scale 缩放比例
+     * @return 缩放后的形状
+     */
+    public static VoxelShape scaleFromOrigin(VoxelShape shape, double scale) {
+        if (shape.isEmpty()) {
+            return VoxelShapes.empty();
+        }
+
+        VoxelShape[] result = new VoxelShape[]{VoxelShapes.empty()};
+
+        shape.forEachBox((minX, minY, minZ, maxX, maxY, maxZ) -> {
+            double newMinX = minX * scale;
+            double newMinY = minY * scale;
+            double newMinZ = minZ * scale;
+            double newMaxX = maxX * scale;
+            double newMaxY = maxY * scale;
+            double newMaxZ = maxZ * scale;
+
+            VoxelShape scaledBox = VoxelShapes.cuboid(newMinX, newMinY, newMinZ, newMaxX, newMaxY, newMaxZ);
+            result[0] = VoxelShapes.union(result[0], scaledBox);
+        });
+
+        return result[0];
     }
 }

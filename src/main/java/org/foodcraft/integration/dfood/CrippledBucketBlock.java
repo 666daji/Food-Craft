@@ -9,7 +9,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionUtil;
-import net.minecraft.potion.Potions;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.DirectionProperty;
@@ -28,15 +27,15 @@ import org.foodcraft.item.ModPotions;
 import org.foodcraft.util.FoodCraftUtils;
 
 /**
- * 水桶的残损方块，表示被使用过的水桶
+ * 水桶的残损方块，表示被使用过的桶
  */
-public class CrippledWaterBucketBlock extends CrippledBlock {
+public class CrippledBucketBlock extends CrippledBlock {
     public static final DirectionProperty FACING = Properties.HORIZONTAL_FACING;
     private static final FoodShapeHandle foodShapeHandle = FoodShapeHandle.getInstance();
 
     private final Potion potionType;
 
-    public CrippledWaterBucketBlock(Settings settings, Block baseBlock, Potion potionType) {
+    public CrippledBucketBlock(Settings settings, Block baseBlock, Potion potionType) {
         super(settings, 3, baseBlock, new ItemStack(Items.BUCKET));
         this.potionType = potionType;
     }
@@ -95,9 +94,9 @@ public class CrippledWaterBucketBlock extends CrippledBlock {
 
     public static BlockState getWaterBucketState(BlockState state) {
         for (Block block : AssistedBlocks.assistedBlocks) {
-            if (block instanceof CrippledWaterBucketBlock crippledWaterBucketBlock && crippledWaterBucketBlock.isBaseBlock(state)) {
-                return crippledWaterBucketBlock.getDefaultState()
-                        .with(CrippledWaterBucketBlock.FACING, state.get(CrippledWaterBucketBlock.FACING))
+            if (block instanceof CrippledBucketBlock crippledBucketBlock && crippledBucketBlock.isBaseBlock(state)) {
+                return crippledBucketBlock.getDefaultState()
+                        .with(CrippledBucketBlock.FACING, state.get(CrippledBucketBlock.FACING))
                         .with(IntPropertyManager.create("number_of_use", 3), 1);
             }
         }

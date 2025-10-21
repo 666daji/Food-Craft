@@ -1,80 +1,47 @@
 package org.foodcraft.recipe;
 
-import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.Ingredient;
-import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeSerializer;
 import net.minecraft.recipe.RecipeType;
-import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.collection.DefaultedList;
-import net.minecraft.world.World;
+import org.foodcraft.recipe.serializer.StoveRecipeSerializer;
 import org.foodcraft.registry.ModRecipeSerializers;
 import org.foodcraft.registry.ModRecipeTypes;
+import org.jetbrains.annotations.Nullable;
 
-public class StoveRecipe implements Recipe<Inventory> {
-    protected final Identifier id;
-    protected final Ingredient input;
-    protected final ItemStack output;
-    protected final float experience;
+public class StoveRecipe extends SimpleCraftRecipe {
     protected final int bakingTime;
+    /** 基础模具为null时表示该配方无需模具 */
+    @Nullable
+    protected final ItemStack mold;
 
-    public StoveRecipe(Identifier id, Ingredient input, ItemStack output, float experience, int bakingTime) {
-        this.id = id;
-        this.input = input;
-        this.output = output;
-        this.experience = experience;
-        this.bakingTime = bakingTime;
-    }
-
-    @Override
-    public DefaultedList<Ingredient> getIngredients() {
-        DefaultedList<Ingredient> defaultedList = DefaultedList.of();
-        defaultedList.add(this.input);
-        return defaultedList;
-    }
-
-    @Override
-    public boolean matches(Inventory inventory, World world) {
-        return this.input.test(inventory.getStack(0));
-    }
-
-    @Override
-    public ItemStack craft(Inventory inventory, DynamicRegistryManager registryManager) {
-        return this.output.copy();
-    }
-
-    @Override
-    public boolean fits(int width, int height) {
-        return true;
-    }
-
-    public Ingredient getInput() {
-        return input;
-    }
-
-    @Override
-    public ItemStack getOutput(DynamicRegistryManager registryManager) {
-        return this.output;
-    }
-
-    @Override
-    public Identifier getId() {
-        return this.id;
-    }
-
-    public float getExperience() {
-        return this.experience;
+    public StoveRecipe(Identifier id, Ingredient input, ItemStack output, StoveRecipeSerializer.StoveExtraData data) {
+        super(id, input, output);
+        this.bakingTime = data.stoveTime();
+        this.mold = !data.mold().isEmpty() ? data.mold() : null;
     }
 
     public int getBakingTime() {
         return bakingTime;
     }
 
+    @Nullable
+    public ItemStack getMold() {
+        return mold;
+    }
+
     @Override
     public RecipeSerializer<?> getSerializer() {
         return ModRecipeSerializers.STOVE;
+    }
+
+    /**
+     * 判断该配方是否需要模具
+     * @return 需要模具返回true，否则返回false
+     */
+    public boolean isNeedMold() {
+        return mold != null;
     }
 
     @Override

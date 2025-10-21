@@ -3,6 +3,7 @@ package org.foodcraft.block;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.ShapeContext;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityTicker;
 import net.minecraft.block.entity.BlockEntityType;
@@ -10,16 +11,20 @@ import net.minecraft.block.pattern.BlockPattern;
 import net.minecraft.block.pattern.BlockPatternBuilder;
 import net.minecraft.block.pattern.CachedBlockPosition;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.util.ItemScatterer;
+import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.util.shape.VoxelShape;
+import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import org.foodcraft.block.entity.CombustionFirewoodBlockEntity;
 import org.foodcraft.block.entity.HeatResistantSlateBlockEntity;
@@ -55,6 +60,7 @@ public class HeatResistantSlateBlock extends UpPlaceBlock {
 
     @Override
     public void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
+        // 处理多方块逻辑
         if (!state.isOf(newState.getBlock())) {
             // 方块被替换或破坏
             if (!world.isClient) {
@@ -63,25 +69,47 @@ public class HeatResistantSlateBlock extends UpPlaceBlock {
             }
         }
 
+        // 处理模具掉落
+        if (!state.isOf(newState.getBlock())) {
+            BlockEntity blockEntity = world.getBlockEntity(pos);
+            if (blockEntity instanceof HeatResistantSlateBlockEntity heatResistantSlateBlockEntity) {
+                DefaultedList<ItemStack> otherStack = heatResistantSlateBlockEntity.getOtherStacks();
+                ItemScatterer.spawn(world, pos, otherStack);
+                world.updateComparators(pos, this);
+            }
+        }
+
         super.onStateReplaced(state, world, pos, newState, moved);
     }
 
     @Override
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
+        ItemStack handStack = player.getStackInHand(hand);
+        BlockEntity blockEntity = world.getBlockEntity(pos);
+
+        // 尝试放置模具
+        boolean canPlaceMold = handStack.getItem() instanceof BlockItem blockItem
+                && blockItem.getBlock() instanceof MoldBlock moldBlock && moldBlock.canPlaceSlate;
+        boolean placeMold = blockEntity instanceof HeatResistantSlateBlockEntity heatResistantSlateBlockEntity
+                && heatResistantSlateBlockEntity.tryPlaceMold(player, handStack);
+        if (canPlaceMold && placeMold){
+            return ActionResult.SUCCESS;
+        }
+
+        // 调用父类交互方法
         ActionResult result = super.onUse(state, world, pos, player, hand, hit);
-        if (!result.isAccepted()) {
-            // 如果交互失败，则尝试交互绑定的篝火
-            BlockEntity blockEntity = world.getBlockEntity(pos);
-            if (blockEntity instanceof HeatResistantSlateBlockEntity heatResistantSlateBlockEntity) {
-                for (CombustionFirewoodBlockEntity firewoodEntity : heatResistantSlateBlockEntity.getFirewoodEntities()) {
-                    BlockState firewoodState = firewoodEntity.getCachedState();
-                    ActionResult firewoodResult = firewoodState.getBlock().onUse(firewoodState, world, firewoodEntity.getPos(), player, hand, hit);
-                    if (firewoodResult.isAccepted()) {
-                        return firewoodResult;
-                    }
+
+        // 如果交互失败，则尝试交互绑定的篝火
+        if (!result.isAccepted() && blockEntity instanceof HeatResistantSlateBlockEntity heatResistantSlateBlockEntity) {
+            for (CombustionFirewoodBlockEntity firewoodEntity : heatResistantSlateBlockEntity.getFirewoodEntities()) {
+                BlockState firewoodState = firewoodEntity.getCachedState();
+                ActionResult firewoodResult = firewoodState.getBlock().onUse(firewoodState, world, firewoodEntity.getPos(), player, hand, hit);
+                if (firewoodResult.isAccepted()) {
+                    return firewoodResult;
                 }
             }
         }
+
         return result;
     }
 
@@ -115,7 +143,7 @@ public class HeatResistantSlateBlock extends UpPlaceBlock {
     }
 
     @Override
-    public VoxelShape getBaseShape() {
+    public VoxelShape getBaseShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
         return BASE_SHAPE;
     }
 

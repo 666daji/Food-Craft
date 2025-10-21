@@ -1,4 +1,4 @@
-package org.foodcraft.recipe;
+package org.foodcraft.recipe.serializer;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -9,11 +9,12 @@ import net.minecraft.recipe.RecipeSerializer;
 import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonHelper;
+import org.foodcraft.recipe.SimpleCraftRecipe;
 
-public class StoveRecipeSerializer<T extends StoveRecipe> implements RecipeSerializer<T> {
+public abstract class SimpleCraftRecipeSerializer<T extends SimpleCraftRecipe> implements RecipeSerializer<T> {
     private final RecipeFactory<T> recipeFactory;
 
-    public StoveRecipeSerializer(RecipeFactory<T> recipeFactory) {
+    public SimpleCraftRecipeSerializer(RecipeFactory<T> recipeFactory) {
         this.recipeFactory = recipeFactory;
     }
 
@@ -30,30 +31,48 @@ public class StoveRecipeSerializer<T extends StoveRecipe> implements RecipeSeria
                         .orElseThrow(() -> new IllegalStateException("Item: " + resultId + " does not exist"))
         );
 
-        float experience = JsonHelper.getFloat(json, "experience", 0.0F);
-        int brakingTime = JsonHelper.getInt(json, "stoveTime", 200);
+        // 调用子类方法读取额外数据
+        Object extraData = readExtraData(json);
 
-        return this.recipeFactory.create(id, ingredient, result, experience, brakingTime);
+        return this.recipeFactory.create(id, ingredient, result, extraData);
     }
 
     @Override
     public T read(Identifier id, PacketByteBuf buf) {
         Ingredient ingredient = Ingredient.fromPacket(buf);
         ItemStack result = buf.readItemStack();
-        float experience = buf.readFloat();
-        int grindingTime = buf.readVarInt();
-        return this.recipeFactory.create(id, ingredient, result, experience, grindingTime);
+
+        // 调用子类方法从网络读取额外数据
+        Object extraData = readExtraData(buf);
+
+        return this.recipeFactory.create(id, ingredient, result, extraData);
     }
 
     @Override
     public void write(PacketByteBuf buf, T recipe) {
-        recipe.input.write(buf);
+        recipe.getInput().write(buf);
         buf.writeItemStack(recipe.output);
-        buf.writeFloat(recipe.experience);
-        buf.writeVarInt(recipe.bakingTime);
+
+        // 调用子类方法写入额外数据
+        writeExtraData(buf, recipe);
     }
 
-    public interface RecipeFactory<T extends StoveRecipe> {
-        T create(Identifier id, Ingredient input, ItemStack output, float experience, int brakingTime);
+    /**
+     * 从JSON读取配方特有的额外数据
+     */
+    protected abstract Object readExtraData(JsonObject json);
+
+    /**
+     * 从网络数据包读取配方特有的额外数据
+     */
+    protected abstract Object readExtraData(PacketByteBuf buf);
+
+    /**
+     * 将配方特有的额外数据写入网络数据包
+     */
+    protected abstract void writeExtraData(PacketByteBuf buf, T recipe);
+
+    public interface RecipeFactory<T extends SimpleCraftRecipe> {
+        T create(Identifier id, Ingredient input, ItemStack output, Object extraData);
     }
 }

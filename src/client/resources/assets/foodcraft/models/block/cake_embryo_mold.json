@@ -1,8 +1,8 @@
 {
 	"credit": "Made with Blockbench",
 	"textures": {
-		"0": "foodcraft:block/cake_embryo_mold",
-		"particle": "foodcraft:item/cake_embryo_mold"
+      "0": "foodcraft:block/cake_embryo_mold",
+      "particle": "foodcraft:block/cake_embryo_mold"
 	},
 	"elements": [
 		{
@@ -68,6 +68,26 @@
 			}
 		}
 	],
+	"display": {
+		"thirdperson_righthand": {
+			"rotation": [62, 0, 0],
+			"translation": [0, 4.75, 3],
+			"scale": [0.5, 0.5, 0.5]
+		},
+		"ground": {
+			"translation": [0, 2.25, 0],
+			"scale": [0.5, 0.5, 0.5]
+		},
+		"gui": {
+			"rotation": [0, 55, 47],
+			"translation": [-1.5, 1.75, 0],
+			"scale": [0.7, 0.7, 0.7]
+		},
+		"fixed": {
+			"rotation": [90, 0, 0],
+			"scale": [0.5, 0.5, 0.5]
+		}
+	},
 	"groups": [
 		{
 			"name": "蛋糕胚模具",
@@ -75,10 +95,17 @@
 			"color": 0,
 			"children": [
 				{
-					"name": "group",
-					"origin": [3, 0, 1],
+					"name": "蛋糕胚模具",
+					"origin": [8, 8, 8],
 					"color": 0,
-					"children": [0, 1, 2, 3, 4]
+					"children": [
+						{
+							"name": "group",
+							"origin": [3, 0, 1],
+							"color": 0,
+							"children": [0, 1, 2, 3, 4]
+						}
+					]
 				}
 			]
 		}

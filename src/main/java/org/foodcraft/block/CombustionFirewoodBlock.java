@@ -6,8 +6,11 @@ import net.minecraft.block.entity.BlockEntityTicker;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.loot.context.LootContextParameterSet;
+import net.minecraft.loot.context.LootContextParameters;
 import net.minecraft.particle.ParticleTypes;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.state.StateManager;
@@ -55,7 +58,18 @@ public class CombustionFirewoodBlock extends BlockWithEntity {
         if (isCompletelyExtinguished(world, pos, state)) {
             // 客户端只返回成功，服务端执行实际破坏逻辑
             if (!world.isClient()) {
-                world.breakBlock(pos, true, player);
+                world.breakBlock(pos, false, player);
+                LootContextParameterSet.Builder builder = new LootContextParameterSet.Builder((ServerWorld)world)
+                        .add(LootContextParameters.ORIGIN, pos.toCenterPos())
+                        .add(LootContextParameters.TOOL, Items.AIR.getDefaultStack())
+                        .addOptional(LootContextParameters.THIS_ENTITY, player);
+                List<ItemStack> drops = this.getDroppedStacks(state, builder);
+                for (ItemStack foodItem : drops) {
+                    // 尝试放入玩家物品栏，放不下则掉落在地上
+                    if (!player.isCreative() && !player.giveItemStack(foodItem)){
+                        player.dropItem(foodItem, false);
+                    }
+                }
             }
             return ActionResult.SUCCESS;
         }
@@ -206,28 +220,6 @@ public class CombustionFirewoodBlock extends BlockWithEntity {
         }
         // 非熄灭状态不掉落任何物品
         return List.of();
-    }
-
-    @Override
-    public void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
-        if (!state.isOf(newState.getBlock())) {
-            BlockEntity blockEntity = world.getBlockEntity(pos);
-            if (blockEntity instanceof CombustionFirewoodBlockEntity) {
-                // 检查是否为熄灭状态
-                CombustionState combustionState = state.get(COMBUSTION_STATE);
-                if (combustionState != CombustionState.FIRST_EXTINGUISHED &&
-                        combustionState != CombustionState.AGAIN_EXTINGUISHED) {
-                    // 非熄灭状态被破坏，不生成任何掉落物
-                    // 直接移除方块实体而不调用父类方法
-                    if (state.hasBlockEntity() && !state.isOf(newState.getBlock())) {
-                        world.removeBlockEntity(pos);
-                    }
-                    return;
-                }
-            }
-            // 熄灭状态时调用父类方法正常处理掉落物
-            super.onStateReplaced(state, world, pos, newState, moved);
-        }
     }
 
     public enum CombustionState implements StringIdentifiable {

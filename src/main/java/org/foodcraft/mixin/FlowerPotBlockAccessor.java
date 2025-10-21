@@ -1,0 +1,15 @@
+package org.foodcraft.mixin;
+
+import net.minecraft.block.Block;
+import net.minecraft.block.FlowerPotBlock;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.gen.Accessor;
+
+import java.util.Map;
+
+@Mixin(FlowerPotBlock.class)
+public interface FlowerPotBlockAccessor {
+
+    @Accessor("CONTENT_TO_POTTED")
+    Map<Block, Block> getContentToPotted();
+}

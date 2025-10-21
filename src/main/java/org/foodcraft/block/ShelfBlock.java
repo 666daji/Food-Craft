@@ -1,8 +1,6 @@
 package org.foodcraft.block;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockRenderType;
-import net.minecraft.block.BlockState;
+import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
@@ -11,16 +9,28 @@ import net.minecraft.state.property.DirectionProperty;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.BlockMirror;
 import net.minecraft.util.BlockRotation;
+import net.minecraft.util.ItemScatterer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.shape.VoxelShape;
+import net.minecraft.world.BlockView;
+import net.minecraft.world.World;
+import net.minecraft.world.WorldAccess;
+import net.minecraft.world.WorldView;
+import org.dfood.tag.ModTags;
+import org.foodcraft.FoodCraft;
 import org.foodcraft.block.entity.ShelfBlockEntity;
 import org.foodcraft.block.entity.UpPlaceBlockEntity;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
 
 public class ShelfBlock extends UpPlaceBlock {
+    public static final Logger LOGGER = FoodCraft.LOGGER;
     public static final DirectionProperty FACING = Properties.HORIZONTAL_FACING;
-    private static final VoxelShape BASE_SHAPE = Block.createCuboidShape(0,0,0,16,5,16);
+    private static final VoxelShape WEST_SHAPE = Block.createCuboidShape(0,0,0,8,5,16);
+    private static final VoxelShape NORTH_SHAPE = Block.createCuboidShape(0,0,0,16,5,8);
+    private static final VoxelShape EAST_SHAPE = Block.createCuboidShape(8,0,0,16,5,16);
+    private static final VoxelShape SOUTH_SHAPE = Block.createCuboidShape(0,0,8,16,5,16);
 
     public ShelfBlock(Settings settings) {
         super(settings);
@@ -29,25 +39,90 @@ public class ShelfBlock extends UpPlaceBlock {
     }
 
     @Override
-    public VoxelShape getBaseShape() {
-        return BASE_SHAPE;
+    public VoxelShape getBaseShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
+        Direction direction = state.get(FACING);
+        return switch (direction) {
+            case NORTH -> NORTH_SHAPE;
+            case SOUTH -> SOUTH_SHAPE;
+            case WEST -> WEST_SHAPE;
+            case EAST -> EAST_SHAPE;
+            default -> throw new IllegalStateException("Unexpected direction: " + direction);
+        };
     }
 
     @Override
     public boolean canFetched(UpPlaceBlockEntity blockEntity, ItemStack handStack) {
-        if (blockEntity.isEmpty()){
+        if (blockEntity.isEmpty()) {
             return false;
         }
 
-        if (handStack.isEmpty() || blockEntity.isFull()) {
+        ShelfBlockEntity shelf = (ShelfBlockEntity) blockEntity;
+
+        if (blockEntity.isFull() && (!shelf.hasEmptyFlowerPot() || !shelf.canInsertFlower(handStack))){
             return true;
         }
-        return !blockEntity.isValidItem(handStack);
+
+        if (shelf.canInsertFlower(handStack) && !shelf.hasEmptyFlowerPot()){
+            return true;
+        }
+
+        // 如果手持可放入物品，不允许取出（应该优先放置）
+        if (shelf.isValidItem(handStack) || (shelf.canInsertFlower(handStack) && shelf.hasEmptyFlowerPot())) {
+            return false;
+        }
+
+        // 空手或手持不可放入物品时，允许取出
+        return handStack.isEmpty() || !shelf.isValidItem(handStack);
     }
 
     @Override
     public boolean canPlace(UpPlaceBlockEntity blockEntity, ItemStack handStack) {
-        return blockEntity.isValidItem(handStack) && !blockEntity.isFull();
+        if (handStack.isEmpty()) {
+            return false;
+        }
+
+        ShelfBlockEntity shelf = (ShelfBlockEntity) blockEntity;
+
+        // 如果是花，检查是否有空花盆
+        if (shelf.canInsertFlower(handStack)) {
+            return shelf.hasEmptyFlowerPot();
+        }
+
+        // 其他可放入物品，检查架子是否未满
+        return shelf.isValidItem(handStack) && !blockEntity.isFull();
+    }
+
+    @Override
+    public boolean canPlaceAt(BlockState state, WorldView world, BlockPos pos) {
+        BlockPos checkPos = pos.offset(state.get(FACING));
+        return !world.getBlockState(checkPos).isIn(ModTags.FOOD_PLACE);
+    }
+
+    @Override
+    public BlockState getStateForNeighborUpdate(
+            BlockState state, Direction direction, BlockState neighborState, WorldAccess world, BlockPos pos, BlockPos neighborPos
+    ) {
+        return !state.canPlaceAt(world, pos)
+                ? Blocks.AIR.getDefaultState()
+                : super.getStateForNeighborUpdate(state, direction, neighborState, world, pos, neighborPos);
+    }
+
+    /**
+     * 当方块被替换或破坏时的处理
+     * 使用自定义的掉落物逻辑来处理花盆中的花
+     */
+    @Override
+    public void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
+        if (!state.isOf(newState.getBlock())) {
+            BlockEntity blockEntity = world.getBlockEntity(pos);
+            if (blockEntity instanceof ShelfBlockEntity shelfBlockEntity) {
+                // 使用自定义的掉落物逻辑
+                if (!world.isClient()) {
+                    ItemScatterer.spawn(world, pos, shelfBlockEntity.getDroppedStacks());
+                }
+            }
+            super.onStateReplaced(state, world, pos, newState, moved);
+        }
     }
 
     @Override

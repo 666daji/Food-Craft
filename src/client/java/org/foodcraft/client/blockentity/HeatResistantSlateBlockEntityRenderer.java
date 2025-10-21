@@ -2,7 +2,6 @@ package org.foodcraft.client.blockentity;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
-import net.minecraft.block.ChestBlock;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.render.RenderLayers;
 import net.minecraft.client.render.VertexConsumerProvider;
@@ -11,6 +10,7 @@ import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
 import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.render.model.json.ModelTransformationMode;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.RotationAxis;
 import net.minecraft.util.math.random.Random;
 import org.foodcraft.block.entity.HeatResistantSlateBlockEntity;
@@ -29,10 +29,17 @@ public class HeatResistantSlateBlockEntityRenderer extends MultiBlockDebugRender
     @Override
     public void render(HeatResistantSlateBlockEntity entity, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay) {
         super.render(entity, tickDelta, matrices, vertexConsumers, light, overlay);
+        ItemStack otherStack = entity.getOtherStacks().get(0);
+
         if (!entity.isEmpty()) {
             matrices.push();
             BlockState blockState = entity.getInventoryBlockState();
             matrices.translate(0.0, 0.125, 0.0);
+            if (!otherStack.isEmpty()){
+                matrices.translate(0.0, 0.125, 0.0);
+            }
+
+            // 渲染主要内容
             if (blockState.getBlock() != Blocks.AIR){
                 blockRenderManager.renderBlock(blockState, entity.getPos(), entity.getWorld(), matrices,
                         vertexConsumers.getBuffer(RenderLayers.getBlockLayer(blockState)), true, Random.create());
@@ -46,6 +53,19 @@ public class HeatResistantSlateBlockEntityRenderer extends MultiBlockDebugRender
                 }
                 itemRenderer.renderItem(entity.getStack(0), ModelTransformationMode.FIXED, light, overlay, matrices,
                         vertexConsumers, entity.getWorld(), 0);
+            }
+            matrices.pop();
+        }
+
+        // 渲染叠加内容
+        if (!otherStack.isEmpty()){
+            matrices.push();
+            BlockState blockState = entity.getOtherBlockState();
+            matrices.translate(0.0, 0.125, 0.0);
+
+            if (blockState.getBlock() != Blocks.AIR){
+                blockRenderManager.renderBlock(blockState, entity.getPos(), entity.getWorld(), matrices,
+                        vertexConsumers.getBuffer(RenderLayers.getBlockLayer(blockState)), true, Random.create());
             }
             matrices.pop();
         }

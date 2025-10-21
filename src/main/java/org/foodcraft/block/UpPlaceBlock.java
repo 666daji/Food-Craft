@@ -52,12 +52,12 @@ public abstract class UpPlaceBlock extends BlockWithEntity {
     public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
         BlockEntity entity = world.getBlockEntity(pos);
         if (entity instanceof UpPlaceBlockEntity blockEntity && !blockEntity.isEmpty()) {
-            return VoxelShapes.union(getBaseShape(), blockEntity.getContentShape(state, world, pos, context));
+            return VoxelShapes.union(getBaseShape(state, world, pos, context), blockEntity.getContentShape(state, world, pos, context));
         }
-        return getBaseShape();
+        return getBaseShape(state, world, pos, context);
     }
 
-    public abstract VoxelShape getBaseShape();
+    public abstract VoxelShape getBaseShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context);
 
     @Override
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
@@ -73,7 +73,7 @@ public abstract class UpPlaceBlock extends BlockWithEntity {
             if (canFetched(upPlaceBlockEntity, handStack)) {
                 ActionResult fetchResult = upPlaceBlockEntity.tryFetchItem(player);
                 if (fetchResult.isAccepted()) {
-                    onFetch(state, world, pos, player, hand, hit);
+                    upPlaceBlockEntity.onFetch(state, world, pos, player, hand, hit);
                     return fetchResult;
                 }
             }
@@ -85,25 +85,13 @@ public abstract class UpPlaceBlock extends BlockWithEntity {
                     if (!player.isCreative()) {
                         handStack.decrement(1);
                     }
-                    onPlace(state, world, pos, player, hand, hit);
+                    upPlaceBlockEntity.onPlace(state, world, pos, player, hand, hit);
                     return placeResult;
                 }
             }
         }
 
         return ActionResult.FAIL;
-    }
-
-    /**
-     * 在取出物品时调用
-     */
-    private void onFetch(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
-    }
-
-    /**
-     * 在放置物品时调用
-     */
-    private void onPlace(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
     }
 
     public abstract boolean canFetched(UpPlaceBlockEntity blockEntity, ItemStack handStack);

@@ -23,6 +23,7 @@ import java.util.function.Function;
 public class AssistedBlocks {
     public static Set<Block> assistedBlocks = new HashSet<>();
 
+    // 汤类
     public static final Block CRIPPLED_RABBIT_STEW = registerAssistedStewBlock("crippled_rabbit_stew",
             AbstractBlock.Settings.create()
                     .mapColor(MapColor.BROWN).strength(0.1F, 0.1F).nonOpaque()
@@ -47,16 +48,17 @@ public class AssistedBlocks {
                     .sounds(BlockSoundGroup.DECORATED_POT).pistonBehavior(PistonBehavior.DESTROY),
             settings -> new CrippledSuspiciousStewBlock(settings, FoodComponents.SUSPICIOUS_STEW, FoodBlocks.SUSPICIOUS_STEW));
 
+    // 桶类
     public static final Block CRIPPLED_WATER_BUCKET = registerAssistedBlock("crippled_water_bucket",
             AbstractBlock.Settings.create()
                     .mapColor(MapColor.BLUE).strength(0.2F, 0.2F).nonOpaque()
                     .sounds(ModSoundGroups.WATER_BUCKET).pistonBehavior(PistonBehavior.DESTROY),
-            settings -> new CrippledWaterBucketBlock(settings, FoodBlocks.WATER_BUCKET, Potions.WATER), 3);
+            settings -> new CrippledBucketBlock(settings, FoodBlocks.WATER_BUCKET, Potions.WATER), 3);
     public static final Block CRIPPLED_MILK_BUCKET = registerAssistedBlock("crippled_milk_bucket",
             AbstractBlock.Settings.create()
                     .mapColor(MapColor.BLUE).strength(0.2F, 0.2F).nonOpaque()
                     .sounds(ModSoundGroups.WATER_BUCKET).pistonBehavior(PistonBehavior.DESTROY),
-            settings -> new CrippledWaterBucketBlock(settings, FoodBlocks.MILK_BUCKET, ModPotions.MILK), 3);
+            settings -> new CrippledBucketBlock(settings, FoodBlocks.MILK_BUCKET, ModPotions.MILK), 3);
 
     public static Block registerAssistedStewBlock(String name, AbstractBlock.Settings settings,
                                                  Function<AbstractBlock.Settings, Block> blockCreator) {

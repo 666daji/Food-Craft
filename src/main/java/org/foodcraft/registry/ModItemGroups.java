@@ -12,6 +12,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.foodcraft.FoodCraft;
 import org.foodcraft.item.ModPotions;
+import org.foodcraft.util.FoodCraftUtils;
 
 public class ModItemGroups {
     public static final RegistryKey<ItemGroup> DEMO_GROUP = register("demogroup");
@@ -75,7 +76,7 @@ public class ModItemGroups {
                             entries.add(ModItems.SALT_ORE);
                             entries.add(ModItems.DEEPSLATE_SALT_ORE);
 
-                            entries.add(PotionUtil.setPotion(new ItemStack(Items.POTION), ModPotions.MILK));
+                            entries.add(FoodCraftUtils.getMilkPotion());
                         }))
                         .build()
         );

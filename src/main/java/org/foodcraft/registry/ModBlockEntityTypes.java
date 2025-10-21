@@ -1,10 +1,12 @@
 package org.foodcraft.registry;
 
+import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.BlockPos;
 import org.foodcraft.FoodCraft;
 import org.foodcraft.block.entity.*;
 
@@ -44,6 +46,13 @@ public class ModBlockEntityTypes {
             BlockEntityType.Builder.create(
                     CombustionFirewoodBlockEntity::new,
                     ModBlocks.COMBUSTION_FIREWOOD
+            )
+    );
+    public static final BlockEntityType<MoldBlockEntity> MOLD = create("mold",
+            BlockEntityType.Builder.create(
+                    MoldBlockEntity::new,
+                    ModBlocks.CAKE_EMBRYO_MOLD,
+                    ModBlocks.TOAST_MOLD
             )
     );
 

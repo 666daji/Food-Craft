@@ -50,11 +50,11 @@ public class ModBlocks {
     public static final Block CAKE_EMBRYO_MOLD = registerBlock("cake_embryo_mold",
             new MoldBlock(AbstractBlock.Settings.create()
                     .sounds(BlockSoundGroup.WOOL).strength(0.2F)
-                    .nonOpaque().pistonBehavior(PistonBehavior.DESTROY)));
+                    .nonOpaque().pistonBehavior(PistonBehavior.DESTROY), true));
     public static final Block TOAST_MOLD = registerBlock("toast_mold",
             new MoldBlock(AbstractBlock.Settings.create()
                     .sounds(BlockSoundGroup.WOOL).sounds(BlockSoundGroup.WOOL).strength(0.2F)
-                    .nonOpaque().pistonBehavior(PistonBehavior.DESTROY)));
+                    .nonOpaque().pistonBehavior(PistonBehavior.DESTROY), false));
 
     // 粉尘袋
     public static final Block WHEAT_FLOUR_SACK = registerFoodBlock("wheat_flour_sack", 2,

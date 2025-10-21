@@ -1,7 +1,6 @@
 package org.foodcraft.block.entity;
 
 import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
 import net.minecraft.block.ShapeContext;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItem;
@@ -73,21 +72,9 @@ public class DishesBlockEntity extends UpPlaceBlockEntity {
      */
     public BlockState getInventoryBlockState() {
         ItemStack stack = this.inventory.get(0);
-        Item item = stack.getItem();
-
-        if (item == Items.CAKE) {
-            return Blocks.CAKE.getDefaultState();
-        }
-
         Direction facing = this.getCachedState().get(DishesBlock.FACING);
 
-        if (item instanceof DoubleBlockItem doubleBlockItem && doubleBlockItem.getSecondBlock() instanceof FoodBlock) {
-            return FoodCraftUtils.createFoodBlockState(doubleBlockItem.getSecondBlock().getDefaultState(), stack.getCount(), facing);
-        } else if (item instanceof BlockItem blockItem && blockItem.getBlock() instanceof FoodBlock) {
-            return FoodCraftUtils.createFoodBlockState(blockItem.getBlock().getDefaultState(), stack.getCount(), facing);
-        }
-
-        return Blocks.AIR.getDefaultState();
+        return FoodCraftUtils.createCountBlockstate(stack, facing);
     }
 
     public ActionResult tryAddItem(ItemStack stack) {

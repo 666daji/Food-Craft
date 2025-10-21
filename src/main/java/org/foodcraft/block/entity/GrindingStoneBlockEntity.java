@@ -461,12 +461,12 @@ public class GrindingStoneBlockEntity extends BlockEntity implements SidedInvent
         GrindingRecipe recipe = this.getCurrentRecipe();
         if (recipe != null && this.canGrind()) {
             ItemStack input = this.inventory.get(INPUT_SLOT_INDEX);
-            ItemStack output = recipe.getOutput(null);
+            ItemStack output = recipe.craft(this, null);
             ItemStack outputSlot = this.inventory.get(OUTPUT_SLOT_INDEX);
             int requiredCount = recipe.getInputCount();
 
             if (outputSlot.isEmpty()) {
-                this.inventory.set(OUTPUT_SLOT_INDEX, output.copy());
+                this.inventory.set(OUTPUT_SLOT_INDEX, output);
             } else if (ItemStack.areItemsEqual(outputSlot, output)) {
                 outputSlot.increment(output.getCount());
             }

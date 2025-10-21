@@ -11,10 +11,13 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.ActionResult;
+import net.minecraft.util.Hand;
 import net.minecraft.util.collection.DefaultedList;
+import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.world.BlockView;
+import net.minecraft.world.World;
 import org.foodcraft.block.UpPlaceBlock;
 
 /**
@@ -78,10 +81,6 @@ public abstract class UpPlaceBlockEntity extends BlockEntity implements Inventor
     public void setStack(int slot, ItemStack stack) {
         validateSlotIndex(slot);
 
-        if (!isValidItem(stack)) {
-            return;
-        }
-
         this.inventory.set(slot, stack);
         limitStackSizeIfNeeded(stack);
     }
@@ -136,6 +135,18 @@ public abstract class UpPlaceBlockEntity extends BlockEntity implements Inventor
      * @return ActionResult 表示操作结果
      */
     public abstract ActionResult tryFetchItem(PlayerEntity player);
+
+    /**
+     * 在取出物品时调用
+     */
+    public void onFetch(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
+    }
+
+    /**
+     * 在放置物品时调用
+     */
+    public void onPlace(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
+    }
 
     @Override
     public boolean canPlayerUse(PlayerEntity player) {

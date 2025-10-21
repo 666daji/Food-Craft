@@ -25,5 +25,6 @@ public abstract class BlockEntityRendererFactoriesMixin {
         register(ModBlockEntityTypes.DISHES, DishesBlockEntityRenderer::new);
         register(ModBlockEntityTypes.SHELF, ShelfBlockEntityRenderer::new);
         register(ModBlockEntityTypes.HEAT_RESISTANT_SLATE, HeatResistantSlateBlockEntityRenderer::new);
+        register(ModBlockEntityTypes.MOLD, MoldBlockEntityRenderer::new);
     }
 }

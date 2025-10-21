@@ -51,7 +51,7 @@ public class FoodBlocksModifier {
                 }
 
                 // 转换为残损水桶状态
-                BlockState newState = CrippledWaterBucketBlock.getWaterBucketState(state);
+                BlockState newState = CrippledBucketBlock.getWaterBucketState(state);
                 world.setBlockState(pos, newState, 3);
 
                 // 播放声音
