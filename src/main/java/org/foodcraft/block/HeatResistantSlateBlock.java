@@ -11,7 +11,6 @@ import net.minecraft.block.pattern.BlockPattern;
 import net.minecraft.block.pattern.BlockPatternBuilder;
 import net.minecraft.block.pattern.CachedBlockPosition;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.sound.SoundCategory;
@@ -24,6 +23,7 @@ import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.util.shape.VoxelShape;
+import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import org.foodcraft.block.entity.CombustionFirewoodBlockEntity;
@@ -38,14 +38,13 @@ import java.util.function.Predicate;
 public class HeatResistantSlateBlock extends UpPlaceBlock {
     protected static final VoxelShape BASE_SHAPE = Block.createCuboidShape(0,0,0,16,2,16);
 
-    public BlockPattern stove1x1;
-    public BlockPattern stove1x2;
-    public BlockPattern stove2x2;
-    public BlockPattern stove2x3;
+    public static final BlockPattern stove1x1;
+    public static final BlockPattern stove1x2;
+    public static final BlockPattern stove2x2;
+    public static final BlockPattern stove2x3;
 
     public HeatResistantSlateBlock(Settings settings) {
         super(settings);
-        initStovePattern();
     }
 
     @Override
@@ -84,17 +83,7 @@ public class HeatResistantSlateBlock extends UpPlaceBlock {
 
     @Override
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
-        ItemStack handStack = player.getStackInHand(hand);
         BlockEntity blockEntity = world.getBlockEntity(pos);
-
-        // 尝试放置模具
-        boolean canPlaceMold = handStack.getItem() instanceof BlockItem blockItem
-                && blockItem.getBlock() instanceof MoldBlock moldBlock && moldBlock.canPlaceSlate;
-        boolean placeMold = blockEntity instanceof HeatResistantSlateBlockEntity heatResistantSlateBlockEntity
-                && heatResistantSlateBlockEntity.tryPlaceMold(player, handStack);
-        if (canPlaceMold && placeMold){
-            return ActionResult.SUCCESS;
-        }
 
         // 调用父类交互方法
         ActionResult result = super.onUse(state, world, pos, player, hand, hit);
@@ -148,13 +137,24 @@ public class HeatResistantSlateBlock extends UpPlaceBlock {
     }
 
     @Override
+    public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
+        BlockEntity entity = world.getBlockEntity(pos);
+        if (entity instanceof HeatResistantSlateBlockEntity blockEntity && !blockEntity.isOtherEmpty()) {
+            return VoxelShapes.union(getBaseShape(state, world, pos, context), blockEntity.getContentShape(state, world, pos, context));
+        }
+        return super.getOutlineShape(state, world, pos, context);
+    }
+
+    @Override
     public boolean canFetched(UpPlaceBlockEntity blockEntity, ItemStack handStack) {
-        return !blockEntity.isEmpty();
+        boolean moldFetched = blockEntity.isEmpty() && !(blockEntity instanceof HeatResistantSlateBlockEntity heatResistantSlateBlockEntity
+                && heatResistantSlateBlockEntity.isOtherEmpty()) && !blockEntity.isValidItem(handStack);
+        return !blockEntity.isEmpty() || moldFetched;
     }
 
     @Override
     public boolean canPlace(UpPlaceBlockEntity blockEntity, ItemStack handStack) {
-        return blockEntity.isValidItem(handStack);
+        return blockEntity.isValidItem(handStack) || HeatResistantSlateBlockEntity.isCanPlaceMold(handStack);
     }
 
     @Override
@@ -165,54 +165,6 @@ public class HeatResistantSlateBlock extends UpPlaceBlock {
             // 处理相邻方块更新，检查多方块结构完整性
             MultiBlockHelper.onNeighborUpdate(world, pos, this);
         }
-    }
-
-    private void initStovePattern() {
-        Predicate<CachedBlockPosition> heatResistantSlatePredicate = cachedBlockPosition -> cachedBlockPosition.getBlockState().getBlock() instanceof HeatResistantSlateBlock;
-        Predicate<CachedBlockPosition> firewoodPredicate = cachedBlockPosition -> cachedBlockPosition.getBlockState().isAir() ||
-                cachedBlockPosition.getBlockState().getBlock() instanceof FirewoodBlock ||
-                cachedBlockPosition.getBlockState().getBlock() instanceof CombustionFirewoodBlock;
-
-        this.stove1x1 = BlockPatternBuilder.start()
-                .aisle("###", "#|#")
-                .aisle("#^#","#~#")
-                .aisle("###", "###")
-                .where('^', cachedBlockPosition -> cachedBlockPosition.getBlockState().isAir())
-                .where('#', cachedBlockPosition -> !cachedBlockPosition.getBlockState().isAir())
-                .where('|', heatResistantSlatePredicate)
-                .where('~', firewoodPredicate)
-                .build();
-        this.stove1x2 = BlockPatternBuilder.start()
-                .aisle("###", "#|#")
-                .aisle("###", "#|#")
-                .aisle("#^#","#~#")
-                .aisle("###", "###")
-                .where('^', cachedBlockPosition -> cachedBlockPosition.getBlockState().isAir())
-                .where('#', cachedBlockPosition -> !cachedBlockPosition.getBlockState().isAir())
-                .where('|', heatResistantSlatePredicate)
-                .where('~', firewoodPredicate)
-                .build();
-        this.stove2x2 = BlockPatternBuilder.start()
-                .aisle("####", "#||#")
-                .aisle("####", "#||#")
-                .aisle("#^^#","#~~#")
-                .aisle("####", "####")
-                .where('^', cachedBlockPosition -> cachedBlockPosition.getBlockState().isAir())
-                .where('#', cachedBlockPosition -> !cachedBlockPosition.getBlockState().isAir())
-                .where('|', heatResistantSlatePredicate)
-                .where('~', firewoodPredicate)
-                .build();
-        this.stove2x3 = BlockPatternBuilder.start()
-                .aisle("####", "#||#")
-                .aisle("####", "#||#")
-                .aisle("####", "#||#")
-                .aisle("#^^#","#~~#")
-                .aisle("####", "####")
-                .where('^', cachedBlockPosition -> cachedBlockPosition.getBlockState().isAir())
-                .where('#', cachedBlockPosition -> !cachedBlockPosition.getBlockState().isAir())
-                .where('|', heatResistantSlatePredicate)
-                .where('~', firewoodPredicate)
-                .build();
     }
 
     @Nullable
@@ -247,5 +199,57 @@ public class HeatResistantSlateBlock extends UpPlaceBlock {
     @Override
     public BlockRenderType getRenderType(BlockState state) {
         return BlockRenderType.MODEL;
+    }
+
+    static {
+        Predicate<CachedBlockPosition> heatResistantSlatePredicate = cachedBlockPosition -> cachedBlockPosition.getBlockState().getBlock() instanceof HeatResistantSlateBlock;
+        Predicate<CachedBlockPosition> firewoodPredicate = cachedBlockPosition -> cachedBlockPosition.getBlockState().isAir() ||
+                cachedBlockPosition.getBlockState().getBlock() instanceof FirewoodBlock ||
+                cachedBlockPosition.getBlockState().getBlock() instanceof CombustionFirewoodBlock;
+
+        stove1x1 = BlockPatternBuilder.start()
+                .aisle("?#?", "#|#")
+                .aisle("#^#","#~#")
+                .aisle("?#?", "?#?")
+                .where('^', cachedBlockPosition -> cachedBlockPosition.getBlockState().isAir())
+                .where('#', cachedBlockPosition -> !cachedBlockPosition.getBlockState().isAir())
+                .where('|', heatResistantSlatePredicate)
+                .where('~', firewoodPredicate)
+                .where('?', cachedBlockPosition -> true)
+                .build();
+        stove1x2 = BlockPatternBuilder.start()
+                .aisle("?#?", "#|#")
+                .aisle("?#?", "#|#")
+                .aisle("#^#","#~#")
+                .aisle("?#?", "?#?")
+                .where('^', cachedBlockPosition -> cachedBlockPosition.getBlockState().isAir())
+                .where('#', cachedBlockPosition -> !cachedBlockPosition.getBlockState().isAir())
+                .where('|', heatResistantSlatePredicate)
+                .where('~', firewoodPredicate)
+                .where('?', cachedBlockPosition -> true)
+                .build();
+        stove2x2 = BlockPatternBuilder.start()
+                .aisle("?##?", "#||#")
+                .aisle("?##?", "#||#")
+                .aisle("#^^#","#~~#")
+                .aisle("?##?", "?##?")
+                .where('^', cachedBlockPosition -> cachedBlockPosition.getBlockState().isAir())
+                .where('#', cachedBlockPosition -> !cachedBlockPosition.getBlockState().isAir())
+                .where('|', heatResistantSlatePredicate)
+                .where('~', firewoodPredicate)
+                .where('?', cachedBlockPosition -> true)
+                .build();
+        stove2x3 = BlockPatternBuilder.start()
+                .aisle("?##?", "#||#")
+                .aisle("?##?", "#||#")
+                .aisle("?##?", "#||#")
+                .aisle("#^^#","#~~#")
+                .aisle("?##?", "?##?")
+                .where('^', cachedBlockPosition -> cachedBlockPosition.getBlockState().isAir())
+                .where('#', cachedBlockPosition -> !cachedBlockPosition.getBlockState().isAir())
+                .where('|', heatResistantSlatePredicate)
+                .where('~', firewoodPredicate)
+                .where('?', cachedBlockPosition -> true)
+                .build();
     }
 }

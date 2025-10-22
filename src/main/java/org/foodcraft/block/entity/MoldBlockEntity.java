@@ -9,6 +9,7 @@ import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.SidedInventory;
 import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.BlockItem;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.listener.ClientPlayPacketListener;
@@ -30,6 +31,8 @@ import org.foodcraft.registry.ModBlockEntityTypes;
 import org.foodcraft.registry.ModRecipeTypes;
 import org.foodcraft.util.FoodCraftUtils;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Set;
 
 public class MoldBlockEntity extends UpPlaceBlockEntity implements SidedInventory, RecipeUnlocker, RecipeInputProvider {
     protected static final int MAX_STACK_SIZE = 1;
@@ -78,6 +81,11 @@ public class MoldBlockEntity extends UpPlaceBlockEntity implements SidedInventor
 
     @Override
     public boolean isValidItem(ItemStack stack) {
+        Item item =  Item.BLOCK_ITEMS.get(getCachedState().getBlock());
+        if (item != null) {
+            return MoldRecipe.isCanPlace(item, stack);
+        }
+
         return isValidMoldInput(stack);
     }
 

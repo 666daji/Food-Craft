@@ -31,6 +31,7 @@ import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.shape.VoxelShape;
+import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import org.dfood.block.FoodBlock;
@@ -187,14 +188,14 @@ public class HeatResistantSlateBlockEntity extends UpPlaceBlockEntity implements
             ItemStack itemStack = stacks.get(i);
             if (!itemStack.isEmpty()) {
                 NbtCompound nbtCompound = new NbtCompound();
-                nbtCompound.putByte("OtherSlot", (byte)i); // 使用不同的键名避免冲突
+                nbtCompound.putByte("OtherSlot", (byte)i);
                 itemStack.writeNbt(nbtCompound);
                 nbtList.add(nbtCompound);
             }
         }
 
         if (!nbtList.isEmpty() || setIfEmpty) {
-            nbt.put("OtherItems", nbtList); // 使用不同的键名避免冲突
+            nbt.put("OtherItems", nbtList);
         }
     }
 
@@ -202,15 +203,16 @@ public class HeatResistantSlateBlockEntity extends UpPlaceBlockEntity implements
      * 从 NBT 读取 otherStack
      */
     private void readOtherStackNbt(NbtCompound nbt, DefaultedList<ItemStack> stacks) {
-        if (!nbt.contains("OtherItems", NbtElement.LIST_TYPE)) {
+        NbtList nbtList = nbt.getList("OtherItems", NbtElement.COMPOUND_TYPE);
+
+        if (!nbt.contains("OtherItems", NbtElement.LIST_TYPE) || nbtList.isEmpty()) {
+            stacks.clear();
             return;
         }
 
-        NbtList nbtList = nbt.getList("OtherItems", NbtElement.COMPOUND_TYPE);
-
         for (int i = 0; i < nbtList.size(); i++) {
             NbtCompound nbtCompound = nbtList.getCompound(i);
-            int j = nbtCompound.getByte("OtherSlot") & 255; // 使用对应的键名
+            int j = nbtCompound.getByte("OtherSlot") & 255;
             if (j < stacks.size()) {
                 stacks.set(j, ItemStack.fromNbt(nbtCompound));
             }
@@ -219,15 +221,30 @@ public class HeatResistantSlateBlockEntity extends UpPlaceBlockEntity implements
 
     @Override
     public VoxelShape getContentShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
-        BlockState itemState = this.getInventoryBlockState();
-        Block itemBlock = itemState.getBlock();
-        if (itemBlock instanceof FoodBlock foodBlock) {
-            return FoodShapeHandle.getInstance().getShape(itemState, foodBlock.NUMBER_OF_FOOD)
-                    .offset(0.0, INPUT_OFFSET_Y, 0.0);
-        }else if (itemBlock != Blocks.AIR){
-            return itemBlock.getDefaultState().getOutlineShape(world, pos).offset(0.0, INPUT_OFFSET_Y, 0.0);
+        VoxelShape itemShape = getBlockShape(this.getInventoryBlockState(), world, pos);
+        VoxelShape otherShape = getBlockShape(this.getOtherBlockState(), world, pos);
+
+        if (!otherShape.isEmpty()){
+            itemShape.offset(0.0, INPUT_OFFSET_Y, 0.0);
         }
-        return Block.createCuboidShape(0,0,0,0,0,0);
+        return VoxelShapes.union(itemShape, otherShape);
+    }
+
+    private VoxelShape getBlockShape(BlockState blockState, BlockView world, BlockPos pos) {
+        Block block = blockState.getBlock();
+
+        if (block == Blocks.AIR) {
+            return VoxelShapes.empty();
+        }
+
+        VoxelShape shape;
+        if (block instanceof FoodBlock foodBlock) {
+            shape = FoodShapeHandle.getInstance().getShape(blockState, foodBlock.NUMBER_OF_FOOD);
+        } else {
+            shape = block.getDefaultState().getOutlineShape(world, pos);
+        }
+
+        return shape.offset(0.0, INPUT_OFFSET_Y, 0.0);
     }
 
     @Override
@@ -240,13 +257,17 @@ public class HeatResistantSlateBlockEntity extends UpPlaceBlockEntity implements
      * @param stack 待验证的物品堆栈
      * @return 是否可以放置
      */
-    protected boolean isCanPlaceMold(ItemStack stack) {
+    public static boolean isCanPlaceMold(ItemStack stack) {
         return stack.getItem() instanceof BlockItem blockItem
                 && blockItem.getBlock() instanceof MoldBlock moldBlock && moldBlock.canPlaceSlate;
     }
 
     @Override
     public ActionResult tryAddItem(ItemStack stack) {
+        if (isCanPlaceMold(stack) && tryPlaceMold(stack)){
+            return ActionResult.SUCCESS;
+        }
+
         if (stack.isEmpty() || !isValidItem(stack)) {
             return ActionResult.FAIL;
         }
@@ -258,7 +279,8 @@ public class HeatResistantSlateBlockEntity extends UpPlaceBlockEntity implements
         StoveRecipe recipe = this.matchGetter.getFirstMatch(new SimpleInventory(newStack), this.world).orElse(null);
         if (recipe != null && recipe.isNeedMold()) {
             ItemStack moldStack = this.otherStack.get(0);
-            if ((moldStack.isEmpty() || !ItemStack.areItemsEqual(moldStack, recipe.getMold()))) {
+            if (recipe.getMold() != null &&
+                    (moldStack.isEmpty() || !ItemStack.areItemsEqual(moldStack, recipe.getMold()))) {
                 return ActionResult.FAIL;
             }
         }
@@ -275,7 +297,9 @@ public class HeatResistantSlateBlockEntity extends UpPlaceBlockEntity implements
     public ActionResult tryFetchItem(PlayerEntity player) {
         ItemStack contentStack = this.getStack(0);
         if (contentStack.isEmpty()) {
-            return ActionResult.FAIL;
+            return tyeFetchMold(player)?
+                    ActionResult.SUCCESS:
+                    ActionResult.FAIL;
         }
         // 给予玩家物品
         if (!player.isCreative() && !player.giveItemStack(contentStack)) {
@@ -330,25 +354,37 @@ public class HeatResistantSlateBlockEntity extends UpPlaceBlockEntity implements
 
     /**
      * 尝试在耐热石板上放置模具
-     * @param player 执行放置操作的玩家
      * @param stack 要放置的物品堆栈
      * @return 是否成功放置模具
      */
-    public boolean tryPlaceMold(PlayerEntity player, ItemStack stack){
-        if (stack.getItem() instanceof BlockItem blockItem
-                && blockItem.getBlock() instanceof MoldBlock moldBlock && moldBlock.canPlaceSlate){
-
+    public boolean tryPlaceMold(ItemStack stack){
+        if (isCanPlaceMold(stack)){
             ItemStack moldStack = this.otherStack.get(0);
             if (moldStack.isEmpty()){
                 ItemStack newStack = stack.copy();
                 newStack.setCount(1);
                 this.otherStack.set(0, newStack);
+                this.markDirtyAndSync();
+                return true;
+            }
+        }
+        return false;
+    }
 
-                // 减少玩家手中的物品数量
-                if (!player.isCreative()) {
-                    stack.decrement(1);
+    /**
+     * 尝试取出额外物品栏中的模具
+     * @param player 执行操作的玩家
+     * @return 是否成功取出
+     */
+    public boolean tyeFetchMold(PlayerEntity player){
+        for (int i = 0; i < otherStack.size(); i++){
+            ItemStack stack = otherStack.get(i);
+            if (!stack.isEmpty()){
+                if (!player.isCreative() && !player.giveItemStack(stack)) {
+                    player.dropItem(stack, false); // 背包满时掉落
                 }
 
+                otherStack.set(i, ItemStack.EMPTY);
                 this.markDirtyAndSync();
                 return true;
             }
@@ -688,7 +724,8 @@ public class HeatResistantSlateBlockEntity extends UpPlaceBlockEntity implements
         }
 
         // 处理需要模具的配方
-        if (recipe.isNeedMold() && !(this.otherStack.get(0) == recipe.getMold())) {
+        if (recipe.getMold() != null && recipe.isNeedMold() &&
+                !ItemStack.areItemsEqual(this.otherStack.get(0), recipe.getMold())) {
             return;
         }
 
@@ -1010,11 +1047,28 @@ public class HeatResistantSlateBlockEntity extends UpPlaceBlockEntity implements
         return slot == 0;
     }
 
+    /**
+     * 获取额外的物品列表
+     * @return 额外的物品列表
+     */
     public DefaultedList<ItemStack> getOtherStacks() {
         DefaultedList<ItemStack> result = DefaultedList.ofSize(otherStack.size(), ItemStack.EMPTY);
         for (int i = 0; i < otherStack.size(); i++) {
             result.set(i, otherStack.get(i).copy());
         }
         return result;
+    }
+
+    /**
+     * 检查额外物品栏是否为空
+     * @return 是否为空
+     */
+    public boolean isOtherEmpty(){
+        for (ItemStack stack : otherStack){
+            if (!stack.isEmpty()){
+                return false;
+            }
+        }
+        return true;
     }
 }

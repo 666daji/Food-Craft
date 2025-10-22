@@ -15,6 +15,7 @@ import java.util.Objects;
 /**
  * 客户端多方块引用实现
  * 只包含显示所需的信息，不包含实际功能，数据完全从服务器同步
+ * @see ServerMultiBlockReference
  */
 public class ClientMultiBlockReference implements MultiBlockReference {
     private static final Logger LOGGER = FoodCraft.LOGGER;
@@ -81,7 +82,7 @@ public class ClientMultiBlockReference implements MultiBlockReference {
         // 基础方块
         nbt.putString(BASE_BLOCK_KEY, baseBlock.getRegistryEntry().registryKey().getValue().toString());
 
-        // 体积（用于客户端显示）
+        // 体积
         nbt.putInt("Volume", volume);
 
         LOGGER.debug("Serialized ClientMultiBlockReference: master={}, relative={}, block={}",
