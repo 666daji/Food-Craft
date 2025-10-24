@@ -1,4 +1,4 @@
-package org.foodcraft.client.blockentity;
+package org.foodcraft.client.render.blockentity;
 
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.font.TextRenderer;

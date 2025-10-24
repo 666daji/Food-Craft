@@ -11,6 +11,7 @@ import net.minecraft.util.Identifier;
 import org.dfood.util.DFoodUtils;
 import org.foodcraft.FoodCraft;
 import org.foodcraft.block.*;
+import org.foodcraft.block.entity.FlourSackBlockEntity;
 
 import java.util.function.BiFunction;
 
@@ -57,27 +58,7 @@ public class ModBlocks {
                     .nonOpaque().pistonBehavior(PistonBehavior.DESTROY), false));
 
     // 粉尘袋
-    public static final Block WHEAT_FLOUR_SACK = registerFoodBlock("wheat_flour_sack", 2,
-            AbstractBlock.Settings.create()
-                    .sounds(BlockSoundGroup.WOOL).strength(0.5F)
-                    .nonOpaque().pistonBehavior(PistonBehavior.DESTROY),
-            FlourSackBlock::new);
-    public static final Block LAPIS_LAZULI_FLOUR_SACK = registerFoodBlock("lapis_lazuli_flour_sack", 2,
-            AbstractBlock.Settings.create()
-                    .sounds(BlockSoundGroup.WOOL).strength(0.5F)
-                    .nonOpaque().pistonBehavior(PistonBehavior.DESTROY),
-            FlourSackBlock::new);
-    public static final Block COCOA_FLOUR_SACK = registerFoodBlock("cocoa_flour_sack", 2,
-            AbstractBlock.Settings.create()
-                    .sounds(BlockSoundGroup.WOOL).strength(0.5F)
-                    .nonOpaque().pistonBehavior(PistonBehavior.DESTROY),
-            FlourSackBlock::new);
-    public static final Block AMETHYST_FLOUR_SACK = registerFoodBlock("amethyst_flour_sack", 2,
-            AbstractBlock.Settings.create()
-                    .sounds(BlockSoundGroup.WOOL).strength(0.5F)
-                    .nonOpaque().pistonBehavior(PistonBehavior.DESTROY),
-            FlourSackBlock::new);
-    public static final Block SUGAR_SACK = registerFoodBlock("sugar_sack", 2,
+    public static final Block FLOUR_SACK = registerFoodBlock("flour_sack", FlourSackBlockEntity.MAX_SACK_STACK,
             AbstractBlock.Settings.create()
                     .sounds(BlockSoundGroup.WOOL).strength(0.5F)
                     .nonOpaque().pistonBehavior(PistonBehavior.DESTROY),

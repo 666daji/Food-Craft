@@ -1,11 +1,11 @@
-package org.foodcraft.client.entity;
+package org.foodcraft.client.render.model;
 
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.minecraft.client.render.entity.model.EntityModelLayer;
 import net.minecraft.util.Identifier;
 import org.foodcraft.FoodCraft;
-import org.foodcraft.client.blockentity.BracketBlockEntityRenderer;
-import org.foodcraft.client.blockentity.GrindingStoneBlockEntityRenderer;
+import org.foodcraft.client.render.blockentity.BracketBlockEntityRenderer;
+import org.foodcraft.client.render.blockentity.GrindingStoneBlockEntityRenderer;
 
 public class ModModelLayers {
     public static final EntityModelLayer BRACKET_BLOCK = registerMain("bracket_block", BracketBlockEntityRenderer::getTexturedModelData);

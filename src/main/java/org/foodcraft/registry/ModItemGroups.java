@@ -2,8 +2,6 @@ package org.foodcraft.registry;
 
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.potion.PotionUtil;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
@@ -11,7 +9,6 @@ import net.minecraft.registry.RegistryKeys;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.foodcraft.FoodCraft;
-import org.foodcraft.item.ModPotions;
 import org.foodcraft.util.FoodCraftUtils;
 
 public class ModItemGroups {
@@ -53,11 +50,6 @@ public class ModItemGroups {
 
                             // 粉尘袋
                             entries.add(ModItems.FLOUR_SACK);
-                            entries.add(ModItems.WHEAT_FLOUR_SACK);
-                            entries.add(ModItems.LAPIS_LAZULI_FLOUR_SACK);
-                            entries.add(ModItems.COCOA_FLOUR_SACK);
-                            entries.add(ModItems.AMETHYST_FLOUR_SACK);
-                            entries.add(ModItems.SUGAR_SACK);
 
                             // 面食
                             entries.add(ModItems.DOUGH);

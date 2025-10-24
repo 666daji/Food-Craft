@@ -39,5 +39,12 @@
   "grinding_stone.add.refused": "这东西可不能磨哦",
   "grinding_stone.add.full": "已经满了!",
   "grinding_stone.energy.full": "现在不需要推动石磨...",
-  "grinding_stone.add.not_enough": "这些好像不太够哦"
+  "grinding_stone.add.not_enough": "这些好像不太够哦",
+
+
+  "item.foodcraft.flour_sack.fullness": "容量: %s/%s",
+  "item.foodcraft.flour_sack.content": "%s x%s",
+  "item.foodcraft.flour_sack.tooltip.empty": "右键点击放入粉尘",
+  "item.foodcraft.flour_sack.tooltip.contents": "右键点击取出粉尘"
+
 }

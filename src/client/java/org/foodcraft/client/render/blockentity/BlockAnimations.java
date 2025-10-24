@@ -1,4 +1,4 @@
-package org.foodcraft.client.blockentity;
+package org.foodcraft.client.render.blockentity;
 
 import net.minecraft.client.render.entity.animation.Animation;
 import net.minecraft.client.render.entity.animation.AnimationHelper;

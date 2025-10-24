@@ -1,7 +1,0 @@
-{
-	"parent": "foodcraft:block/flour_sack",
-	"textures": {
-		"0": "foodcraft:block/lapis_lazuli_flour_sack",
-		"particle": "foodcraft:item/lapis_lazuli_flour_sack"
-	}
-}

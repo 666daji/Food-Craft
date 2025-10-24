@@ -3,7 +3,6 @@ package org.foodcraft;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents;
-import net.minecraft.item.ItemStack;
 import org.foodcraft.block.multi.MultiBlockManager;
 import org.foodcraft.registry.*;
 import org.foodcraft.integration.dfood.dfoodInit;
@@ -13,7 +12,6 @@ import org.slf4j.LoggerFactory;
 public class FoodCraft implements ModInitializer {
     public static final String MOD_ID = "foodcraft";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
-//    public static ItemStack NULL;
 
     @Override
     public void onInitialize() {
@@ -21,7 +19,6 @@ public class FoodCraft implements ModInitializer {
         RegistryInit.init();
         multiBlockInit();
         ModOreGeneration.registerOres();
-//        NULL.isEmpty();
         LOGGER.info("FoodCraft mod is initializing");
     }
 

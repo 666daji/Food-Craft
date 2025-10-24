@@ -1,4 +1,4 @@
-package org.foodcraft.client.blockentity;
+package org.foodcraft.client.render.blockentity;
 
 import net.minecraft.client.model.*;
 import net.minecraft.client.render.VertexConsumerProvider;
@@ -10,7 +10,7 @@ import net.minecraft.util.Identifier;
 import org.foodcraft.FoodCraft;
 import org.foodcraft.block.entity.BracketBlockEntity;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
-import org.foodcraft.client.entity.ModModelLayers;
+import org.foodcraft.client.render.model.ModModelLayers;
 import org.joml.Quaternionf;
 
 public class BracketBlockEntityRenderer implements BlockEntityRenderer<BracketBlockEntity> {

@@ -1,4 +1,4 @@
-package org.foodcraft.client.blockentity;
+package org.foodcraft.client.render.blockentity;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.block.ChestBlock;
@@ -17,7 +17,7 @@ import net.minecraft.world.World;
 import org.foodcraft.FoodCraft;
 import org.foodcraft.registry.ModBlocks;
 import org.foodcraft.block.entity.GrindingStoneBlockEntity;
-import org.foodcraft.client.entity.ModModelLayers;
+import org.foodcraft.client.render.model.ModModelLayers;
 
 public class GrindingStoneBlockEntityRenderer extends WithAnimationBlockEntityRenderer<GrindingStoneBlockEntity> {
     private final ModelPart root;
