@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "foodcraft:dough"
+    },
+    {
+      "item": "foodcraft:salt_cubes"
+    }
+  ],
+  "result": {
+    "item": "foodcraft:baguette_embryo",
+    "count": 1
+  }
+}

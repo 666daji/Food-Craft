@@ -1,0 +1,8 @@
+{
+  "type": "foodcraft:stove",
+  "ingredient": {
+    "item": "foodcraft:toast_embryo"
+  },
+  "result": "minecraft:toast",
+  "stoveTime": 16000
+}

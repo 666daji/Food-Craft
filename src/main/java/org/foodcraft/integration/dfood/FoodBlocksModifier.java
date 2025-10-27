@@ -10,10 +10,12 @@ import net.minecraft.util.ActionResult;
 import org.dfood.block.entity.SuspiciousStewBlockEntity;
 import org.dfood.block.FoodBlock;
 import org.dfood.block.FoodBlocks;
+import org.foodcraft.block.CrippledHardBreadBoatBlock;
+import org.foodcraft.registry.ModBlocks;
 
 public class FoodBlocksModifier {
     /** 能够让玩家像使用蛋糕那样使用炖菜。*/
-    protected static final FoodBlock.onUseHook stewEatHook = (state, world, pos, player, hand, hit) -> {
+    public static final FoodBlock.onUseHook stewEatHook = (state, world, pos, player, hand, hit) -> {
         if (player.canConsume(false)) {
             BlockEntity currentBlockEntity = world.getBlockEntity(pos);
             NbtCompound blockEntityData = null;

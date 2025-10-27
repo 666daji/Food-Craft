@@ -1,0 +1,14 @@
+{
+  "stove_baking": {
+    "sounds": [
+      "foodcraft:block/stove_baking_1"
+    ],
+    "subtitle": "subtitles.foodcraft.stove_baking"
+  },
+  "grinding_stone_grinding": {
+    "sounds": [
+      "foodcraft:block/grinding_stone_grinding_1"
+    ],
+    "subtitle": "subtitle.foodcraft.stone_grinding"
+  }
+}

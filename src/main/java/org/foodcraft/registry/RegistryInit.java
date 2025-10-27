@@ -10,6 +10,8 @@ public class RegistryInit {
         ModEntityTypes.registerModEntityTypes();
         ModRecipeTypes.initialize();
         ModItemGroups.RegistryModItemGroups();
+        ModSounds.initialize();
+        FoodBlocksModifier.init();
         registerShapes();
     }
 

@@ -9,9 +9,11 @@ import net.minecraft.registry.Registry;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.util.Identifier;
 import org.dfood.util.DFoodUtils;
+import org.dfood.util.IntPropertyManager;
 import org.foodcraft.FoodCraft;
 import org.foodcraft.block.*;
 import org.foodcraft.block.entity.FlourSackBlockEntity;
+import org.foodcraft.component.ModFoodComponents;
 
 import java.util.function.BiFunction;
 
@@ -101,6 +103,19 @@ public class ModBlocks {
             new SimpleFoodBlock(AbstractBlock.Settings.create()
                     .sounds(BlockSoundGroup.WOOL).strength(0.2F)
                     .nonOpaque().pistonBehavior(PistonBehavior.DESTROY)));
+    public static final Block HARD_BREAD_BOAT = registerBlock("hard_bread_boat",
+            new SimpleFoodBlock(AbstractBlock.Settings.create().sounds(BlockSoundGroup.WOOL).strength(0.2F)
+                    .nonOpaque().pistonBehavior(PistonBehavior.DESTROY)));
+
+    // 过渡方块
+    public static final Block BEETROOT_SOUP_HARD_BREAD_BOAT = registerAssistedBlock("crippled_beetroot_hard_bread_boat",
+            AbstractBlock.Settings.create().sounds(BlockSoundGroup.WOOL).strength(0.2F)
+                    .nonOpaque().pistonBehavior(PistonBehavior.DESTROY),
+            ((settings, maxUse) -> new CrippledHardBreadBoatBlock(settings, maxUse, ModFoodComponents.BEETROOT_SOUP_HARD_BREAD_BOAT, ModBlocks.HARD_BREAD_BOAT)), 4);
+    public static final Block MUSHROOM_STEW_HARD_BREAD_BOAT = registerAssistedBlock("crippled_mushroom_hard_bread_boat",
+            AbstractBlock.Settings.create().sounds(BlockSoundGroup.WOOL).strength(0.2F)
+                    .nonOpaque().pistonBehavior(PistonBehavior.DESTROY),
+            ((settings, maxUse) -> new CrippledHardBreadBoatBlock(settings, maxUse, ModFoodComponents.MUSHROOM_STEW_HARD_BREAD_BOAT, ModBlocks.HARD_BREAD_BOAT)), 4);
 
     // 调味料
     public static final Block SALT_SHAKER = registerBlock("salt_shaker",
@@ -120,9 +135,24 @@ public class ModBlocks {
         return Registry.register(Registries.BLOCK, new Identifier(FoodCraft.MOD_ID, name), block);
     }
 
+    /**
+     * 注册食物方块
+     * @param name 方块的id
+     * @param foodValue 食物方块的最大堆叠数量
+     * @param settings 方块设置
+     * @param blockCreator 食物方块的构造函数
+     * @return 注册后的方块
+     */
     public static Block registerFoodBlock(String name, int foodValue, AbstractBlock.Settings settings,
                                           BiFunction<AbstractBlock.Settings, Integer, Block> blockCreator) {
         Block block = DFoodUtils.createFoodBlock(foodValue, settings, blockCreator);
+        return Registry.register(Registries.BLOCK, new Identifier(FoodCraft.MOD_ID, name), block);
+    }
+
+    public static Block registerAssistedBlock(String name, AbstractBlock.Settings settings,
+                                              BiFunction<AbstractBlock.Settings, Integer, Block> blockCreator, int maxUse) {
+        IntPropertyManager.preCache("number_of_use", maxUse);
+        Block block = blockCreator.apply(settings, maxUse);
         return Registry.register(Registries.BLOCK, new Identifier(FoodCraft.MOD_ID, name), block);
     }
 

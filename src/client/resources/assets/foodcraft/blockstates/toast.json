@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "foodcraft:block/toast",
+      "y": 180
+    },
+    "facing=south": {
+      "model": "foodcraft:block/toast"
+    },
+    "facing=east": {
+      "model": "foodcraft:block/toast",
+      "y": 270
+    },
+    "facing=west": {
+      "model": "foodcraft:block/toast",
+      "y": 90
+    }
+  }
+}

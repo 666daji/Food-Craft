@@ -32,8 +32,8 @@ public class CrippledStewBlock extends CrippledBlock {
     public static final DirectionProperty FACING = Properties.HORIZONTAL_FACING;
     private static final FoodShapeHandle foodShapeHandle = FoodShapeHandle.getInstance();
 
-    public CrippledStewBlock(Settings settings, FoodComponent foodComponent, Block baseBlock) {
-        super(settings, 4, baseBlock, new ItemStack(Items.BOWL));
+    public CrippledStewBlock(Settings settings, int maxUse, FoodComponent foodComponent, Block baseBlock) {
+        super(settings, maxUse, baseBlock, new ItemStack(Items.BOWL));
         this.foodComponent = foodComponent;
     }
 
@@ -51,15 +51,19 @@ public class CrippledStewBlock extends CrippledBlock {
             player.getHungerManager().add(foodComponent.getHunger() / 4, foodComponent.getSaturationModifier() / 4.0F);
             int i = state.get(NUMBER_OF_USE);
             world.emitGameEvent(player, GameEvent.EAT, pos);
-            if (i < 4) {
+            if (i < useNumber) {
                 world.setBlockState(pos, state.with(NUMBER_OF_USE, i + 1), Block.NOTIFY_ALL);
             } else {
-                world.setBlockState(pos, FoodBlocks.BOWL.getDefaultState()
-                        .with(FACING, state.get(FACING)), Block.NOTIFY_ALL);
+                world.setBlockState(pos, getUseFinishesState(world, pos, state, player), Block.NOTIFY_ALL);
             }
 
             return ActionResult.SUCCESS;
         }
+    }
+
+    @Override
+    protected BlockState getUseFinishesState(WorldAccess world, BlockPos pos, BlockState state, PlayerEntity player) {
+        return FoodBlocks.BOWL.getDefaultState().with(FACING, state.get(FACING));
     }
 
     @Override

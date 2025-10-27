@@ -2,6 +2,7 @@ package org.foodcraft.block;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.loot.context.LootContextParameterSet;
@@ -24,7 +25,9 @@ import java.util.List;
 public abstract class CrippledBlock extends Block {
     public final IntProperty NUMBER_OF_USE;
     public final int useNumber;
+    /** 表示被使用之前的方块 */
     protected final Block baseBlock;
+    /** 破坏方块后的掉落物 */
     protected final List<ItemStack> Remainder;
 
     public CrippledBlock(Settings settings, int useNumber, Block baseBlock, ItemStack... Remainder) {
@@ -51,7 +54,27 @@ public abstract class CrippledBlock extends Block {
         return tryUse(world, pos, state, player);
     }
 
+    /**
+     * 尝试使用该方块
+     * @param world 当前的世界
+     * @param pos 方块的位置
+     * @param state 当前的方块状态
+     * @param player 使用方块的玩家实体
+     * @return 使用的结果
+     */
     protected abstract ActionResult tryUse(WorldAccess world, BlockPos pos, BlockState state, PlayerEntity player);
+
+    /**
+     * 获取方块使用完之后方块状态
+     * @param world 当前的世界
+     * @param pos 方块的位置
+     * @param state 当前的方块状态
+     * @param player 使用方块的玩家实体
+     * @return 使用完之后的方块状态
+     */
+    protected BlockState getUseFinishesState(WorldAccess world, BlockPos pos, BlockState state, PlayerEntity player){
+        return Blocks.AIR.getDefaultState();
+    }
 
     public boolean isBaseBlock(BlockState state) {
         return state.getBlock() == baseBlock;

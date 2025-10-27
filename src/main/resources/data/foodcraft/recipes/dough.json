@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "BB ",
+    "AAA",
+    "   "
+  ],
+  "key": {
+    "A": {
+      "item": "foodcraft:wheat_flour"
+    },
+    "B": {
+      "item": "minecraft:potion",
+      "nbt": "{CustomPotionColor:15792383}"
+    }
+  },
+  "result": {
+    "item": "foodcraft:dough",
+    "count": 1
+  }
+}

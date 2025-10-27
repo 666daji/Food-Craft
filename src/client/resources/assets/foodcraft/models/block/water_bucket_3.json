@@ -2,7 +2,7 @@
 	"credit": "Made with Blockbench",
 	"texture_size": [64, 64],
 	"textures": {
-      "1": "minecraft:block/water_bucket",
+      "1": "foodcraft:block/water_bucket_3",
       "particle": "minecraft:item/water_bucket"
 	},
 	"elements": [

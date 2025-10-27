@@ -19,8 +19,8 @@ import org.dfood.block.entity.SuspiciousStewBlockEntity;
 import org.jetbrains.annotations.Nullable;
 
 public class CrippledSuspiciousStewBlock extends CrippledStewBlock implements BlockEntityProvider {
-    public CrippledSuspiciousStewBlock(Settings settings, FoodComponent foodComponent, Block baseBlock) {
-        super(settings, foodComponent, baseBlock);
+    public CrippledSuspiciousStewBlock(Settings settings, int maxUse, FoodComponent foodComponent, Block baseBlock) {
+        super(settings, maxUse, foodComponent, baseBlock);
     }
 
     @Override

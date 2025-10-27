@@ -41,6 +41,7 @@ public class ModItemGroups {
                             entries.add(ModItems.IRON_DISHES);
                             entries.add(ModItems.WOODEN_SHELF);
                             entries.add(ModItems.CAKE_EMBRYO_MOLD);
+                            entries.add(ModItems.TOAST_MOLD);
 
                             // 粉尘
                             entries.add(ModItems.WHEAT_FLOUR);
@@ -58,7 +59,10 @@ public class ModItemGroups {
                             entries.add(ModItems.SMALL_BREAD);
                             entries.add(ModItems.BAGUETTE);
                             entries.add(ModItems.BAGUETTE_EMBRYO);
+                            entries.add(ModItems.FLUFFY_BREAD_EMBRYO);
+                            entries.add(ModItems.TOAST);
                             entries.add(ModItems.CAKE_EMBRYO);
+                            entries.add(ModItems.HARD_BREAD_BOAT);
 
                             // 调味料
                             entries.add(ModItems.SALT_CUBES);

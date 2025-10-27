@@ -8,6 +8,7 @@ import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
+import net.minecraft.sound.SoundCategory;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.DirectionProperty;
 import net.minecraft.state.property.Properties;
@@ -19,12 +20,14 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.random.Random;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import org.foodcraft.block.entity.GrindingStoneBlockEntity;
 import org.foodcraft.registry.ModBlockEntityTypes;
+import org.foodcraft.registry.ModSounds;
 import org.jetbrains.annotations.Nullable;
 
 public class GrindingStoneBlock extends BlockWithEntity {
@@ -130,6 +133,26 @@ public class GrindingStoneBlock extends BlockWithEntity {
                         pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, stack);
                 itemEntity.setToDefaultPickupDelay();
                 world.spawnEntity(itemEntity);
+            }
+        }
+    }
+
+    @Override
+    public void randomDisplayTick(BlockState state, World world, BlockPos pos, Random random) {
+        BlockEntity blockEntity = world.getBlockEntity(pos);
+
+        if (blockEntity instanceof GrindingStoneBlockEntity grindingStoneBlockEntity && grindingStoneBlockEntity.isGrinding()){
+            if (random.nextInt(2) == 0) {
+                world.playSound(
+                        pos.getX() + 0.5,
+                        pos.getY() + 0.5,
+                        pos.getZ() + 0.5,
+                        ModSounds.GRINDING_STONE_GRINDING,
+                        SoundCategory.BLOCKS,
+                        0.5F + random.nextFloat(),
+                        random.nextFloat() * 0.7F + 0.6F,
+                        false
+                );
             }
         }
     }

@@ -35,8 +35,8 @@ public class CrippledBucketBlock extends CrippledBlock {
 
     private final Potion potionType;
 
-    public CrippledBucketBlock(Settings settings, Block baseBlock, Potion potionType) {
-        super(settings, 3, baseBlock, new ItemStack(Items.BUCKET));
+    public CrippledBucketBlock(Settings settings, int maxUse, Block baseBlock, Potion potionType) {
+        super(settings, maxUse, baseBlock, new ItemStack(Items.BUCKET));
         this.potionType = potionType;
     }
 
@@ -76,14 +76,18 @@ public class CrippledBucketBlock extends CrippledBlock {
                 world.setBlockState(pos, state.with(NUMBER_OF_USE, i + 1), Block.NOTIFY_ALL);
             } else {
                 // 水用完了，变成空桶
-                world.setBlockState(pos, FoodBlocks.BUCKET.getDefaultState()
-                        .with(FACING, state.get(FACING)), Block.NOTIFY_ALL);
+                world.setBlockState(pos, getUseFinishesState(world, pos, state, player), Block.NOTIFY_ALL);
             }
 
             return ActionResult.SUCCESS;
         }
 
         return ActionResult.PASS;
+    }
+
+    @Override
+    protected BlockState getUseFinishesState(WorldAccess world, BlockPos pos, BlockState state, PlayerEntity player) {
+        return FoodBlocks.BUCKET.getDefaultState().with(FACING, state.get(FACING));
     }
 
     @Override

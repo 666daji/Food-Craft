@@ -31,6 +31,7 @@ import org.foodcraft.block.entity.HeatResistantSlateBlockEntity;
 import org.foodcraft.block.entity.UpPlaceBlockEntity;
 import org.foodcraft.block.multi.MultiBlockHelper;
 import org.foodcraft.registry.ModBlockEntityTypes;
+import org.foodcraft.registry.ModSounds;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Predicate;
@@ -116,12 +117,12 @@ public class HeatResistantSlateBlock extends UpPlaceBlock {
                             0.0, 0.07, 0.0);
                 }
             }
-            if (random.nextInt(10) == 0) {
+            if (random.nextInt(3) == 0) {
                 world.playSound(
                         pos.getX() + 0.5,
                         pos.getY() + 0.5,
                         pos.getZ() + 0.5,
-                        SoundEvents.BLOCK_CAMPFIRE_CRACKLE,
+                        ModSounds.COOKING_SOUND,
                         SoundCategory.BLOCKS,
                         0.5F + random.nextFloat(),
                         random.nextFloat() * 0.7F + 0.6F,

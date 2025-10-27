@@ -5,13 +5,17 @@ import net.minecraft.block.BlockEntityProvider;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.loot.context.LootContextParameterSet;
 import net.minecraft.loot.context.LootContextParameters;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtList;
+import net.minecraft.state.StateManager;
+import net.minecraft.state.property.IntProperty;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 import org.dfood.block.FoodBlock;
 import org.foodcraft.block.entity.FlourSackBlockEntity;
@@ -20,12 +24,30 @@ import org.foodcraft.item.FlourSackItem;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 public class FlourSackBlock extends FoodBlock implements BlockEntityProvider {
+    public static final IntProperty SHELF_INDEX = IntProperty.of("shelf_index", 0, 1);
 
     public FlourSackBlock(Settings settings, int maxFood) {
         super(settings, maxFood);
+        this.setDefaultState(this.getDefaultState()
+                .with(FACING, Direction.NORTH)
+                .with(NUMBER_OF_FOOD, 1)
+                .with(SHELF_INDEX, 0));
+    }
+
+    @Override
+    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
+        super.appendProperties(builder);
+        builder.add(SHELF_INDEX);
+    }
+
+    @Override
+    public @Nullable BlockState getPlacementState(ItemPlacementContext ctx) {
+        return Objects.requireNonNull(super.getPlacementState(ctx))
+                .with(SHELF_INDEX, 0);
     }
 
     @Override
@@ -39,8 +61,7 @@ public class FlourSackBlock extends FoodBlock implements BlockEntityProvider {
             return handleSackStacking(state, world, pos, handStack, (FlourSackBlockEntity) blockEntity);
         }
 
-        // 回退到父类逻辑
-        return super.tryAdd(state, world, pos, player, handStack, blockEntity);
+        return false;
     }
 
     @Override
@@ -235,9 +256,6 @@ public class FlourSackBlock extends FoodBlock implements BlockEntityProvider {
         } else {
             BlockState newState = state.with(NUMBER_OF_FOOD, sackCount);
             world.setBlockState(pos, newState, Block.NOTIFY_ALL);
-
-            // 确保方块实体数据也同步
-            entity.markDirtyAndSync();
         }
     }
 

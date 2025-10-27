@@ -15,4 +15,12 @@ public class ModFoodComponents {
             .hunger(2)
             .saturationModifier(0.9f)
             .build();
+    public static final FoodComponent BEETROOT_SOUP_HARD_BREAD_BOAT = new FoodComponent.Builder()
+            .hunger(8)
+            .saturationModifier(0.9f)
+            .build();
+    public static final FoodComponent MUSHROOM_STEW_HARD_BREAD_BOAT = new FoodComponent.Builder()
+            .hunger(8)
+            .saturationModifier(0.9f)
+            .build();
 }
