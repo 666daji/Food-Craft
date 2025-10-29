@@ -11,24 +11,11 @@ public class RegistryInit {
         ModRecipeTypes.initialize();
         ModItemGroups.RegistryModItemGroups();
         ModSounds.initialize();
-        FoodBlocksModifier.init();
         registerShapes();
     }
 
     private static void registerShapes() {
-        Shapes.shapeMap.put("foodcraft:wheat_flour_sack",new int[][]{
-                {1, 2, 8}
-        });
-        Shapes.shapeMap.put("foodcraft:lapis_lazuli_flour_sack",new int[][]{
-                {1, 2, 8}
-        });
-        Shapes.shapeMap.put("foodcraft:cocoa_flour_sack",new int[][]{
-                {1, 2, 8}
-        });
-        Shapes.shapeMap.put("foodcraft:amethyst_flour_sack",new int[][]{
-                {1, 2, 8}
-        });
-        Shapes.shapeMap.put("foodcraft:sugar_sack",new int[][]{
+        Shapes.shapeMap.put("foodcraft:flour_sack",new int[][]{
                 {1, 2, 8}
         });
 

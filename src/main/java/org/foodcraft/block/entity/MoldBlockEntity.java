@@ -32,8 +32,6 @@ import org.foodcraft.registry.ModRecipeTypes;
 import org.foodcraft.util.FoodCraftUtils;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Set;
-
 public class MoldBlockEntity extends UpPlaceBlockEntity implements SidedInventory, RecipeUnlocker, RecipeInputProvider {
     protected static final int MAX_STACK_SIZE = 1;
 
@@ -81,7 +79,7 @@ public class MoldBlockEntity extends UpPlaceBlockEntity implements SidedInventor
 
     @Override
     public boolean isValidItem(ItemStack stack) {
-        Item item =  Item.BLOCK_ITEMS.get(getCachedState().getBlock());
+        Item item = Item.BLOCK_ITEMS.get(getCachedState().getBlock());
         if (item != null) {
             return MoldRecipe.isCanPlace(item, stack);
         }

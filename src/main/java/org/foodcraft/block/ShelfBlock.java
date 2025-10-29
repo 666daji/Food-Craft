@@ -18,14 +18,11 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
 import net.minecraft.world.WorldView;
 import org.dfood.tag.ModTags;
-import org.foodcraft.FoodCraft;
 import org.foodcraft.block.entity.ShelfBlockEntity;
 import org.foodcraft.block.entity.UpPlaceBlockEntity;
 import org.jetbrains.annotations.Nullable;
-import org.slf4j.Logger;
 
 public class ShelfBlock extends UpPlaceBlock {
-    public static final Logger LOGGER = FoodCraft.LOGGER;
     public static final DirectionProperty FACING = Properties.HORIZONTAL_FACING;
     private static final VoxelShape WEST_SHAPE = Block.createCuboidShape(0,0,0,8,5,16);
     private static final VoxelShape NORTH_SHAPE = Block.createCuboidShape(0,0,0,16,5,8);
@@ -119,6 +116,8 @@ public class ShelfBlock extends UpPlaceBlock {
                 // 使用自定义的掉落物逻辑
                 if (!world.isClient()) {
                     ItemScatterer.spawn(world, pos, shelfBlockEntity.getDroppedStacks());
+                    shelfBlockEntity.clear();
+                    world.updateComparators(pos, this);
                 }
             }
             super.onStateReplaced(state, world, pos, newState, moved);

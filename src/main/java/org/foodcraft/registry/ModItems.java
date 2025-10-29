@@ -23,6 +23,7 @@ public class ModItems {
     public static final Item WOODEN_SHELF = registerItem(ModBlocks.WOODEN_SHELF);
     public static final Item CAKE_EMBRYO_MOLD = registerItem(ModBlocks.CAKE_EMBRYO_MOLD);
     public static final Item TOAST_MOLD = registerItem(ModBlocks.TOAST_MOLD);
+    public static final Item CUTTING_BOARD = registerItem(ModBlocks.CUTTING_BOARD);
 
     // 粉尘
     public static final Item WHEAT_FLOUR = registerItem("wheat_flour",
@@ -44,7 +45,6 @@ public class ModItems {
     public static final Item SMALL_BREAD = registerItem(ModBlocks.SMALL_BREAD, new Item.Settings().food(ModFoodComponents.SMALL_BREAD));
     public static final Item BAGUETTE = registerItem(ModBlocks.BAGUETTE, new Item.Settings().food(ModFoodComponents.BAGUETTE));
     public static final Item BAGUETTE_EMBRYO = registerItem(ModBlocks.BAGUETTE_EMBRYO);
-    public static final Item FLUFFY_BREAD_EMBRYO = registerItem(ModBlocks.FLUFFY_BREAD_EMBRYO);
     public static final Item TOAST = registerItem(ModBlocks.TOAST);
     public static final Item CAKE_EMBRYO = registerItem(ModBlocks.CAKE_EMBRYO);
     public static final Item HARD_BREAD_BOAT = registerItem(ModBlocks.HARD_BREAD_BOAT);

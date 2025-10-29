@@ -33,7 +33,6 @@ public class ModBlockEntityTypes {
                     ModBlocks.IRON_DISHES
             )
     );
-
     public static final BlockEntityType<ShelfBlockEntity> SHELF = create("shelf",
             BlockEntityType.Builder.create(
                     ShelfBlockEntity::new,
@@ -57,7 +56,14 @@ public class ModBlockEntityTypes {
             BlockEntityType.Builder.create(
                     FlourSackBlockEntity::new,
                     ModBlocks.FLOUR_SACK
-            ));
+            )
+    );
+    public static final BlockEntityType<CuttingBoardBlockEntity> CUTTING_BOARD = create("cutting_board",
+            BlockEntityType.Builder.create(
+                    CuttingBoardBlockEntity::new,
+                    ModBlocks.CUTTING_BOARD
+            )
+    );
 
     private static <T extends BlockEntity> BlockEntityType<T> create(String id, BlockEntityType.Builder<T> builder) {
         return Registry.register(Registries.BLOCK_ENTITY_TYPE, new Identifier(FoodCraft.MOD_ID, id), builder.build(null));

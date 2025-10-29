@@ -1,8 +1,9 @@
 {
+	"format_version": "1.21.6",
 	"credit": "Made with Blockbench",
 	"textures": {
 		"1": "foodcraft:block/wooden_shelf",
-    	"particle": "minecraft:block/spruce_planks"
+		"particle": "block/spruce_planks"
 	},
 	"elements": [
 		{
@@ -47,8 +48,16 @@
 	],
 	"display": {
 		"firstperson_righthand": {
-			"rotation": [1, 0, 0],
-			"translation": [0, 7.75, 0]
+			"rotation": [1, 13, 0],
+			"translation": [-1.5, 5, 2]
+		},
+		"firstperson_lefthand": {
+			"rotation": [0, 9, 0],
+			"translation": [5, 4.5, 0.75]
+		},
+		"ground": {
+			"translation": [-2, 3.25, 0],
+			"scale": [0.6, 0.6, 0.6]
 		},
 		"gui": {
 			"rotation": [28, -51, 0],
@@ -57,6 +66,10 @@
 		"fixed": {
 			"rotation": [-90, 0, 0],
 			"translation": [-4.5, 0, -4]
+		},
+		"on_shelf": {
+			"rotation": [0, -91, 0],
+			"translation": [0.5, 0, 0]
 		}
 	},
 	"groups": [

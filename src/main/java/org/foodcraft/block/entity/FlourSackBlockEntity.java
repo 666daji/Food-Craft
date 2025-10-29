@@ -21,17 +21,12 @@ import java.util.Optional;
  * 粉尘袋方块实体，管理堆叠和内容物
  */
 public class FlourSackBlockEntity extends BlockEntity {
-
-    // NBT键常量
     public static final String ITEMS_KEY = "Items";
     private static final String SACK_COUNT_KEY = "SackCount";
-
-    // 配置常量
     public static final int MAX_SACK_STACK = 2;
     private static final int ITEMS_PER_SACK = 64;
     public static final int DEFAULT_FLOUR_COLOR = 0xFFFFFF; // 默认白色
 
-    // 数据存储
     private DefaultedList<ItemStack> sackContents;
     private int sackCount;
 
@@ -39,8 +34,6 @@ public class FlourSackBlockEntity extends BlockEntity {
         super(ModBlockEntityTypes.FLOUR_SACK, pos, state);
         this.sackContents = DefaultedList.ofSize(MAX_SACK_STACK, ItemStack.EMPTY);
     }
-
-    // ========== 数据同步方法 ==========
 
     @Override
     public NbtCompound toInitialChunkDataNbt() {
@@ -69,8 +62,6 @@ public class FlourSackBlockEntity extends BlockEntity {
         }
     }
 
-    // ========== NBT操作 ==========
-
     /**
      * 从物品NBT读取数据到方块实体
      */
@@ -80,7 +71,6 @@ public class FlourSackBlockEntity extends BlockEntity {
         }
 
         if (nbt.contains(SACK_COUNT_KEY)) {
-            System.out.println("成功同步数量" + nbt.getInt(SACK_COUNT_KEY));
             this.sackCount = nbt.getInt(SACK_COUNT_KEY);
         }
     }
@@ -105,8 +95,6 @@ public class FlourSackBlockEntity extends BlockEntity {
         super.writeNbt(nbt);
         writeItemNbt(nbt);
     }
-
-    // ========== 堆叠管理 ==========
 
     public int getSackCount() {
         return sackCount;
@@ -159,8 +147,6 @@ public class FlourSackBlockEntity extends BlockEntity {
 
         return createSackItem(removedContent);
     }
-
-    // ========== 内容物管理 ==========
 
     /**
      * 获取指定位置的粉尘袋内容物
@@ -260,8 +246,6 @@ public class FlourSackBlockEntity extends BlockEntity {
     public void forceSync() {
         markDirtyAndSync();
     }
-
-    // ========== 私有辅助方法 ==========
 
     /**
      * 从NBT加载物品列表

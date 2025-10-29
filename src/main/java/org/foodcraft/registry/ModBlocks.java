@@ -13,7 +13,6 @@ import org.dfood.util.IntPropertyManager;
 import org.foodcraft.FoodCraft;
 import org.foodcraft.block.*;
 import org.foodcraft.block.entity.FlourSackBlockEntity;
-import org.foodcraft.component.ModFoodComponents;
 
 import java.util.function.BiFunction;
 
@@ -58,6 +57,10 @@ public class ModBlocks {
             new MoldBlock(AbstractBlock.Settings.create()
                     .sounds(BlockSoundGroup.WOOL).sounds(BlockSoundGroup.WOOL).strength(0.2F)
                     .nonOpaque().pistonBehavior(PistonBehavior.DESTROY), false));
+    public static final Block CUTTING_BOARD = registerBlock("cutting_board",
+            new CuttingBoardBlock(AbstractBlock.Settings.create()
+                    .sounds(BlockSoundGroup.WOOL).sounds(BlockSoundGroup.WOOL).strength(0.2F)
+                    .nonOpaque().pistonBehavior(PistonBehavior.DESTROY)));
 
     // 粉尘袋
     public static final Block FLOUR_SACK = registerFoodBlock("flour_sack", FlourSackBlockEntity.MAX_SACK_STACK,
@@ -91,10 +94,6 @@ public class ModBlocks {
             new SimpleFoodBlock(AbstractBlock.Settings.create()
                     .sounds(BlockSoundGroup.WOOL).strength(0.2F)
                     .nonOpaque().pistonBehavior(PistonBehavior.DESTROY)));
-    public static final Block FLUFFY_BREAD_EMBRYO = registerBlock("fluffy_bread_embryo",
-            new SimpleFoodBlock(AbstractBlock.Settings.create()
-                    .sounds(BlockSoundGroup.WOOL).strength(0.2F)
-                    .nonOpaque().pistonBehavior(PistonBehavior.DESTROY)));
     public static final Block TOAST = registerBlock("toast",
             new SimpleFoodBlock(AbstractBlock.Settings.create()
                     .sounds(BlockSoundGroup.WOOL).strength(0.2F)
@@ -103,19 +102,10 @@ public class ModBlocks {
             new SimpleFoodBlock(AbstractBlock.Settings.create()
                     .sounds(BlockSoundGroup.WOOL).strength(0.2F)
                     .nonOpaque().pistonBehavior(PistonBehavior.DESTROY)));
-    public static final Block HARD_BREAD_BOAT = registerBlock("hard_bread_boat",
-            new SimpleFoodBlock(AbstractBlock.Settings.create().sounds(BlockSoundGroup.WOOL).strength(0.2F)
-                    .nonOpaque().pistonBehavior(PistonBehavior.DESTROY)));
-
-    // 过渡方块
-    public static final Block BEETROOT_SOUP_HARD_BREAD_BOAT = registerAssistedBlock("crippled_beetroot_hard_bread_boat",
+    public static final Block HARD_BREAD_BOAT = registerBreadBoatBlock("hard_bread_boat",
             AbstractBlock.Settings.create().sounds(BlockSoundGroup.WOOL).strength(0.2F)
                     .nonOpaque().pistonBehavior(PistonBehavior.DESTROY),
-            ((settings, maxUse) -> new CrippledHardBreadBoatBlock(settings, maxUse, ModFoodComponents.BEETROOT_SOUP_HARD_BREAD_BOAT, ModBlocks.HARD_BREAD_BOAT)), 4);
-    public static final Block MUSHROOM_STEW_HARD_BREAD_BOAT = registerAssistedBlock("crippled_mushroom_hard_bread_boat",
-            AbstractBlock.Settings.create().sounds(BlockSoundGroup.WOOL).strength(0.2F)
-                    .nonOpaque().pistonBehavior(PistonBehavior.DESTROY),
-            ((settings, maxUse) -> new CrippledHardBreadBoatBlock(settings, maxUse, ModFoodComponents.MUSHROOM_STEW_HARD_BREAD_BOAT, ModBlocks.HARD_BREAD_BOAT)), 4);
+            BreadBoatBlock::new, 4);
 
     // 调味料
     public static final Block SALT_SHAKER = registerBlock("salt_shaker",
@@ -149,9 +139,9 @@ public class ModBlocks {
         return Registry.register(Registries.BLOCK, new Identifier(FoodCraft.MOD_ID, name), block);
     }
 
-    public static Block registerAssistedBlock(String name, AbstractBlock.Settings settings,
-                                              BiFunction<AbstractBlock.Settings, Integer, Block> blockCreator, int maxUse) {
-        IntPropertyManager.preCache("number_of_use", maxUse);
+    public static Block registerBreadBoatBlock(String name, AbstractBlock.Settings settings,
+                                               BiFunction<AbstractBlock.Settings, Integer, Block> blockCreator, int maxUse) {
+        IntPropertyManager.preCache("bites", 0, maxUse);
         Block block = blockCreator.apply(settings, maxUse);
         return Registry.register(Registries.BLOCK, new Identifier(FoodCraft.MOD_ID, name), block);
     }

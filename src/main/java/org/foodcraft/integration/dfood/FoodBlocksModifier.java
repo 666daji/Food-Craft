@@ -10,8 +10,6 @@ import net.minecraft.util.ActionResult;
 import org.dfood.block.entity.SuspiciousStewBlockEntity;
 import org.dfood.block.FoodBlock;
 import org.dfood.block.FoodBlocks;
-import org.foodcraft.block.CrippledHardBreadBoatBlock;
-import org.foodcraft.registry.ModBlocks;
 
 public class FoodBlocksModifier {
     /** 能够让玩家像使用蛋糕那样使用炖菜。*/

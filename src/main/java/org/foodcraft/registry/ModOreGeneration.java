@@ -13,8 +13,8 @@ public class ModOreGeneration {
     public static void registerOres() {
         // 注册盐矿生成
         BiomeModifications.addFeature(
-                BiomeSelectors.foundInOverworld(), // 选择所有主世界生物群系
-                GenerationStep.Feature.UNDERGROUND_ORES, // 在矿石生成阶段
+                BiomeSelectors.foundInOverworld(),
+                GenerationStep.Feature.UNDERGROUND_ORES,
                 RegistryKey.of(RegistryKeys.PLACED_FEATURE,
                         new Identifier(FoodCraft.MOD_ID, "ore_salt_middle"))
         );
