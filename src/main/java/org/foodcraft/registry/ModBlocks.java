@@ -49,14 +49,6 @@ public class ModBlocks {
             new ShelfBlock(AbstractBlock.Settings.create()
                     .sounds(BlockSoundGroup.WOOD).strength(0.5F)
                     .nonOpaque().pistonBehavior(PistonBehavior.DESTROY)));
-    public static final Block CAKE_EMBRYO_MOLD = registerBlock("cake_embryo_mold",
-            new MoldBlock(AbstractBlock.Settings.create()
-                    .sounds(BlockSoundGroup.WOOL).strength(0.2F)
-                    .nonOpaque().pistonBehavior(PistonBehavior.DESTROY), true));
-    public static final Block TOAST_MOLD = registerBlock("toast_mold",
-            new MoldBlock(AbstractBlock.Settings.create()
-                    .sounds(BlockSoundGroup.WOOL).sounds(BlockSoundGroup.WOOL).strength(0.2F)
-                    .nonOpaque().pistonBehavior(PistonBehavior.DESTROY), false));
     public static final Block CUTTING_BOARD = registerBlock("cutting_board",
             new CuttingBoardBlock(AbstractBlock.Settings.create()
                     .sounds(BlockSoundGroup.WOOL).sounds(BlockSoundGroup.WOOL).strength(0.2F)
@@ -102,10 +94,24 @@ public class ModBlocks {
             new SimpleFoodBlock(AbstractBlock.Settings.create()
                     .sounds(BlockSoundGroup.WOOL).strength(0.2F)
                     .nonOpaque().pistonBehavior(PistonBehavior.DESTROY)));
+    public static final Block BAKED_CAKE_EMBRYO = registerBlock("baked_cake_embryo",
+            new SimpleFoodBlock(AbstractBlock.Settings.create()
+                    .sounds(BlockSoundGroup.WOOL).strength(0.2F)
+                    .nonOpaque().pistonBehavior(PistonBehavior.DESTROY)));
     public static final Block HARD_BREAD_BOAT = registerBreadBoatBlock("hard_bread_boat",
             AbstractBlock.Settings.create().sounds(BlockSoundGroup.WOOL).strength(0.2F)
                     .nonOpaque().pistonBehavior(PistonBehavior.DESTROY),
             BreadBoatBlock::new, 4);
+
+    // 模具
+    public static final Block CAKE_EMBRYO_MOLD = registerBlock("cake_embryo_mold",
+            new MoldBlock(AbstractBlock.Settings.create()
+                    .sounds(BlockSoundGroup.WOOL).strength(0.2F)
+                    .nonOpaque().pistonBehavior(PistonBehavior.DESTROY), true));
+    public static final Block TOAST_MOLD = registerBlock("toast_mold",
+            new MoldBlock(AbstractBlock.Settings.create()
+                    .sounds(BlockSoundGroup.WOOL).sounds(BlockSoundGroup.WOOL).strength(0.2F)
+                    .nonOpaque().pistonBehavior(PistonBehavior.DESTROY), false));
 
     // 调味料
     public static final Block SALT_SHAKER = registerBlock("salt_shaker",

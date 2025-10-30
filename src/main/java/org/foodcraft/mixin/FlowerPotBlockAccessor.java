@@ -11,5 +11,7 @@ import java.util.Map;
 public interface FlowerPotBlockAccessor {
 
     @Accessor("CONTENT_TO_POTTED")
-    Map<Block, Block> getContentToPotted();
+    static Map<Block, Block> getContentToPotted() {
+        throw new AssertionError();
+    }
 }

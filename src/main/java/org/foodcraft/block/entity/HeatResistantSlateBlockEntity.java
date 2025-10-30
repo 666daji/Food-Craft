@@ -24,10 +24,8 @@ import net.minecraft.recipe.*;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.collection.DefaultedList;
-import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.shape.VoxelShape;
@@ -42,6 +40,8 @@ import org.foodcraft.block.FirewoodBlock;
 import org.foodcraft.block.HeatResistantSlateBlock;
 import org.foodcraft.block.MoldBlock;
 import org.foodcraft.block.multi.*;
+import org.foodcraft.item.MoldItem;
+import org.foodcraft.recipe.MoldRecipe;
 import org.foodcraft.recipe.StoveRecipe;
 import org.foodcraft.registry.ModBlockEntityTypes;
 import org.foodcraft.registry.ModRecipeTypes;
@@ -76,6 +76,7 @@ public class HeatResistantSlateBlockEntity extends UpPlaceBlockEntity implements
     protected int bakingTimeTotal;
     /** 用于在耐热石板上的叠加交互 */
     protected DefaultedList<ItemStack> otherStack = DefaultedList.ofSize(1, ItemStack.EMPTY);
+    public ItemStack originalInputStack = ItemStack.EMPTY;
 
     protected final Object2IntOpenHashMap<Identifier> recipesUsed = new Object2IntOpenHashMap<>();
     protected final RecipeManager.MatchGetter<Inventory, ? extends StoveRecipe> matchGetter;
@@ -119,6 +120,7 @@ public class HeatResistantSlateBlockEntity extends UpPlaceBlockEntity implements
 
         // 写入额外物品栏
         writeOtherStackNbt(nbt, otherStack, true);
+        nbt.put("OriginalInputStack", originalInputStack.writeNbt(new NbtCompound()));
 
         // 保存烘烤进度
         nbt.putInt("BakingTime", bakingTime);
@@ -172,6 +174,9 @@ public class HeatResistantSlateBlockEntity extends UpPlaceBlockEntity implements
 
         // 读取额外物品栏
         readOtherStackNbt(nbt, otherStack);
+        if (nbt.contains("OriginalInputStack")) {
+            this.originalInputStack = ItemStack.fromNbt(nbt.getCompound("OriginalInputStack"));
+        }
 
         // 读取烘烤进度
         bakingTime = nbt.getInt("BakingTime");
@@ -249,6 +254,14 @@ public class HeatResistantSlateBlockEntity extends UpPlaceBlockEntity implements
 
     @Override
     public boolean isValidItem(ItemStack stack) {
+        ItemStack moldStack = this.otherStack.get(0);
+
+        // 如果有模具在额外库存中，只允许可以被该模具定型的物品
+        if (!moldStack.isEmpty()) {
+            return tryMoldItemWithMold(stack, moldStack) != ItemStack.EMPTY;
+        }
+
+        // 没有模具，允许任何有效的炉子配方输入
         return isValidGrindingInput(stack);
     }
 
@@ -264,7 +277,16 @@ public class HeatResistantSlateBlockEntity extends UpPlaceBlockEntity implements
 
     @Override
     public ActionResult tryAddItem(ItemStack stack) {
-        if (isCanPlaceMold(stack) && tryPlaceMold(stack)){
+        // 首先尝试处理装有定型内容的模具
+        if (stack.getItem() instanceof MoldItem && ((MoldItem) stack.getItem()).hasContent(stack)) {
+            ActionResult result = handleFilledMoldPlacement(stack);
+            if (result.isAccepted()) {
+                return result;
+            }
+        }
+
+        // 尝试放置空模具
+        if (isCanPlaceMold(stack) && tryPlaceMold(stack)) {
             return ActionResult.SUCCESS;
         }
 
@@ -275,17 +297,24 @@ public class HeatResistantSlateBlockEntity extends UpPlaceBlockEntity implements
         ItemStack newStack = stack.copy();
         newStack.setCount(1);
 
-        // 检查烘烤是否需要模具
-        StoveRecipe recipe = this.matchGetter.getFirstMatch(new SimpleInventory(newStack), this.world).orElse(null);
-        if (recipe != null && recipe.isNeedMold()) {
-            ItemStack moldStack = this.otherStack.get(0);
-            if (recipe.getMold() != null &&
-                    (moldStack.isEmpty() || !ItemStack.areItemsEqual(moldStack, recipe.getMold()))) {
+        // 如果有模具在额外库存中，只能放置可以被该模具定型的物品
+        ItemStack moldStack = this.otherStack.get(0);
+        if (!moldStack.isEmpty()) {
+            ItemStack moldedItem = tryMoldItemWithMold(newStack, moldStack);
+            if (!moldedItem.isEmpty()) {
+                // 定型成功，放置定型后的物品
+                this.setStack(0, moldedItem);
+                this.originalInputStack = newStack.copy(); // 保存原始输入
+                this.markDirtyAndSync();
+                return ActionResult.SUCCESS;
+            } else {
+                // 有模具但不能定型，不允许放置
                 return ActionResult.FAIL;
             }
         }
 
-        if (isEmpty()){
+        // 没有模具，直接放置物品（检查是否是有效的炉子配方输入）
+        if (isEmpty() && isValidGrindingInput(newStack)) {
             this.setStack(0, newStack);
             this.markDirtyAndSync();
             return ActionResult.SUCCESS;
@@ -296,32 +325,133 @@ public class HeatResistantSlateBlockEntity extends UpPlaceBlockEntity implements
     @Override
     public ActionResult tryFetchItem(PlayerEntity player) {
         ItemStack contentStack = this.getStack(0);
-        if (contentStack.isEmpty()) {
-            return tyeFetchMold(player)?
-                    ActionResult.SUCCESS:
-                    ActionResult.FAIL;
-        }
-        // 给予玩家物品
-        if (!player.isCreative() && !player.giveItemStack(contentStack)) {
-            player.dropItem(contentStack, false); // 背包满时掉落
+
+        // 如果有原始输入物品（说明是通过模具定型的），则返回原始输入物品和模具
+        if (!contentStack.isEmpty() && !originalInputStack.isEmpty() && !isOtherEmpty()) {
+            return fetchMoldedItem(player);
         }
 
-        // 减少容器中的物品数量
+        if (contentStack.isEmpty()) {
+            // 取出模具
+            boolean result = tyeFetchMold(player);
+            if (result) {
+                // 取出模具后，如果主库存中有通过模具定型的物品，需要重置为原始输入
+                if (!originalInputStack.isEmpty()) {
+                    this.setStack(0, originalInputStack.copy());
+                    this.originalInputStack = ItemStack.EMPTY;
+                }
+                return ActionResult.SUCCESS;
+            }
+            return ActionResult.FAIL;
+        }
+
+        // 普通物品的取出逻辑
+        if (!player.isCreative() && !player.giveItemStack(contentStack)) {
+            player.dropItem(contentStack, false);
+        }
+
         contentStack.decrement(1);
         if (contentStack.isEmpty()) {
             this.setStack(0, ItemStack.EMPTY);
+            this.originalInputStack = ItemStack.EMPTY;
         }
 
         this.markDirtyAndSync();
         return ActionResult.SUCCESS;
     }
 
-    @Override
-    public void onPlace(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
-        if (otherStack.get(0).getItem() instanceof BlockItem blockItem
-                && blockItem.getBlock() instanceof MoldBlock moldBlock && moldBlock.canPlaceSlate){
 
+    private ActionResult handleFilledMoldPlacement(ItemStack stack) {
+        if (!(stack.getItem() instanceof MoldItem moldItem)) {
+            return ActionResult.FAIL;
         }
+
+        // 检查是否可以放置（主库存和额外库存都为空）
+        if (!isEmpty() || !isOtherEmpty()) {
+            return ActionResult.FAIL;
+        }
+
+        // 从模具物品中提取内容物信息
+        ItemStack contentStack = moldItem.getContentStack(stack);
+        if (contentStack.isEmpty()) {
+            return ActionResult.FAIL;
+        }
+
+        // 查找对应的模具配方
+        MoldRecipe recipe = findMatchingMoldRecipe(contentStack);
+        if (recipe == null) {
+            return ActionResult.FAIL;
+        }
+
+        // 获取定型后的物品
+        ItemStack moldedOutput = recipe.getOutput(world != null ? world.getRegistryManager() : null);
+        if (moldedOutput.isEmpty()) {
+            return ActionResult.FAIL;
+        }
+
+        // 设置主库存为定型后的物品
+        this.setStack(0, moldedOutput.copy());
+        // 设置额外库存为空模具
+        this.otherStack.set(0, new ItemStack(recipe.getBaseMoldItem()));
+        // 保存原始输入物品
+        this.originalInputStack = contentStack.copy();
+
+        this.markDirtyAndSync();
+        return ActionResult.SUCCESS;
+    }
+
+    /**
+     * 查找匹配的模具配方
+     */
+    private MoldRecipe findMatchingMoldRecipe(ItemStack inputStack) {
+        if (world == null) return null;
+
+        Inventory tempInventory = new SimpleInventory(inputStack);
+        return world.getRecipeManager()
+                .getFirstMatch(ModRecipeTypes.MOLD, tempInventory, world)
+                .orElse(null);
+    }
+
+    /**
+     * 使用模具对物品进行定型
+     */
+    private ItemStack tryMoldItemWithMold(ItemStack input, ItemStack moldStack) {
+        if (world == null) return ItemStack.EMPTY;
+
+        // 查找模具配方
+        MoldRecipe recipe = findMatchingMoldRecipe(input);
+        if (recipe == null) return ItemStack.EMPTY;
+
+        // 检查模具是否匹配
+        if (!ItemStack.areItemsEqual(moldStack, new ItemStack(recipe.getBaseMoldItem()))) {
+            return ItemStack.EMPTY;
+        }
+
+        return recipe.getOutput(world.getRegistryManager());
+    }
+
+    /**
+     * 取出定型物品（返回原始输入物品和模具）
+     */
+    private ActionResult fetchMoldedItem(PlayerEntity player) {
+        // 给予玩家原始输入物品
+        if (!player.isCreative() && !player.giveItemStack(originalInputStack.copy())) {
+            player.dropItem(originalInputStack.copy(), false);
+        }
+
+        // 给予玩家模具
+        ItemStack moldStack = otherStack.get(0).copy();
+        if (!player.isCreative() && !player.giveItemStack(moldStack)) {
+            player.dropItem(moldStack, false);
+        }
+
+        // 清空所有库存
+        this.setStack(0, ItemStack.EMPTY);
+        this.otherStack.set(0, ItemStack.EMPTY);
+        this.originalInputStack = ItemStack.EMPTY;
+
+        this.markDirtyAndSync();
+        return ActionResult.SUCCESS;
     }
 
     /**
@@ -795,18 +925,16 @@ public class HeatResistantSlateBlockEntity extends UpPlaceBlockEntity implements
             return;
         }
 
-        LOGGER.info("{},{}", inputStack, outputStack);
-
         // 消耗输入物品
         setStack(0, recipe.craft(this, world.getRegistryManager()));
+
+        // 烘烤完成后，清空原始输入（因为现在已经是烘烤后的物品）
+        this.originalInputStack = ItemStack.EMPTY;
 
         setLastRecipe(recipe);
         recipesUsed.addTo(recipe.getId(), 1);
 
-        // 重置烘烤进度
         resetBakingProgress();
-
-        // 播放完成音效
         world.playSound(null, pos, SoundEvents.BLOCK_FURNACE_FIRE_CRACKLE, SoundCategory.BLOCKS, 0.5f, 1.0f);
     }
 

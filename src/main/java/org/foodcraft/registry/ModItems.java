@@ -10,6 +10,7 @@ import org.foodcraft.FoodCraft;
 import org.foodcraft.component.ModFoodComponents;
 import org.foodcraft.item.FlourItem;
 import org.foodcraft.item.FlourSackItem;
+import org.foodcraft.item.MoldItem;
 
 public class ModItems {
     // 工作方块
@@ -21,8 +22,6 @@ public class ModItems {
     // 工具
     public static final Item IRON_DISHES = registerItem(ModBlocks.IRON_DISHES);
     public static final Item WOODEN_SHELF = registerItem(ModBlocks.WOODEN_SHELF);
-    public static final Item CAKE_EMBRYO_MOLD = registerItem(ModBlocks.CAKE_EMBRYO_MOLD);
-    public static final Item TOAST_MOLD = registerItem(ModBlocks.TOAST_MOLD);
     public static final Item CUTTING_BOARD = registerItem(ModBlocks.CUTTING_BOARD);
 
     // 粉尘
@@ -47,7 +46,16 @@ public class ModItems {
     public static final Item BAGUETTE_EMBRYO = registerItem(ModBlocks.BAGUETTE_EMBRYO);
     public static final Item TOAST = registerItem(ModBlocks.TOAST);
     public static final Item CAKE_EMBRYO = registerItem(ModBlocks.CAKE_EMBRYO);
+    public static final Item BAKED_CAKE_EMBRYO = registerItem(ModBlocks.BAKED_CAKE_EMBRYO);
     public static final Item HARD_BREAD_BOAT = registerItem(ModBlocks.HARD_BREAD_BOAT);
+
+    // 模具
+    public static final Item DOUGH_CAKE_EMBRYO_MOLD = direcRegisterItem("dough_cake_embryo_mold",
+            new MoldItem(ModBlocks.CAKE_EMBRYO_MOLD, new Item.Settings(), DOUGH));
+    public static final Item DOUGH_TOAST_EMBRYO_MOLD = direcRegisterItem("dough_cake_embryo_mold",
+            new MoldItem(ModBlocks.CAKE_EMBRYO_MOLD, new Item.Settings(), DOUGH));
+    public static final Item CAKE_EMBRYO_MOLD = registerItem(ModBlocks.CAKE_EMBRYO_MOLD);
+    public static final Item TOAST_MOLD = registerItem(ModBlocks.TOAST_MOLD);
 
     // 调味料
     public static final Item SALT_CUBES = registerItem("salt_cubes", new Item(new Item.Settings()));
@@ -61,6 +69,10 @@ public class ModItems {
         if (item instanceof BlockItem) {
             ((BlockItem)item).appendBlocks(Item.BLOCK_ITEMS, item);
         }
+        return Registry.register(Registries.ITEM, new Identifier(FoodCraft.MOD_ID, name), item);
+    }
+
+    private static Item direcRegisterItem(String name, Item item){
         return Registry.register(Registries.ITEM, new Identifier(FoodCraft.MOD_ID, name), item);
     }
 

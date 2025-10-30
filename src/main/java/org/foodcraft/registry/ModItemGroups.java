@@ -34,8 +34,6 @@ public class ModItemGroups {
                             // 工具
                             entries.add(ModItems.IRON_DISHES);
                             entries.add(ModItems.WOODEN_SHELF);
-                            entries.add(ModItems.CAKE_EMBRYO_MOLD);
-                            entries.add(ModItems.TOAST_MOLD);
                             entries.add(ModItems.CUTTING_BOARD);
 
                             // 粉尘
@@ -55,8 +53,13 @@ public class ModItemGroups {
                             entries.add(ModItems.BAGUETTE);
                             entries.add(ModItems.BAGUETTE_EMBRYO);
                             entries.add(ModItems.TOAST);
-                            entries.add(ModItems.CAKE_EMBRYO);
+                            entries.add(ModItems.BAKED_CAKE_EMBRYO);
                             entries.add(ModItems.HARD_BREAD_BOAT);
+
+                            //模具
+                            entries.add(ModItems.CAKE_EMBRYO_MOLD);
+                            entries.add(ModItems.TOAST_MOLD);
+                            entries.add(ModItems.DOUGH_CAKE_EMBRYO_MOLD);
 
                             // 调味料
                             entries.add(ModItems.SALT_CUBES);

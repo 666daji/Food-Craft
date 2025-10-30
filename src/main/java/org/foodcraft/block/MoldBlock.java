@@ -5,7 +5,10 @@ import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.ShapeContext;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.loot.context.LootContextParameterSet;
+import net.minecraft.loot.context.LootContextParameters;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.DirectionProperty;
 import net.minecraft.state.property.Properties;
@@ -14,12 +17,19 @@ import net.minecraft.util.BlockRotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.world.BlockView;
+import net.minecraft.world.World;
+import org.foodcraft.FoodCraft;
 import org.foodcraft.block.entity.HeatResistantSlateBlockEntity;
 import org.foodcraft.block.entity.MoldBlockEntity;
 import org.foodcraft.block.entity.UpPlaceBlockEntity;
+import org.foodcraft.item.MoldItem;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+
+import java.util.List;
 
 public class MoldBlock extends UpPlaceBlock {
+    public static final Logger LOGGER = FoodCraft.LOGGER;
     public static final DirectionProperty FACING = Properties.HORIZONTAL_FACING;
     public static final VoxelShape SHAPE = Block.createCuboidShape(0, 0, 0, 16, 9, 16);
 
@@ -56,6 +66,44 @@ public class MoldBlock extends UpPlaceBlock {
     @Override
     public boolean canPlace(UpPlaceBlockEntity blockEntity, ItemStack handStack) {
         return blockEntity.isValidItem(handStack);
+    }
+
+    @Override
+    public void onPlaced(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack itemStack) {
+        if (!world.isClient && itemStack.getItem() instanceof MoldItem moldItem){
+            BlockEntity blockEntity = world.getBlockEntity(pos);
+            if (blockEntity instanceof MoldBlockEntity moldBlockEntity){
+                moldItem.toMoldBlock(moldBlockEntity, itemStack);
+            }
+        }
+    }
+
+    @Override
+    public void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
+        BlockEntity blockEntity = world.getBlockEntity(pos);
+        if (blockEntity instanceof MoldBlockEntity moldBlockEntity && moldBlockEntity.isEmpty()){
+            super.onStateReplaced(state, world, pos, newState, moved);
+        }
+
+        if (state.hasBlockEntity() && !state.isOf(newState.getBlock())) {
+            world.removeBlockEntity(pos);
+        }
+    }
+
+    @Override
+    public List<ItemStack> getDroppedStacks(BlockState state, LootContextParameterSet.Builder builder) {
+        BlockEntity blockEntity = builder.get(LootContextParameters.BLOCK_ENTITY);
+
+        if (blockEntity instanceof MoldBlockEntity moldBlockEntity) {
+            // 如果模具中有内容，返回对应的模具物品
+            if (!moldBlockEntity.isEmpty()) {
+                ItemStack result =  MoldItem.getTargetStack(state.getBlock(), moldBlockEntity.getInputStack());
+                return List.of(result);
+            }
+        }
+
+        // 空模具掉落自身
+        return super.getDroppedStacks(state, builder);
     }
 
     @Override

@@ -151,7 +151,7 @@ public class ShelfBlockEntity extends UpPlaceBlockEntity {
         if (isFlowerPot(stack) && hasFlower(index)) {
             Block flowerBlock = getFlowerBlock(index);
             if (flowerBlock != null) {
-                Map<Block, Block> contentToPotted = ((FlowerPotBlockAccessor) Blocks.FLOWER_POT).getContentToPotted();
+                Map<Block, Block> contentToPotted = FlowerPotBlockAccessor.getContentToPotted();
                 Block pottedBlock = contentToPotted.get(flowerBlock);
                 if (pottedBlock != null) {
                     return pottedBlock.getDefaultState();
@@ -195,7 +195,7 @@ public class ShelfBlockEntity extends UpPlaceBlockEntity {
         }
 
         Block block = blockItem.getBlock();
-        Map<Block, Block> contentToPotted = ((FlowerPotBlockAccessor) Blocks.FLOWER_POT).getContentToPotted();
+        Map<Block, Block> contentToPotted = FlowerPotBlockAccessor.getContentToPotted();
         return contentToPotted.containsKey(block);
     }
 

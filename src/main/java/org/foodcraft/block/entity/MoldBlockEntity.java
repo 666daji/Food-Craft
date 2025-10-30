@@ -35,6 +35,9 @@ import org.jetbrains.annotations.Nullable;
 public class MoldBlockEntity extends UpPlaceBlockEntity implements SidedInventory, RecipeUnlocker, RecipeInputProvider {
     protected static final int MAX_STACK_SIZE = 1;
 
+    /** 输入模具的物品堆栈 */
+    @Nullable
+    protected ItemStack inputStack;
     protected final Object2IntOpenHashMap<Identifier> recipesUsed = new Object2IntOpenHashMap<>();
     protected final RecipeManager.MatchGetter<Inventory, ? extends MoldRecipe> matchGetter;
     @Nullable
@@ -43,6 +46,26 @@ public class MoldBlockEntity extends UpPlaceBlockEntity implements SidedInventor
     public MoldBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntityTypes.MOLD, pos, state, 1);
         this.matchGetter = RecipeManager.createCachedMatchGetter(ModRecipeTypes.MOLD);
+    }
+
+    @Override
+    public void writeNbt(NbtCompound nbt) {
+        super.writeNbt(nbt);
+        // 保存输入物品到NBT
+        if (inputStack != null) {
+            NbtCompound inputNbt = new NbtCompound();
+            inputStack.writeNbt(inputNbt);
+            nbt.put("Input", inputNbt);
+        }
+    }
+
+    @Override
+    public void readNbt(NbtCompound nbt) {
+        super.readNbt(nbt);
+        // 从NBT加载输入物品
+        if (nbt.contains("Input")) {
+            this.inputStack = ItemStack.fromNbt(nbt.getCompound("Input"));
+        }
     }
 
     @Override
@@ -80,8 +103,8 @@ public class MoldBlockEntity extends UpPlaceBlockEntity implements SidedInventor
     @Override
     public boolean isValidItem(ItemStack stack) {
         Item item = Item.BLOCK_ITEMS.get(getCachedState().getBlock());
-        if (item != null) {
-            return MoldRecipe.isCanPlace(item, stack);
+        if (item != null && MoldRecipe.isCanPlace(item, stack)) {
+             return true;
         }
 
         return isValidMoldInput(stack);
@@ -89,7 +112,13 @@ public class MoldBlockEntity extends UpPlaceBlockEntity implements SidedInventor
 
     @Override
     public void onPlace(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
+      tryCraft();
+    }
+
+    public void tryCraft(){
         MoldRecipe recipe = this.matchGetter.getFirstMatch(this, this.world).orElse(null);
+        this.inputStack = this.getStack(0).copy();
+
         if (recipe == null) {
             return;
         }
@@ -116,16 +145,17 @@ public class MoldBlockEntity extends UpPlaceBlockEntity implements SidedInventor
     @Override
     public ActionResult tryFetchItem(PlayerEntity player) {
         ItemStack contentStack = this.getStack(0);
-        if (contentStack.isEmpty()) {
+        if (contentStack.isEmpty() || inputStack == null) {
             return ActionResult.FAIL;
         }
-        // 给予玩家物品
-        if (!player.isCreative() && !player.giveItemStack(contentStack)) {
-            player.dropItem(contentStack, false); // 背包满时掉落
+        // 将输入物品原封不动地返还
+        if (!player.isCreative() && !player.giveItemStack(inputStack)) {
+            player.dropItem(inputStack, false); // 背包满时掉落
         }
 
         // 减少容器中的物品数量
         contentStack.decrement(1);
+        inputStack = null;
         if (contentStack.isEmpty()) {
             this.setStack(0, ItemStack.EMPTY);
         }
@@ -146,6 +176,13 @@ public class MoldBlockEntity extends UpPlaceBlockEntity implements SidedInventor
         recipesUsed.addTo(recipe.getId(), 1);
 
         markDirtyAndSync();
+    }
+
+    public @Nullable ItemStack getInputStack() {
+        if (inputStack != null) {
+            return inputStack.copy();
+        }
+        return null;
     }
 
     @Override

@@ -3,6 +3,6 @@
   "ingredient": {
     "item": "foodcraft:dough"
   },
-  "baseMold": "foodcraft:toast_mold",
-  "result": "foodcraft:toast"
+  "baseMold": "foodcraft:cake_embryo_mold",
+  "result": "foodcraft:cake_embryo"
 }

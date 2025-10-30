@@ -6,8 +6,10 @@ import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.RecipeSerializer;
 import net.minecraft.recipe.RecipeType;
 import net.minecraft.util.Identifier;
+import org.foodcraft.FoodCraft;
 import org.foodcraft.registry.ModRecipeSerializers;
 import org.foodcraft.registry.ModRecipeTypes;
+import org.slf4j.Logger;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -15,6 +17,7 @@ import java.util.Map;
 import java.util.Set;
 
 public class MoldRecipe extends SimpleCraftRecipe {
+    public static final Logger LOGGER = FoodCraft.LOGGER;
     /** 可以放置在模具中的物品 */
     public static final Map<Item, Set<Item>> CAN_PLACE_MOLD_ITEMS = new HashMap<>();
 

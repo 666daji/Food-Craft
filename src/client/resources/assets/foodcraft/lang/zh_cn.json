@@ -6,7 +6,6 @@
   "item.foodcraft.flour_sack": "粉尘袋",
 
   "block.foodcraft.grinding_stone": "石磨",
-  "block.foodcraft.cake_embryo_mold": "蛋糕胚模具",
   "block.foodcraft.toast_mold": "土司胚模具",
   "block.foodcraft.heat_resistant_slate": "耐热石板",
   "item.foodcraft.firewood": "柴火",
@@ -23,7 +22,11 @@
   "item.foodcraft.baguette": " 长棍面包",
   "item.foodcraft.baguette_embryo": "长棍面包胚",
   "item.foodcraft.toast": "土司",
+  "item.foodcraft.baked_cake_embryo": "烤熟的蛋糕胚",
   "item.foodcraft.hard_bread_boat": "硬面包船",
+
+  "block.foodcraft.cake_embryo_mold": "蛋糕胚模具",
+  "block.foodcraft.dough_cake_embryo_mold": "装有面团的蛋糕胚模具",
 
   "block.foodcraft.salt_ore": "盐矿石",
   "block.foodcraft.deepslate_salt_ore": "深板岩盐矿石",
