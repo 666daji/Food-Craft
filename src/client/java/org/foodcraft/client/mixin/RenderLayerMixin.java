@@ -23,5 +23,6 @@ public class RenderLayerMixin {
         BLOCKS.put(AssistedBlocks.CRIPPLED_SUSPICIOUS_STEW, RenderLayer.getCutout());
         BLOCKS.put(ModBlocks.COMBUSTION_FIREWOOD, RenderLayer.getCutout());
         BLOCKS.put(ModBlocks.SALT_SHAKER, RenderLayer.getCutout());
+        BLOCKS.put(ModBlocks.MILK_POTION, RenderLayer.getCutout());
     }
 }

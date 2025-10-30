@@ -3,24 +3,17 @@ package org.foodcraft.component;
 import net.minecraft.item.FoodComponent;
 
 public class ModFoodComponents {
-    public static final FoodComponent HARD_BREAD = new FoodComponent.Builder()
-            .hunger(2)
-            .saturationModifier(0.6f)
-            .build();
-    public static final FoodComponent SMALL_BREAD = new FoodComponent.Builder()
-            .hunger(1)
-            .saturationModifier(0.8f)
-            .build();
-    public static final FoodComponent BAGUETTE = new FoodComponent.Builder()
-            .hunger(2)
-            .saturationModifier(0.9f)
-            .build();
-    public static final FoodComponent BEETROOT_SOUP_HARD_BREAD_BOAT = new FoodComponent.Builder()
-            .hunger(8)
-            .saturationModifier(0.9f)
-            .build();
-    public static final FoodComponent MUSHROOM_STEW_HARD_BREAD_BOAT = new FoodComponent.Builder()
-            .hunger(8)
-            .saturationModifier(0.9f)
-            .build();
+    public static final FoodComponent HARD_BREAD = createSimpleFoodComponent(2, 0.6f);
+    public static final FoodComponent SMALL_BREAD = createSimpleFoodComponent(1, 0.8f);
+    public static final FoodComponent BAGUETTE = createSimpleFoodComponent(2, 0.9f);
+    public static final FoodComponent BEETROOT_SOUP_HARD_BREAD_BOAT = createSimpleFoodComponent(8, 0.9f);
+    public static final FoodComponent MUSHROOM_STEW_HARD_BREAD_BOAT = createSimpleFoodComponent(8, 0.9f);
+    public static final FoodComponent MILK = createSimpleFoodComponent(1, 0.4f);
+
+    private static FoodComponent createSimpleFoodComponent(int hunger, float saturationModifier){
+        return new FoodComponent.Builder()
+                .hunger(hunger)
+                .saturationModifier(saturationModifier)
+                .build();
+    }
 }

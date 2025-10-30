@@ -8,11 +8,10 @@
   ],
   "key": {
     "A": {
-      "tag": "foodcraft:wheat_flour"
+      "tag": "minecraft:wooden_slabs"
     },
     "B": {
-      "item": "minecraft:potion",
-      "nbt": "{CustomPotionColor:15792383}"
+      "item": "minecraft:stick"
     }
   },
   "result": {

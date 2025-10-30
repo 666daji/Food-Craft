@@ -11,8 +11,7 @@
       "item": "foodcraft:wheat_flour"
     },
     "B": {
-      "item": "minecraft:potion",
-      "nbt": "{CustomPotionColor:15792383}"
+      "item": "foodcraft:milk_potion"
     }
   },
   "result": {

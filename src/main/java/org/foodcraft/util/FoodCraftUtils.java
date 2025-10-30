@@ -110,15 +110,6 @@ public class FoodCraftUtils {
     }
 
     /**
-     * 获取牛奶瓶子
-     */
-    public static ItemStack getMilkPotion() {
-        ItemStack milkPotion = PotionUtil.setPotion(new ItemStack(Items.POTION), ModPotions.MILK);
-        milkPotion.getOrCreateNbt().putInt("CustomPotionColor", 15792383);
-        return milkPotion;
-    }
-
-    /**
      * 根据物品堆和朝向创建对应的方块状态
      * @param stack 物品堆栈
      * @param facing 方块朝向

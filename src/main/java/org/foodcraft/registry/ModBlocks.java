@@ -8,6 +8,7 @@ import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.util.Identifier;
+import org.dfood.block.FoodBlock;
 import org.dfood.util.DFoodUtils;
 import org.dfood.util.IntPropertyManager;
 import org.foodcraft.FoodCraft;
@@ -60,6 +61,13 @@ public class ModBlocks {
                     .sounds(BlockSoundGroup.WOOL).strength(0.5F)
                     .nonOpaque().pistonBehavior(PistonBehavior.DESTROY),
             FlourSackBlock::new);
+
+    // 奶制品
+    public static final Block MILK_POTION = registerFoodBlock("milk_potion", 3 ,
+            AbstractBlock.Settings.create()
+                    .sounds(BlockSoundGroup.WOOL).strength(0.2F)
+                    .nonOpaque().pistonBehavior(PistonBehavior.DESTROY),
+            FoodBlock::new);
 
     // 面食
     public static final Block DOUGH = registerBlock("dough",

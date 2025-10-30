@@ -37,6 +37,9 @@ public class ModItems {
     // 粉尘袋
     public static final Item FLOUR_SACK = registerItem("flour_sack", new FlourSackItem(ModBlocks.FLOUR_SACK ,new Item.Settings().maxCount(1)));
 
+    // 奶制品
+    public static final Item MILK_POTION = registerItem(ModBlocks.MILK_POTION, new Item.Settings().food(ModFoodComponents.MILK).maxCount(16));
+
     // 面食
     public static final Item DOUGH = registerItem(ModBlocks.DOUGH);
     public static final Item HARD_BREAD = registerItem(ModBlocks.HARD_BREAD, new Item.Settings().food(ModFoodComponents.HARD_BREAD));
@@ -52,7 +55,7 @@ public class ModItems {
     // 模具
     public static final Item DOUGH_CAKE_EMBRYO_MOLD = direcRegisterItem("dough_cake_embryo_mold",
             new MoldItem(ModBlocks.CAKE_EMBRYO_MOLD, new Item.Settings(), DOUGH));
-    public static final Item DOUGH_TOAST_EMBRYO_MOLD = direcRegisterItem("dough_cake_embryo_mold",
+    public static final Item DOUGH_TOAST_EMBRYO_MOLD = direcRegisterItem("dough_toast_embryo_mold",
             new MoldItem(ModBlocks.CAKE_EMBRYO_MOLD, new Item.Settings(), DOUGH));
     public static final Item CAKE_EMBRYO_MOLD = registerItem(ModBlocks.CAKE_EMBRYO_MOLD);
     public static final Item TOAST_MOLD = registerItem(ModBlocks.TOAST_MOLD);

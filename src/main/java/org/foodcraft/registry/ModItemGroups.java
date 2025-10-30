@@ -45,6 +45,9 @@ public class ModItemGroups {
                             // 粉尘袋
                             entries.add(ModItems.FLOUR_SACK);
 
+                            // 奶制品
+                            entries.add(ModItems.MILK_POTION);
+
                             // 面食
                             entries.add(ModItems.DOUGH);
                             entries.add(ModItems.HARD_BREAD);
@@ -67,8 +70,6 @@ public class ModItemGroups {
                             // 矿物
                             entries.add(ModItems.SALT_ORE);
                             entries.add(ModItems.DEEPSLATE_SALT_ORE);
-
-                            entries.add(FoodCraftUtils.getMilkPotion());
                         }))
                         .build()
         );

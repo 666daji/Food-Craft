@@ -24,7 +24,7 @@ import org.dfood.shape.FoodShapeHandle;
 import org.dfood.util.IntPropertyManager;
 import org.foodcraft.block.CrippledBlock;
 import org.foodcraft.item.ModPotions;
-import org.foodcraft.util.FoodCraftUtils;
+import org.foodcraft.registry.ModItems;
 
 /**
  * 水桶的残损方块，表示被使用过的桶
@@ -64,7 +64,7 @@ public class CrippledBucketBlock extends CrippledBlock {
             }
             ItemStack waterBottle = PotionUtil.setPotion(new ItemStack(Items.POTION), this.potionType);
             if (this.potionType == ModPotions.MILK) {
-                waterBottle = FoodCraftUtils.getMilkPotion();
+                waterBottle = new ItemStack(ModItems.MILK_POTION);
             }
             if (!player.giveItemStack(waterBottle)) {
                 player.dropItem(waterBottle, false);

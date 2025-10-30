@@ -14,6 +14,8 @@
   "block.foodcraft.wooden_shelf": "木架子",
   "block.foodcraft.cutting_board": "案板",
 
+  "item.foodcraft.milk_potion": "奶瓶",
+
   "item.foodcraft.dough": "面团",
   "item.foodcraft.hard_bread": "硬面包",
   "item.foodcraft.small_bread_embryo": "小面包胚",
@@ -26,15 +28,13 @@
   "item.foodcraft.hard_bread_boat": "硬面包船",
 
   "block.foodcraft.cake_embryo_mold": "蛋糕胚模具",
-  "block.foodcraft.dough_cake_embryo_mold": "装有面团的蛋糕胚模具",
+  "item.foodcraft.dough_cake_embryo_mold": "装有面团的蛋糕胚模具",
 
   "block.foodcraft.salt_ore": "盐矿石",
   "block.foodcraft.deepslate_salt_ore": "深板岩盐矿石",
 
   "item.foodcraft.salt_shaker": "盐罐",
   "item.foodcraft.salt_cubes": "盐块",
-
-  "item.minecraft.potion.effect.milk": "奶瓶",
 
   "itemgroup.foodcraft": "食物工艺",
 
@@ -50,7 +50,7 @@
   "item.foodcraft.flour_sack.fullness": "容量: %s/%s",
   "item.foodcraft.flour_sack.content": "%s x%s",
   "item.foodcraft.flour_sack.tooltip.empty": "右键点击放入粉尘",
-  "item.foodcraft.flour_sack.tooltip.non_empty": "右键取出粉尘",
+  "item.foodcraft.flour_sack.tooltip.non_empty": "右键点击取出粉尘",
   "item.foodcraft.flour_sack.tooltip.contents": "右键点击取出粉尘"
 
 }
