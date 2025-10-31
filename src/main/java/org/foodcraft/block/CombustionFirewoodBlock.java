@@ -4,6 +4,9 @@ import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityTicker;
 import net.minecraft.block.entity.BlockEntityType;
+import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -22,10 +25,15 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.StringIdentifiable;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldAccess;
+import net.minecraft.world.WorldView;
+import org.dfood.block.FoodBlock;
+import org.dfood.tag.ModTags;
 import org.foodcraft.block.entity.CombustionFirewoodBlockEntity;
 import org.foodcraft.registry.ModBlockEntityTypes;
 import org.foodcraft.registry.ModItems;
@@ -145,7 +153,7 @@ public class CombustionFirewoodBlock extends BlockWithEntity {
                         pos.getZ() + 0.5,
                         SoundEvents.BLOCK_CAMPFIRE_CRACKLE,
                         SoundCategory.BLOCKS,
-                        0.5F + random.nextFloat() * currentState.getParticleIntensity(),
+                        0.5F + random.nextFloat(),
                         random.nextFloat() * 0.7F + 0.6F,
                         false
                 );
@@ -154,7 +162,7 @@ public class CombustionFirewoodBlock extends BlockWithEntity {
             // 烟雾粒子
             if (random.nextInt(5) == 0) {
                 for(int i = 0; i < random.nextInt(1) + 1; ++i) {
-                    world.addParticle(ParticleTypes.CAMPFIRE_COSY_SMOKE,
+                    world.addParticle(ParticleTypes.CAMPFIRE_SIGNAL_SMOKE,
                             pos.getX() + 0.5 + random.nextDouble() / 3.0 * (random.nextBoolean() ? 1 : -1),
                             pos.getY() + random.nextDouble() + random.nextDouble(),
                             pos.getZ() + 0.5 + random.nextDouble() / 3.0 * (random.nextBoolean() ? 1 : -1),
@@ -169,7 +177,7 @@ public class CombustionFirewoodBlock extends BlockWithEntity {
                             pos.getX() + 0.5 + random.nextDouble() / 4.0 * (random.nextBoolean() ? 1 : -1),
                             pos.getY() + 0.4,
                             pos.getZ() + 0.5 + random.nextDouble() / 4.0 * (random.nextBoolean() ? 1 : -1),
-                            0.0, 0.005, 0.0);
+                            0.0, 0.07, 0.0);
                 }
             }
 
@@ -184,6 +192,33 @@ public class CombustionFirewoodBlock extends BlockWithEntity {
                 }
             }
         }
+    }
+
+    @Override
+    public void onEntityCollision(BlockState state, World world, BlockPos pos, Entity entity) {
+        CombustionState currentState = state.get(COMBUSTION_STATE);
+
+        if (currentState.isBurning() && entity instanceof LivingEntity && !EnchantmentHelper.hasFrostWalker((LivingEntity)entity)) {
+            entity.damage(world.getDamageSources().inFire(), 1);
+        }
+
+        super.onEntityCollision(state, world, pos, entity);
+    }
+
+    @Override
+    public BlockState getStateForNeighborUpdate(
+            BlockState state, Direction direction, BlockState neighborState, WorldAccess world, BlockPos pos, BlockPos neighborPos
+    ) {
+        return !state.canPlaceAt(world, pos)
+                ? Blocks.AIR.getDefaultState()
+                : super.getStateForNeighborUpdate(state, direction, neighborState, world, pos, neighborPos);
+    }
+
+    @Override
+    public boolean canPlaceAt(BlockState state, WorldView world, BlockPos pos) {
+        BlockPos downPos = pos.down();
+        BlockState checkState = world.getBlockState(downPos);
+        return !checkState.isIn(ModTags.FOOD_PLACE) && !(checkState.getBlock() instanceof FoodBlock);
     }
 
     @Override
