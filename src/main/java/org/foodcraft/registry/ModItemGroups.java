@@ -9,7 +9,6 @@ import net.minecraft.registry.RegistryKeys;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.foodcraft.FoodCraft;
-import org.foodcraft.util.FoodCraftUtils;
 
 public class ModItemGroups {
     public static final RegistryKey<ItemGroup> DEMO_GROUP = register("foodcraft");
@@ -55,14 +54,16 @@ public class ModItemGroups {
                             entries.add(ModItems.SMALL_BREAD);
                             entries.add(ModItems.BAGUETTE);
                             entries.add(ModItems.BAGUETTE_EMBRYO);
+                            entries.add(ModItems.FLUFFY_BREAD_EMBRYO);
                             entries.add(ModItems.TOAST);
                             entries.add(ModItems.BAKED_CAKE_EMBRYO);
                             entries.add(ModItems.HARD_BREAD_BOAT);
 
                             //模具
                             entries.add(ModItems.CAKE_EMBRYO_MOLD);
-                            entries.add(ModItems.TOAST_MOLD);
+                            entries.add(ModItems.TOAST_EMBRYO_MOLD);
                             entries.add(ModItems.DOUGH_CAKE_EMBRYO_MOLD);
+                            entries.add(ModItems.FLUFFY_BREAD_EMBRYO_TOAST_EMBRYO_MOLD);
 
                             // 调味料
                             entries.add(ModItems.SALT_CUBES);

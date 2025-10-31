@@ -49,7 +49,7 @@ public class ModBlockEntityTypes {
             BlockEntityType.Builder.create(
                     MoldBlockEntity::new,
                     ModBlocks.CAKE_EMBRYO_MOLD,
-                    ModBlocks.TOAST_MOLD
+                    ModBlocks.TOAST_EMBRYO_MOLD
             )
     );
     public static final BlockEntityType<FlourSackBlockEntity> FLOUR_SACK = create("flour_sack",

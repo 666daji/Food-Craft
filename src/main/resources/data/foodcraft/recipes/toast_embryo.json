@@ -1,0 +1,8 @@
+{
+  "type": "foodcraft:mold",
+  "ingredient": {
+    "item": "foodcraft:fluffy_bread_embryo"
+  },
+  "baseMold": "foodcraft:toast_embryo_mold",
+  "result": "foodcraft:toast_embryo"
+}

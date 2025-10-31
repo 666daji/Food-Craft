@@ -9,6 +9,7 @@ public class ModFoodComponents {
     public static final FoodComponent BEETROOT_SOUP_HARD_BREAD_BOAT = createSimpleFoodComponent(8, 0.9f);
     public static final FoodComponent MUSHROOM_STEW_HARD_BREAD_BOAT = createSimpleFoodComponent(8, 0.9f);
     public static final FoodComponent MILK = createSimpleFoodComponent(1, 0.4f);
+    public static final FoodComponent TOAST = createSimpleFoodComponent(5, 0.6f);
 
     private static FoodComponent createSimpleFoodComponent(int hunger, float saturationModifier){
         return new FoodComponent.Builder()

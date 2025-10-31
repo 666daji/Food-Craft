@@ -40,7 +40,7 @@ import org.foodcraft.block.FirewoodBlock;
 import org.foodcraft.block.HeatResistantSlateBlock;
 import org.foodcraft.block.MoldBlock;
 import org.foodcraft.block.multi.*;
-import org.foodcraft.item.MoldItem;
+import org.foodcraft.item.MoldContentItem;
 import org.foodcraft.recipe.MoldRecipe;
 import org.foodcraft.recipe.StoveRecipe;
 import org.foodcraft.registry.ModBlockEntityTypes;
@@ -278,7 +278,7 @@ public class HeatResistantSlateBlockEntity extends UpPlaceBlockEntity implements
     @Override
     public ActionResult tryAddItem(ItemStack stack) {
         // 首先尝试处理装有定型内容的模具
-        if (stack.getItem() instanceof MoldItem && ((MoldItem) stack.getItem()).hasContent(stack)) {
+        if (stack.getItem() instanceof MoldContentItem && ((MoldContentItem) stack.getItem()).hasContent(stack)) {
             ActionResult result = handleFilledMoldPlacement(stack);
             if (result.isAccepted()) {
                 return result;
@@ -362,7 +362,7 @@ public class HeatResistantSlateBlockEntity extends UpPlaceBlockEntity implements
 
 
     private ActionResult handleFilledMoldPlacement(ItemStack stack) {
-        if (!(stack.getItem() instanceof MoldItem moldItem)) {
+        if (!(stack.getItem() instanceof MoldContentItem moldContentItem)) {
             return ActionResult.FAIL;
         }
 
@@ -372,7 +372,7 @@ public class HeatResistantSlateBlockEntity extends UpPlaceBlockEntity implements
         }
 
         // 从模具物品中提取内容物信息
-        ItemStack contentStack = moldItem.getContentStack(stack);
+        ItemStack contentStack = moldContentItem.getContentStack(stack);
         if (contentStack.isEmpty()) {
             return ActionResult.FAIL;
         }

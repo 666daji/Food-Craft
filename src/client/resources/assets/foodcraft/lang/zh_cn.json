@@ -23,12 +23,15 @@
   "item.foodcraft.cake_embryo": "蛋糕胚",
   "item.foodcraft.baguette": " 长棍面包",
   "item.foodcraft.baguette_embryo": "长棍面包胚",
+  "item.foodcraft.fluffy_bread_embryo": "蓬松面包胚",
   "item.foodcraft.toast": "土司",
   "item.foodcraft.baked_cake_embryo": "烤熟的蛋糕胚",
   "item.foodcraft.hard_bread_boat": "硬面包船",
 
   "block.foodcraft.cake_embryo_mold": "蛋糕胚模具",
+  "block.foodcraft.toast_embryo_mold": "土司胚模具",
   "item.foodcraft.dough_cake_embryo_mold": "装有面团的蛋糕胚模具",
+  "item.foodcraft.fluffy_bread_embryo_toast_embryo_mold": "装有蓬松面包胚的土司胚模具",
 
   "block.foodcraft.salt_ore": "盐矿石",
   "block.foodcraft.deepslate_salt_ore": "深板岩盐矿石",

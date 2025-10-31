@@ -30,7 +30,7 @@ import org.foodcraft.block.entity.CombustionFirewoodBlockEntity;
 import org.foodcraft.block.entity.HeatResistantSlateBlockEntity;
 import org.foodcraft.block.entity.UpPlaceBlockEntity;
 import org.foodcraft.block.multi.MultiBlockHelper;
-import org.foodcraft.item.MoldItem;
+import org.foodcraft.item.MoldContentItem;
 import org.foodcraft.registry.ModBlockEntityTypes;
 import org.foodcraft.registry.ModSounds;
 import org.jetbrains.annotations.Nullable;
@@ -161,7 +161,7 @@ public class HeatResistantSlateBlock extends UpPlaceBlock {
     public boolean canPlace(UpPlaceBlockEntity blockEntity, ItemStack handStack) {
         if (blockEntity instanceof HeatResistantSlateBlockEntity slateEntity) {
             // 检查是否是装有内容的模具
-            if (handStack.getItem() instanceof MoldItem moldItem && moldItem.hasContent(handStack)) {
+            if (handStack.getItem() instanceof MoldContentItem moldContentItem && moldContentItem.hasContent(handStack)) {
                 return true;
             }
 

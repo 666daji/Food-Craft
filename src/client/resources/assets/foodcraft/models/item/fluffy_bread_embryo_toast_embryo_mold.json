@@ -1,9 +1,10 @@
 {
+	"format_version": "1.21.6",
 	"credit": "Made with Blockbench",
 	"texture_size": [64, 64],
 	"textures": {
-		"2": "foodcraft:block/toast_mold",
-		"particle": "foodcraft:block/toast_mold"
+		"2": "foodcraft:block/fluffy_bread_embryo_toast_embryo_mold",
+		"particle": "foodcraft:block/fluffy_bread_embryo_toast_embryo_mold"
 	},
 	"elements": [
 		{
@@ -148,8 +149,57 @@
 				"up": {"uv": [9.75, 3.25, 9.5, 2.5], "texture": "#2"},
 				"down": {"uv": [9.75, 3.25, 9.5, 4], "texture": "#2"}
 			}
+		},
+		{
+			"from": [1, 1, 4],
+			"to": [15, 5, 12],
+			"rotation": {"angle": 0, "axis": "y", "origin": [1, 1, 6]},
+			"faces": {
+				"north": {"uv": [0, 6, 3.5, 7], "texture": "#2"},
+				"east": {"uv": [7.5, 2, 9.5, 3], "texture": "#2"},
+				"south": {"uv": [3.5, 6, 7, 7], "texture": "#2"},
+				"west": {"uv": [7.5, 3, 9.5, 4], "texture": "#2"},
+				"up": {"uv": [7.5, 4, 4, 2], "texture": "#2"},
+				"down": {"uv": [7.5, 4, 4, 6], "texture": "#2"}
+			}
 		}
 	],
+	"display": {
+		"thirdperson_righthand": {
+			"translation": [0, 4.75, 0.75],
+			"scale": [0.6, 0.6, 0.6]
+		},
+		"thirdperson_lefthand": {
+			"translation": [0, 4.75, 0.75],
+			"scale": [0.6, 0.6, 0.6]
+		},
+		"firstperson_righthand": {
+			"rotation": [20, -70, 10],
+			"translation": [0.25, 5, 4.25],
+			"scale": [0.8, 0.8, 0.8]
+		},
+		"firstperson_lefthand": {
+			"rotation": [20, -70, 10],
+			"translation": [0.25, 5, 4.25],
+			"scale": [0.8, 0.8, 0.8]
+		},
+		"ground": {
+			"translation": [0, 3.25, 0],
+			"scale": [0.6, 0.6, 0.6]
+		},
+		"gui": {
+			"rotation": [45, 45, 0],
+			"translation": [-0.25, 1.25, -0.25],
+			"scale": [0.7, 0.7, 0.7]
+		},
+		"fixed": {
+			"rotation": [-90, 0, 0],
+			"translation": [0, 0, -6.75]
+		},
+		"on_shelf": {
+			"translation": [0, 0, 0.25]
+		}
+	},
 	"groups": [
 		{
 			"name": "蛋糕胚模具",
@@ -161,7 +211,8 @@
 					"origin": [3, 0, 1],
 					"color": 0,
 					"children": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-				}
+				},
+				11
 			]
 		}
 	]

@@ -94,6 +94,10 @@ public class ModBlocks {
             new SimpleFoodBlock(AbstractBlock.Settings.create()
                     .sounds(BlockSoundGroup.WOOL).strength(0.2F)
                     .nonOpaque().pistonBehavior(PistonBehavior.DESTROY)));
+    public static final Block TOAST_EMBRYO = registerBlock("toast_embryo",
+            new SimpleFoodBlock(AbstractBlock.Settings.create()
+                    .sounds(BlockSoundGroup.WOOL).strength(0.2F)
+                    .nonOpaque().pistonBehavior(PistonBehavior.DESTROY)));
     public static final Block TOAST = registerBlock("toast",
             new SimpleFoodBlock(AbstractBlock.Settings.create()
                     .sounds(BlockSoundGroup.WOOL).strength(0.2F)
@@ -116,10 +120,10 @@ public class ModBlocks {
             new MoldBlock(AbstractBlock.Settings.create()
                     .sounds(BlockSoundGroup.WOOL).strength(0.2F)
                     .nonOpaque().pistonBehavior(PistonBehavior.DESTROY), true));
-    public static final Block TOAST_MOLD = registerBlock("toast_mold",
+    public static final Block TOAST_EMBRYO_MOLD = registerBlock("toast_embryo_mold",
             new MoldBlock(AbstractBlock.Settings.create()
                     .sounds(BlockSoundGroup.WOOL).sounds(BlockSoundGroup.WOOL).strength(0.2F)
-                    .nonOpaque().pistonBehavior(PistonBehavior.DESTROY), false));
+                    .nonOpaque().pistonBehavior(PistonBehavior.DESTROY), true));
 
     // 调味料
     public static final Block SALT_SHAKER = registerBlock("salt_shaker",

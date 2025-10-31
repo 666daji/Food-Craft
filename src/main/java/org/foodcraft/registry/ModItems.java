@@ -10,7 +10,10 @@ import org.foodcraft.FoodCraft;
 import org.foodcraft.component.ModFoodComponents;
 import org.foodcraft.item.FlourItem;
 import org.foodcraft.item.FlourSackItem;
-import org.foodcraft.item.MoldItem;
+import org.foodcraft.item.FoodPotionItem;
+import org.foodcraft.item.MoldContentItem;
+
+import java.util.function.BiFunction;
 
 public class ModItems {
     // 工作方块
@@ -38,7 +41,7 @@ public class ModItems {
     public static final Item FLOUR_SACK = registerItem("flour_sack", new FlourSackItem(ModBlocks.FLOUR_SACK ,new Item.Settings().maxCount(1)));
 
     // 奶制品
-    public static final Item MILK_POTION = registerItem(ModBlocks.MILK_POTION, new Item.Settings().food(ModFoodComponents.MILK).maxCount(16));
+    public static final Item MILK_POTION = registerItem(ModBlocks.MILK_POTION, new Item.Settings().food(ModFoodComponents.MILK).maxCount(16), FoodPotionItem::new);
 
     // 面食
     public static final Item DOUGH = registerItem(ModBlocks.DOUGH);
@@ -47,18 +50,20 @@ public class ModItems {
     public static final Item SMALL_BREAD = registerItem(ModBlocks.SMALL_BREAD, new Item.Settings().food(ModFoodComponents.SMALL_BREAD));
     public static final Item BAGUETTE = registerItem(ModBlocks.BAGUETTE, new Item.Settings().food(ModFoodComponents.BAGUETTE));
     public static final Item BAGUETTE_EMBRYO = registerItem(ModBlocks.BAGUETTE_EMBRYO);
-    public static final Item TOAST = registerItem(ModBlocks.TOAST);
+    public static final Item FLUFFY_BREAD_EMBRYO = registerItem("fluffy_bread_embryo", new Item(new Item.Settings()));
+    public static final Item TOAST_EMBRYO = registerItem(ModBlocks.TOAST_EMBRYO);
+    public static final Item TOAST = registerItem(ModBlocks.TOAST, new Item.Settings().food(ModFoodComponents.TOAST));
     public static final Item CAKE_EMBRYO = registerItem(ModBlocks.CAKE_EMBRYO);
     public static final Item BAKED_CAKE_EMBRYO = registerItem(ModBlocks.BAKED_CAKE_EMBRYO);
     public static final Item HARD_BREAD_BOAT = registerItem(ModBlocks.HARD_BREAD_BOAT);
 
     // 模具
     public static final Item DOUGH_CAKE_EMBRYO_MOLD = direcRegisterItem("dough_cake_embryo_mold",
-            new MoldItem(ModBlocks.CAKE_EMBRYO_MOLD, new Item.Settings(), DOUGH));
-    public static final Item DOUGH_TOAST_EMBRYO_MOLD = direcRegisterItem("dough_toast_embryo_mold",
-            new MoldItem(ModBlocks.CAKE_EMBRYO_MOLD, new Item.Settings(), DOUGH));
+            new MoldContentItem(ModBlocks.CAKE_EMBRYO_MOLD, new Item.Settings(), DOUGH));
+    public static final Item FLUFFY_BREAD_EMBRYO_TOAST_EMBRYO_MOLD = direcRegisterItem("fluffy_bread_embryo_toast_embryo_mold",
+            new MoldContentItem(ModBlocks.TOAST_EMBRYO_MOLD, new Item.Settings(), FLUFFY_BREAD_EMBRYO));
     public static final Item CAKE_EMBRYO_MOLD = registerItem(ModBlocks.CAKE_EMBRYO_MOLD);
-    public static final Item TOAST_MOLD = registerItem(ModBlocks.TOAST_MOLD);
+    public static final Item TOAST_EMBRYO_MOLD = registerItem(ModBlocks.TOAST_EMBRYO_MOLD);
 
     // 调味料
     public static final Item SALT_CUBES = registerItem("salt_cubes", new Item(new Item.Settings()));
@@ -84,7 +89,11 @@ public class ModItems {
     }
 
     private static Item registerItem(Block block, Item.Settings settings){
-        return registerItem(Registries.BLOCK.getId(block).getPath(), new BlockItem(block, settings));
+        return registerItem(block, settings, BlockItem::new);
+    }
+
+    private static Item registerItem(Block block, Item.Settings settings, BiFunction<Block, Item.Settings, BlockItem> blockItemCreator){
+        return registerItem(Registries.BLOCK.getId(block).getPath(), blockItemCreator.apply(block, settings));
     }
 
     public static void registerModItems() {}

@@ -13,7 +13,7 @@ import org.foodcraft.block.entity.MoldBlockEntity;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MoldItem extends BlockItem {
+public class MoldContentItem extends BlockItem {
     public final Item contentItem;
 
     /**
@@ -22,7 +22,7 @@ public class MoldItem extends BlockItem {
      */
     public static final Map<Block, Map<Item, Item>> MOLD_CONTENTS = new HashMap<>();
 
-    public MoldItem(Block block, Settings settings, Item contentItem) {
+    public MoldContentItem(Block block, Settings settings, Item contentItem) {
         super(block, settings);
         this.contentItem = contentItem;
         if (MOLD_CONTENTS.containsKey(block)) {
@@ -39,8 +39,8 @@ public class MoldItem extends BlockItem {
             Map<Item, Item> contentItems = MOLD_CONTENTS.get(moldBlock);
             Item content = contentItems.get(contentStack.getItem());
 
-            if (content instanceof MoldItem moldItem){
-                return moldItem.createMoldItemStack(contentStack);
+            if (content instanceof MoldContentItem moldContentItem){
+                return moldContentItem.createMoldItemStack(contentStack);
             }
         }
         return ItemStack.EMPTY;
@@ -49,7 +49,7 @@ public class MoldItem extends BlockItem {
     /**
      * 将内容物堆栈转换为对应的含有该内容物的模具
      * @param contentStack 内容物堆栈
-     * @return 对应的含有该内容物的堆栈，如果输入的内容物与{@link MoldItem#contentItem}不符则返回一个空堆栈
+     * @return 对应的含有该内容物的堆栈，如果输入的内容物与{@link MoldContentItem#contentItem}不符则返回一个空堆栈
      */
     public ItemStack createMoldItemStack(ItemStack contentStack){
         if (contentStack.getItem() == contentItem){

@@ -22,7 +22,7 @@ import org.foodcraft.FoodCraft;
 import org.foodcraft.block.entity.HeatResistantSlateBlockEntity;
 import org.foodcraft.block.entity.MoldBlockEntity;
 import org.foodcraft.block.entity.UpPlaceBlockEntity;
-import org.foodcraft.item.MoldItem;
+import org.foodcraft.item.MoldContentItem;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
@@ -70,10 +70,10 @@ public class MoldBlock extends UpPlaceBlock {
 
     @Override
     public void onPlaced(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack itemStack) {
-        if (!world.isClient && itemStack.getItem() instanceof MoldItem moldItem){
+        if (!world.isClient && itemStack.getItem() instanceof MoldContentItem moldContentItem){
             BlockEntity blockEntity = world.getBlockEntity(pos);
             if (blockEntity instanceof MoldBlockEntity moldBlockEntity){
-                moldItem.toMoldBlock(moldBlockEntity, itemStack);
+                moldContentItem.toMoldBlock(moldBlockEntity, itemStack);
             }
         }
     }
@@ -97,7 +97,7 @@ public class MoldBlock extends UpPlaceBlock {
         if (blockEntity instanceof MoldBlockEntity moldBlockEntity) {
             // 如果模具中有内容，返回对应的模具物品
             if (!moldBlockEntity.isEmpty()) {
-                ItemStack result =  MoldItem.getTargetStack(state.getBlock(), moldBlockEntity.getInputStack());
+                ItemStack result =  MoldContentItem.getTargetStack(state.getBlock(), moldBlockEntity.getInputStack());
                 return List.of(result);
             }
         }
