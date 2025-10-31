@@ -10,5 +10,12 @@
       "foodcraft:block/grinding_stone_grinding_1"
     ],
     "subtitle": "subtitle.foodcraft.stone_grinding"
+  },
+  "combustion_firewood": {
+    "sounds": [
+      "foodcraft:block/combustion_firewood_1",
+      "foodcraft:block/combustion_firewood_2"
+    ],
+    "subtitle": "subtitle.foodcraft.combustion_firewood"
   }
 }

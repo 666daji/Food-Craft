@@ -128,8 +128,8 @@ public class HeatResistantSlateBlock extends UpPlaceBlock {
                         pos.getZ() + 0.5,
                         ModSounds.COOKING_SOUND,
                         SoundCategory.BLOCKS,
-                        0.5F + random.nextFloat(),
-                        random.nextFloat() * 0.7F + 0.6F,
+                        0.2F + random.nextFloat(),
+                        random.nextFloat() * 0.7F + 0.2F,
                         false
                 );
             }

@@ -37,6 +37,7 @@ import org.dfood.tag.ModTags;
 import org.foodcraft.block.entity.CombustionFirewoodBlockEntity;
 import org.foodcraft.registry.ModBlockEntityTypes;
 import org.foodcraft.registry.ModItems;
+import org.foodcraft.registry.ModSounds;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -151,10 +152,10 @@ public class CombustionFirewoodBlock extends BlockWithEntity {
                         pos.getX() + 0.5,
                         pos.getY() + 0.5,
                         pos.getZ() + 0.5,
-                        SoundEvents.BLOCK_CAMPFIRE_CRACKLE,
+                        ModSounds.COMBUSTION_FIREWOOD,
                         SoundCategory.BLOCKS,
-                        0.5F + random.nextFloat(),
-                        random.nextFloat() * 0.7F + 0.6F,
+                        0.2F + random.nextFloat(),
+                        random.nextFloat() * 0.7F + 0.2F,
                         false
                 );
             }

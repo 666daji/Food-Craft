@@ -149,8 +149,8 @@ public class GrindingStoneBlock extends BlockWithEntity {
                         pos.getZ() + 0.5,
                         ModSounds.GRINDING_STONE_GRINDING,
                         SoundCategory.BLOCKS,
-                        0.5F + random.nextFloat(),
-                        random.nextFloat() * 0.7F + 0.6F,
+                        0.2F + random.nextFloat(),
+                        random.nextFloat() * 0.7F + 0.2F,
                         false
                 );
             }
