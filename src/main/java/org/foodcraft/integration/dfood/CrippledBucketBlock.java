@@ -51,10 +51,6 @@ public class CrippledBucketBlock extends CrippledBlock {
 
         // 检查是否手持空瓶子
         if (handStack.getItem() == Items.GLASS_BOTTLE) {
-            if (!player.canConsume(false)) {
-                return ActionResult.PASS;
-            }
-
             int i = state.get(NUMBER_OF_USE);
             world.playSound(player, pos, SoundEvents.ITEM_BOTTLE_FILL, player.getSoundCategory(), 1.0F, 1.0F);
 

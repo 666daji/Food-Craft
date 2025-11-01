@@ -9,6 +9,8 @@ import net.minecraft.nbt.NbtList;
 import net.minecraft.network.listener.ClientPlayPacketListener;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Identifier;
@@ -205,8 +207,15 @@ public class ShelfBlockEntity extends UpPlaceBlockEntity {
             return ActionResult.FAIL;
         }
 
+        if (world == null) {
+            return ActionResult.FAIL;
+        }
+
         // 如果是花，尝试插入到空花盆中
         if (canInsertFlower(stack)) {
+            world.playSound(null, this.pos, SoundEvents.BLOCK_GRASS_PLACE,
+                    SoundCategory.BLOCKS, 0.5f, 0.5f);
+
             return tryInsertFlower(stack);
         }
 
@@ -226,6 +235,9 @@ public class ShelfBlockEntity extends UpPlaceBlockEntity {
             else if (isFlowerPot(newStack)) {
                 initFlowerPotData(emptySlot);
             }
+
+            world.playSound(null, this.pos, SoundEvents.BLOCK_STONE_PLACE,
+                    SoundCategory.BLOCKS, 0.5f, 0.5f);
 
             this.markDirtyAndSync();
             return ActionResult.SUCCESS;
@@ -272,6 +284,10 @@ public class ShelfBlockEntity extends UpPlaceBlockEntity {
 
     @Override
     public ActionResult tryFetchItem(PlayerEntity player) {
+        if (world == null) {
+            return ActionResult.FAIL;
+        }
+
         for (int i = this.size() - 1; i >= 0; i--) {
             ItemStack stack = this.getStack(i);
             if (!stack.isEmpty()) {
@@ -286,9 +302,11 @@ public class ShelfBlockEntity extends UpPlaceBlockEntity {
                     stack = restoreFlourContent(i, stack);
                 }
 
-                // 原有逻辑：取出普通物品
+                // 取出普通物品
                 ItemStack extractedStack = stack.copy();
                 extractedStack.setCount(1);
+                world.playSound(null, this.pos, SoundEvents.BLOCK_STONE_PLACE,
+                        SoundCategory.BLOCKS, 0.5f, 0.5f);
 
                 if (!player.isCreative() && !player.giveItemStack(extractedStack)) {
                     player.dropItem(extractedStack, false);
@@ -356,6 +374,9 @@ public class ShelfBlockEntity extends UpPlaceBlockEntity {
         if (!player.isCreative() && !player.giveItemStack(flowerStack)) {
             player.dropItem(flowerStack, false);
         }
+
+        world.playSound(null, this.pos, SoundEvents.BLOCK_GRASS_PLACE,
+                SoundCategory.BLOCKS, 0.5f, 0.5f);
 
         // 清除花盆中的花数据
         clearFlowerData(slot);

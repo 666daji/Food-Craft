@@ -3,7 +3,7 @@
 	"credit": "Made with Blockbench",
 	"textures": {
 		"3": "foodcraft:block/again_extinguished",
-		"particle": "block/oak_log"
+		"particle": "foodcraft:block/again_extinguished"
 	},
 	"elements": [
 		{

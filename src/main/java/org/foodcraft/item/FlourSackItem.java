@@ -33,7 +33,7 @@ import java.util.stream.Stream;
 
 public class FlourSackItem extends BlockItem {
     private static final String ITEMS_KEY = "Items";
-    private static final int MAX_STORAGE = 64;
+    private static final int MAX_STORAGE = 16;
     private static final int ITEM_BAR_COLOR = MathHelper.packRgb(0.4F, 0.4F, 1.0F);
     private static final int ITEM_OCCUPANCY = 1; // 每个物品占用空间
 

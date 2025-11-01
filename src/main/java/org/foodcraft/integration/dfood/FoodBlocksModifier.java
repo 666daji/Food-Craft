@@ -43,24 +43,22 @@ public class FoodBlocksModifier {
 
         // 检查是否手持空瓶子
         if (handStack.getItem() == Items.GLASS_BOTTLE) {
-            if (player.canConsume(false)) {
-                if (world.isClient) {
-                    // 客户端播放声音
-                    world.playSound(player, pos, SoundEvents.ITEM_BOTTLE_FILL, player.getSoundCategory(), 1.0F, 1.0F);
-                    return ActionResult.SUCCESS;
-                }
-
-                // 转换为残损水桶状态
-                BlockState newState = CrippledBucketBlock.getWaterBucketState(state);
-                world.setBlockState(pos, newState, 3);
-
-                // 播放声音
+            if (world.isClient) {
+                // 客户端播放声音
                 world.playSound(player, pos, SoundEvents.ITEM_BOTTLE_FILL, player.getSoundCategory(), 1.0F, 1.0F);
-
-                // 调用新方块的使用方法
-                newState.onUse(world, player, hand, hit);
                 return ActionResult.SUCCESS;
             }
+
+            // 转换为残损水桶状态
+            BlockState newState = CrippledBucketBlock.getWaterBucketState(state);
+            world.setBlockState(pos, newState, 3);
+
+            // 播放声音
+            world.playSound(player, pos, SoundEvents.ITEM_BOTTLE_FILL, player.getSoundCategory(), 1.0F, 1.0F);
+
+            // 调用新方块的使用方法
+            newState.onUse(world, player, hand, hit);
+            return ActionResult.SUCCESS;
         }
 
         return ActionResult.PASS;

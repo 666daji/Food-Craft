@@ -20,7 +20,7 @@ public class CombustionFirewoodBlockEntity extends BlockEntity {
     /** 热量等级，0-无热量，1-低热量，2-高热量 */
     protected int heatLevel = 0;
 
-    static final int MAX_ENERGY = 24000;
+    static final int MAX_ENERGY = 12000;
     static final int HALF_ENERGY = MAX_ENERGY / 2; // 50%能量阈值
     static final int FIREWOOD_ENERGY = HALF_ENERGY; // 每次添柴增加50%能量
 
