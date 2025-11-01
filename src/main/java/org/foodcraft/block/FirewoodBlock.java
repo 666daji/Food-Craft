@@ -29,7 +29,7 @@ public class FirewoodBlock extends FoodBlock {
     protected final Block targetBlock;
 
     public FirewoodBlock(Settings settings, int max_food, Block targetBlock) {
-        super(settings, max_food);
+        super(settings, max_food, false);
         this.targetBlock = targetBlock;
     }
 

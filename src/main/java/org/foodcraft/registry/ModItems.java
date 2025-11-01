@@ -56,6 +56,8 @@ public class ModItems {
     public static final Item CAKE_EMBRYO = registerItem(ModBlocks.CAKE_EMBRYO);
     public static final Item BAKED_CAKE_EMBRYO = registerItem(ModBlocks.BAKED_CAKE_EMBRYO);
     public static final Item HARD_BREAD_BOAT = registerItem(ModBlocks.HARD_BREAD_BOAT);
+    public static final Item MUSHROOM_STEW_HARD_BREAD_BOAT = registerItem(ModBlocks.MUSHROOM_STEW_HARD_BREAD_BOAT);
+    public static final Item BEETROOT_SOUP_HARD_BREAD_BOAT = registerItem(ModBlocks.BEETROOT_SOUP_HARD_BREAD_BOAT);
 
     // 模具
     public static final Item DOUGH_CAKE_EMBRYO_MOLD = direcRegisterItem("dough_cake_embryo_mold",

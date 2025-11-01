@@ -3,13 +3,10 @@ package org.foodcraft.block;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.FoodComponent;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
+import net.minecraft.item.*;
+import net.minecraft.loot.context.LootContextParameterSet;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.state.StateManager;
-import net.minecraft.state.property.EnumProperty;
 import net.minecraft.state.property.IntProperty;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
@@ -20,51 +17,73 @@ import net.minecraft.world.WorldAccess;
 import net.minecraft.world.event.GameEvent;
 import net.minecraft.util.StringIdentifiable;
 import org.dfood.util.IntPropertyManager;
+import org.foodcraft.component.ModFoodComponents;
+import org.foodcraft.registry.ModBlocks;
+
+import java.util.Collections;
+import java.util.List;
 
 public class BreadBoatBlock extends SimpleFoodBlock {
-    public static final EnumProperty<SoupType> SOUP_TYPE = EnumProperty.of("soup_type", SoupType.class);
     public final IntProperty BITES;
-    public final int maxUse; // 最大使用次数
+    public final int maxUse;
+    public final SoupType soupType;
 
-    public BreadBoatBlock(Settings settings, int maxUse) {
+    public BreadBoatBlock(Settings settings, int maxUse, SoupType soupType) {
         super(settings);
         this.maxUse = maxUse;
+        this.soupType = soupType;
+
         this.BITES = IntPropertyManager.create("bites", 0, maxUse);
 
-        this.setDefaultState(this.getDefaultState()
-                .with(SOUP_TYPE, SoupType.EMPTY)
-                .with(BITES, 0));
+        this.setDefaultState(this.getDefaultState().with(BITES, 0));
     }
 
     @Override
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
         ItemStack handStack = player.getStackInHand(hand);
-        SoupType currentSoupType = state.get(SOUP_TYPE);
 
-        // 如果面包船是空的，并且玩家手持的是可盛入的汤物品
-        if (currentSoupType == SoupType.EMPTY) {
-            for (SoupType soupType : SoupType.values()) {
-                if (soupType != SoupType.EMPTY && handStack.getItem() == soupType.getSourceItem()) {
-                    // 设置面包船为对应的汤状态，重置喝汤次数
-                    world.setBlockState(pos, state.with(SOUP_TYPE, soupType).with(BITES, 0));
+        // 如果是空面包船，可以盛汤
+        if (this.soupType == SoupType.EMPTY) {
+            for (SoupType potentialSoupType : SoupType.values()) {
+                if (potentialSoupType != SoupType.EMPTY && handStack.getItem() == potentialSoupType.getSourceItem()) {
+                    // 获取对应的装满汤的面包船方块
+                    Block fullBoatBlock = getFullBoatBlock(potentialSoupType);
+                    if (fullBoatBlock != null) {
+                        // 替换为装满汤的面包船方块
+                        world.setBlockState(pos, fullBoatBlock.getDefaultState());
 
-                    // 将玩家手中的物品更改为使用后的物品（碗）
-                    if (!player.getAbilities().creativeMode) {
-                        handStack.decrement(1);
-                        ItemStack bowlStack = new ItemStack(Items.BOWL);
-                        if (handStack.isEmpty()) {
-                            player.setStackInHand(hand, bowlStack);
-                        } else if (!player.getInventory().insertStack(bowlStack)) {
-                            player.dropItem(bowlStack, false);
+                        // 将玩家手中的物品更改为使用后的物品（碗）
+                        if (!player.getAbilities().creativeMode) {
+                            handStack.decrement(1);
+                            ItemStack bowlStack = new ItemStack(Items.BOWL);
+                            if (handStack.isEmpty()) {
+                                player.setStackInHand(hand, bowlStack);
+                            } else if (!player.getInventory().insertStack(bowlStack)) {
+                                player.dropItem(bowlStack, false);
+                            }
                         }
+                        return ActionResult.SUCCESS;
                     }
-
-                    return ActionResult.SUCCESS;
                 }
             }
         }
-        // 如果面包船中有汤，并且玩家可以吃东西，则喝汤
-        else if (player.canConsume(false)) {
+        // 如果是装满汤的面包船
+        else {
+            int currentBites = state.get(BITES);
+
+            // 如果玩家不能食用，返还对应的物品并破坏方块
+            if (!player.canConsume(false)) {
+                if (!world.isClient) {
+                    // 掉落对应的装满汤的面包船物品
+                    ItemStack itemStack = new ItemStack(asItem());
+                    player.getInventory().offerOrDrop(itemStack);
+                    // 破坏方块
+                    world.breakBlock(pos, false);
+                }
+                return ActionResult.SUCCESS;
+            }
+
+            // 玩家可以食用，执行喝汤逻辑
             return tryDrinkSoup(world, pos, state, player);
         }
 
@@ -73,32 +92,29 @@ public class BreadBoatBlock extends SimpleFoodBlock {
     }
 
     /**
-     * 喝汤逻辑，参考CrippledStewBlock的实现
+     * 喝汤逻辑
      */
     protected ActionResult tryDrinkSoup(WorldAccess world, BlockPos pos, BlockState state, PlayerEntity player) {
-        SoupType soupType = state.get(SOUP_TYPE);
         int currentBites = state.get(BITES);
-
-        if (!player.canConsume(false)) {
-            return ActionResult.PASS;
-        }
 
         // 播放喝汤声音
         world.playSound(player, pos, SoundEvents.ENTITY_GENERIC_DRINK, player.getSoundCategory(), 1.0F, 1.0F);
 
         // 恢复饥饿值和饱和度（每次喝汤恢复1/maxUse的比例）
-        FoodComponent foodComponent = soupType.getFoodComponent();
-        player.getHungerManager().add(foodComponent.getHunger() / maxUse, foodComponent.getSaturationModifier() / (float) maxUse);
+        player.getHungerManager().add(
+                soupType.getFoodComponent().getHunger() / maxUse,
+                soupType.getFoodComponent().getSaturationModifier() / (float) maxUse
+        );
 
         world.emitGameEvent(player, GameEvent.EAT, pos);
 
         // 更新喝汤次数
-        if (currentBites < maxUse) {
+        if (currentBites < maxUse - 1) {
             // 还有剩余次数，增加喝汤次数
             world.setBlockState(pos, state.with(BITES, currentBites + 1), Block.NOTIFY_ALL);
         } else {
             // 喝完了，面包船被吃掉，不留下任何物品
-            world.breakBlock(pos, false);
+            world.setBlockState(pos, net.minecraft.block.Blocks.AIR.getDefaultState(), Block.NOTIFY_ALL);
         }
 
         return ActionResult.SUCCESS;
@@ -106,13 +122,13 @@ public class BreadBoatBlock extends SimpleFoodBlock {
 
     @Override
     public void onBreak(World world, BlockPos pos, BlockState state, PlayerEntity player) {
-        // 如果面包船中有汤且已被使用过，强制玩家一次性食用完剩余饱食度
-        SoupType soupType = state.get(SOUP_TYPE);
-        if (!world.isClient && soupType != SoupType.EMPTY && state.get(BITES) > 0) {
-            FoodComponent foodComponent = soupType.getFoodComponent();
-            int remainingBites = maxUse - state.get(BITES);
-            int hunger = (foodComponent.getHunger() / maxUse) * remainingBites;
-            float saturation = (foodComponent.getSaturationModifier() / (float) maxUse) * remainingBites;
+        int currentBites = state.get(BITES);
+
+        // 如果已经被吃过，强制返还剩余饱食度
+        if (!world.isClient && currentBites > 0 && this.soupType != SoupType.EMPTY) {
+            int remainingBites = maxUse - currentBites;
+            int hunger = (soupType.getFoodComponent().getHunger() / maxUse) * remainingBites;
+            float saturation = (soupType.getFoodComponent().getSaturationModifier() / (float) maxUse) * remainingBites;
             player.getHungerManager().add(hunger, saturation);
             world.emitGameEvent(player, GameEvent.EAT, pos);
         }
@@ -121,18 +137,38 @@ public class BreadBoatBlock extends SimpleFoodBlock {
     }
 
     @Override
+    public List<ItemStack> getDroppedStacks(BlockState state, LootContextParameterSet.Builder builder) {
+        int bites = state.get(BITES);
+        if (bites == 0){
+            return super.getDroppedStacks(state, builder);
+        }
+        return Collections.emptyList();
+    }
+
+    @Override
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
         super.appendProperties(builder);
-        builder.add(SOUP_TYPE, IntPropertyManager.take());
+        builder.add(IntPropertyManager.take());
+    }
+
+    /**
+     * 根据汤类型获取对应的装满汤的面包船方块
+     */
+    private Block getFullBoatBlock(SoupType soupType) {
+        return switch (soupType) {
+            case MUSHROOM_STEW -> ModBlocks.MUSHROOM_STEW_HARD_BREAD_BOAT;
+            case BEETROOT_SOUP -> ModBlocks.BEETROOT_SOUP_HARD_BREAD_BOAT;
+            default -> null;
+        };
     }
 
     public enum SoupType implements StringIdentifiable {
         EMPTY("empty", null, null),
         BEETROOT_SOUP("beetroot_soup",
-                new FoodComponent.Builder().hunger(6).saturationModifier(0.6f).build(),
+                ModFoodComponents.BEETROOT_SOUP_HARD_BREAD_BOAT,
                 Items.BEETROOT_SOUP),
         MUSHROOM_STEW("mushroom_stew",
-                new FoodComponent.Builder().hunger(6).saturationModifier(0.6f).build(),
+                ModFoodComponents.MUSHROOM_STEW_HARD_BREAD_BOAT,
                 Items.MUSHROOM_STEW);
 
         private final String name;

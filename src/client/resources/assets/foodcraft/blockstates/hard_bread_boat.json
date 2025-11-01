@@ -1,58 +1,8 @@
 {
   "variants": {
-    "soup_type=empty,facing=north": { "model": "foodcraft:block/hard_bread_boat" },
-    "soup_type=empty,facing=east": { "model": "foodcraft:block/hard_bread_boat", "y": 90 },
-    "soup_type=empty,facing=south": { "model": "foodcraft:block/hard_bread_boat", "y": 180 },
-    "soup_type=empty,facing=west": { "model": "foodcraft:block/hard_bread_boat", "y": 270 },
-
-    "soup_type=mushroom_stew,bites=0,facing=north": { "model": "foodcraft:block/mushroom_stew_hard_bread_boat" },
-    "soup_type=mushroom_stew,bites=0,facing=east": { "model": "foodcraft:block/mushroom_stew_hard_bread_boat", "y": 90 },
-    "soup_type=mushroom_stew,bites=0,facing=south": { "model": "foodcraft:block/mushroom_stew_hard_bread_boat", "y": 180 },
-    "soup_type=mushroom_stew,bites=0,facing=west": { "model": "foodcraft:block/mushroom_stew_hard_bread_boat", "y": 270 },
-
-    "soup_type=mushroom_stew,bites=1,facing=north": { "model": "foodcraft:block/mushroom_stew_hard_bread_boat_2" },
-    "soup_type=mushroom_stew,bites=1,facing=east": { "model": "foodcraft:block/mushroom_stew_hard_bread_boat_2", "y": 90 },
-    "soup_type=mushroom_stew,bites=1,facing=south": { "model": "foodcraft:block/mushroom_stew_hard_bread_boat_2", "y": 180 },
-    "soup_type=mushroom_stew,bites=1,facing=west": { "model": "foodcraft:block/mushroom_stew_hard_bread_boat_2", "y": 270 },
-
-    "soup_type=mushroom_stew,bites=2,facing=north": { "model": "foodcraft:block/mushroom_stew_hard_bread_boat_3" },
-    "soup_type=mushroom_stew,bites=2,facing=east": { "model": "foodcraft:block/mushroom_stew_hard_bread_boat_3", "y": 90 },
-    "soup_type=mushroom_stew,bites=2,facing=south": { "model": "foodcraft:block/mushroom_stew_hard_bread_boat_3", "y": 180 },
-    "soup_type=mushroom_stew,bites=2,facing=west": { "model": "foodcraft:block/mushroom_stew_hard_bread_boat_3", "y": 270 },
-
-    "soup_type=mushroom_stew,bites=3,facing=north": { "model": "foodcraft:block/mushroom_stew_hard_bread_boat_4" },
-    "soup_type=mushroom_stew,bites=3,facing=east": { "model": "foodcraft:block/mushroom_stew_hard_bread_boat_4", "y": 90 },
-    "soup_type=mushroom_stew,bites=3,facing=south": { "model": "foodcraft:block/mushroom_stew_hard_bread_boat_4", "y": 180 },
-    "soup_type=mushroom_stew,bites=3,facing=west": { "model": "foodcraft:block/mushroom_stew_hard_bread_boat_4", "y": 270 },
-
-    "soup_type=mushroom_stew,bites=4,facing=north": { "model": "foodcraft:block/mushroom_stew_hard_bread_boat_5" },
-    "soup_type=mushroom_stew,bites=4,facing=east": { "model": "foodcraft:block/mushroom_stew_hard_bread_boat_5", "y": 90 },
-    "soup_type=mushroom_stew,bites=4,facing=south": { "model": "foodcraft:block/mushroom_stew_hard_bread_boat_5", "y": 180 },
-    "soup_type=mushroom_stew,bites=4,facing=west": { "model": "foodcraft:block/mushroom_stew_hard_bread_boat_5", "y": 270 },
-
-    "soup_type=beetroot_soup,bites=0,facing=north": { "model": "foodcraft:block/beetroot_soup_hard_bread_boat" },
-    "soup_type=beetroot_soup,bites=0,facing=east": { "model": "foodcraft:block/beetroot_soup_hard_bread_boat", "y": 90 },
-    "soup_type=beetroot_soup,bites=0,facing=south": { "model": "foodcraft:block/beetroot_soup_hard_bread_boat", "y": 180 },
-    "soup_type=beetroot_soup,bites=0,facing=west": { "model": "foodcraft:block/beetroot_soup_hard_bread_boat", "y": 270 },
-
-    "soup_type=beetroot_soup,bites=1,facing=north": { "model": "foodcraft:block/beetroot_soup_hard_bread_boat_2" },
-    "soup_type=beetroot_soup,bites=1,facing=east": { "model": "foodcraft:block/beetroot_soup_hard_bread_boat_2", "y": 90 },
-    "soup_type=beetroot_soup,bites=1,facing=south": { "model": "foodcraft:block/beetroot_soup_hard_bread_boat_2", "y": 180 },
-    "soup_type=beetroot_soup,bites=1,facing=west": { "model": "foodcraft:block/beetroot_soup_hard_bread_boat_2", "y": 270 },
-
-    "soup_type=beetroot_soup,bites=2,facing=north": { "model": "foodcraft:block/beetroot_soup_hard_bread_boat_3" },
-    "soup_type=beetroot_soup,bites=2,facing=east": { "model": "foodcraft:block/beetroot_soup_hard_bread_boat_3", "y": 90 },
-    "soup_type=beetroot_soup,bites=2,facing=south": { "model": "foodcraft:block/beetroot_soup_hard_bread_boat_3", "y": 180 },
-    "soup_type=beetroot_soup,bites=2,facing=west": { "model": "foodcraft:block/beetroot_soup_hard_bread_boat_3", "y": 270 },
-
-    "soup_type=beetroot_soup,bites=3,facing=north": { "model": "foodcraft:block/beetroot_soup_hard_bread_boat_4" },
-    "soup_type=beetroot_soup,bites=3,facing=east": { "model": "foodcraft:block/beetroot_soup_hard_bread_boat_4", "y": 90 },
-    "soup_type=beetroot_soup,bites=3,facing=south": { "model": "foodcraft:block/beetroot_soup_hard_bread_boat_4", "y": 180 },
-    "soup_type=beetroot_soup,bites=3,facing=west": { "model": "foodcraft:block/beetroot_soup_hard_bread_boat_4", "y": 270 },
-
-    "soup_type=beetroot_soup,bites=4,facing=north": { "model": "foodcraft:block/beetroot_soup_hard_bread_boat_5" },
-    "soup_type=beetroot_soup,bites=4,facing=east": { "model": "foodcraft:block/beetroot_soup_hard_bread_boat_5", "y": 90 },
-    "soup_type=beetroot_soup,bites=4,facing=south": { "model": "foodcraft:block/beetroot_soup_hard_bread_boat_5", "y": 180 },
-    "soup_type=beetroot_soup,bites=4,facing=west": { "model": "foodcraft:block/beetroot_soup_hard_bread_boat_5", "y": 270 }
+    "facing=north": { "model": "foodcraft:block/hard_bread_boat" },
+    "facing=east": { "model": "foodcraft:block/hard_bread_boat", "y": 90 },
+    "facing=south": { "model": "foodcraft:block/hard_bread_boat", "y": 180 },
+    "facing=west": { "model": "foodcraft:block/hard_bread_boat", "y": 270 }
   }
 }

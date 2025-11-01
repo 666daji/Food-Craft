@@ -58,6 +58,8 @@ public class ModItemGroups {
                             entries.add(ModItems.TOAST);
                             entries.add(ModItems.BAKED_CAKE_EMBRYO);
                             entries.add(ModItems.HARD_BREAD_BOAT);
+                            entries.add(ModItems.MUSHROOM_STEW_HARD_BREAD_BOAT);
+                            entries.add(ModItems.BEETROOT_SOUP_HARD_BREAD_BOAT);
 
                             //模具
                             entries.add(ModItems.CAKE_EMBRYO_MOLD);

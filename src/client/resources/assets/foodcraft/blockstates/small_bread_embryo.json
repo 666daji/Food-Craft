@@ -1,19 +1,19 @@
 {
   "variants": {
-    "facing=north": {
-      "model": "foodcraft:block/small_bread_embryo",
-      "y": 180
-    },
-    "facing=south": {
-      "model": "foodcraft:block/small_bread_embryo"
-    },
-    "facing=east": {
-      "model": "foodcraft:block/small_bread_embryo",
-      "y": 270
-    },
-    "facing=west": {
-      "model": "foodcraft:block/small_bread_embryo",
-      "y": 90
-    }
+    "facing=north,number_of_food=1": { "model": "foodcraft:block/small_bread_embryo", "y": 180 },
+    "facing=north,number_of_food=2": { "model": "foodcraft:block/small_bread_embryo_2", "y": 180 },
+    "facing=north,number_of_food=3": { "model": "foodcraft:block/small_bread_embryo_3", "y": 180 },
+
+    "facing=south,number_of_food=1": { "model": "foodcraft:block/small_bread_embryo"},
+    "facing=south,number_of_food=2": { "model": "foodcraft:block/small_bread_embryo_2" },
+    "facing=south,number_of_food=3": { "model": "foodcraft:block/small_bread_embryo_3" },
+
+    "facing=east,number_of_food=1": { "model": "foodcraft:block/small_bread_embryo", "y": 270 },
+    "facing=east,number_of_food=2": { "model": "foodcraft:block/small_bread_embryo_2", "y": 270 },
+    "facing=east,number_of_food=3": { "model": "foodcraft:block/small_bread_embryo_3", "y": 270 },
+
+    "facing=west,number_of_food=1": { "model": "foodcraft:block/small_bread_embryo", "y": 90 },
+    "facing=west,number_of_food=2": { "model": "foodcraft:block/small_bread_embryo_2", "y": 90 },
+    "facing=west,number_of_food=3": { "model": "foodcraft:block/small_bread_embryo_3", "y": 90 }
   }
 }

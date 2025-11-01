@@ -78,14 +78,14 @@ public class ModBlocks {
             new SimpleFoodBlock(AbstractBlock.Settings.create()
                     .sounds(BlockSoundGroup.WOOL).strength(0.2F)
                     .nonOpaque().pistonBehavior(PistonBehavior.DESTROY)));
-    public static final Block SMALL_BREAD_EMBRYO = registerBlock("small_bread_embryo",
-            new SimpleFoodBlock(AbstractBlock.Settings.create()
+    public static final Block SMALL_BREAD_EMBRYO = registerFoodBlock("small_bread_embryo", 3,
+            AbstractBlock.Settings.create()
                     .sounds(BlockSoundGroup.WOOL).strength(0.2F)
-                    .nonOpaque().pistonBehavior(PistonBehavior.DESTROY)));
-    public static final Block SMALL_BREAD = registerBlock("small_bread",
-            new SimpleFoodBlock(AbstractBlock.Settings.create()
+                    .nonOpaque().pistonBehavior(PistonBehavior.DESTROY), FoodBlock::new);
+    public static final Block SMALL_BREAD = registerFoodBlock("small_bread", 2,
+            AbstractBlock.Settings.create()
                     .sounds(BlockSoundGroup.WOOL).strength(0.2F)
-                    .nonOpaque().pistonBehavior(PistonBehavior.DESTROY)));
+                    .nonOpaque().pistonBehavior(PistonBehavior.DESTROY), FoodBlock::new);
     public static final Block BAGUETTE = registerBlock("baguette",
             new SimpleFoodBlock(AbstractBlock.Settings.create()
                     .sounds(BlockSoundGroup.WOOL).strength(0.2F)
@@ -113,7 +113,15 @@ public class ModBlocks {
     public static final Block HARD_BREAD_BOAT = registerBreadBoatBlock("hard_bread_boat",
             AbstractBlock.Settings.create().sounds(BlockSoundGroup.WOOL).strength(0.2F)
                     .nonOpaque().pistonBehavior(PistonBehavior.DESTROY),
-            BreadBoatBlock::new, 4);
+            ((settings, integer) -> new BreadBoatBlock(settings, integer, BreadBoatBlock.SoupType.EMPTY)), 4);
+    public static final Block MUSHROOM_STEW_HARD_BREAD_BOAT = registerBreadBoatBlock("mushroom_stew_hard_bread_boat",
+            AbstractBlock.Settings.create().sounds(BlockSoundGroup.WOOL).strength(0.2F)
+                    .nonOpaque().pistonBehavior(PistonBehavior.DESTROY),
+            ((settings, integer) -> new BreadBoatBlock(settings, integer, BreadBoatBlock.SoupType.MUSHROOM_STEW)), 4);;
+    public static final Block BEETROOT_SOUP_HARD_BREAD_BOAT = registerBreadBoatBlock("beetroot_soup_hard_bread_boat",
+            AbstractBlock.Settings.create().sounds(BlockSoundGroup.WOOL).strength(0.2F)
+                    .nonOpaque().pistonBehavior(PistonBehavior.DESTROY),
+            ((settings, integer) -> new BreadBoatBlock(settings, integer, BreadBoatBlock.SoupType.BEETROOT_SOUP)), 4);;
 
     // 模具
     public static final Block CAKE_EMBRYO_MOLD = registerBlock("cake_embryo_mold",
