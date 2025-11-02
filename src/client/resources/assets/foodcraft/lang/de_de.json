@@ -1,0 +1,60 @@
+{
+  "item.foodcraft.wheat_flour": "Weizenmehl",
+  "item.foodcraft.lapis_lazuli_flour": "Lapislazuli-Mehl",
+  "item.foodcraft.cocoa_flour": "Kakaomehl",
+  "item.foodcraft.amethyst_flour": "Amethyst-Mehl",
+  "item.foodcraft.flour_sack": "Mehlsack",
+
+  "block.foodcraft.grinding_stone": "Mahlstein",
+  "block.foodcraft.toast_mold": "Toast-Form",
+  "block.foodcraft.heat_resistant_slate": "Hitzebeständige Schieferplatte",
+  "item.foodcraft.firewood": "Brennholz",
+
+  "block.foodcraft.iron_dishes": "Eiserne Dekorationsplatte",
+  "block.foodcraft.wooden_shelf": "Holzregal",
+  "block.foodcraft.cutting_board": "Schneidebrett",
+
+  "item.foodcraft.milk_potion": "Milchflasche",
+
+  "item.foodcraft.dough": "Teig",
+  "item.foodcraft.hard_bread": "Hartes Brot",
+  "item.foodcraft.small_bread_embryo": "Kleiner Brot-Embryo",
+  "item.foodcraft.small_bread": "Kleines Brot",
+  "item.foodcraft.cake_embryo": "Kuchen-Embryo",
+  "item.foodcraft.baguette": "Baguette",
+  "item.foodcraft.baguette_embryo": "Baguette-Embryo",
+  "item.foodcraft.fluffy_bread_embryo": "Fluffiger Brot-Embryo",
+  "item.foodcraft.toast": "Toast",
+  "item.foodcraft.baked_cake_embryo": "Gebackener Kuchen-Embryo",
+  "item.foodcraft.hard_bread_boat": "Hartes Brot-Boot",
+  "item.foodcraft.mushroom_stew_hard_bread_boat": "Hartes Brot-Boot mit Pilzeintopf",
+  "item.foodcraft.beetroot_soup_hard_bread_boat": "Hartes Brot-Boot mit Rote-Bete-Suppe",
+
+  "block.foodcraft.cake_embryo_mold": "Kuchen-Embryo-Form",
+  "block.foodcraft.toast_embryo_mold": "Toast-Embryo-Form",
+  "item.foodcraft.dough_cake_embryo_mold": "Kuchen-Embryo-Form mit Teig",
+  "item.foodcraft.fluffy_bread_embryo_toast_embryo_mold": "Toast-Embryo-Form mit Fluffigem Brot-Embryo",
+
+  "block.foodcraft.salt_ore": "Salzerz",
+  "block.foodcraft.deepslate_salt_ore": "Tiefenschiefer-Salzerz",
+
+  "item.foodcraft.salt_shaker": "Salzstreuer",
+  "item.foodcraft.salt_cubes": "Salzwürfel",
+
+  "itemgroup.foodcraft": "FoodCraft",
+
+  "subtitles.foodcraft.stove_baking": "Herd: Backt",
+  "subtitle.foodcraft.stone_grinding": "Mahlstein: Dreht sich",
+  "subtitle.foodcraft.combustion_firewood": "Lagerfeuer: Brennt",
+
+  "grinding_stone.add.refused": "Das kann nicht gemahlen werden!",
+  "grinding_stone.add.full": "Es ist bereits voll!",
+  "grinding_stone.energy.full": "Der Mahlstein muss jetzt nicht geschoben werden...",
+  "grinding_stone.add.not_enough": "Das scheint nicht genug zu sein...",
+
+  "item.foodcraft.flour_sack.fullness": "Kapazität: %s/%s",
+  "item.foodcraft.flour_sack.content": "%s x%s",
+  "item.foodcraft.flour_sack.tooltip.empty": "Rechtsklick zum Hinzufügen von Mehl",
+  "item.foodcraft.flour_sack.tooltip.non_empty": "Rechtsklick zum Entnehmen von Mehl",
+  "item.foodcraft.flour_sack.tooltip.contents": "Rechtsklick zum Entnehmen von Mehl"
+}

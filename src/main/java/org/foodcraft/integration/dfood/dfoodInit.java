@@ -20,11 +20,11 @@ public class dfoodInit {
         Shapes.shapeMap.put("foodcraft:crippled_suspicious_stew",new int[][]{
                 {1, 4, 8}
         });
-        Shapes.shapeMap.put("minecraft:crippled_milk_bucket", new int[][]{
-                {1, 1, 8}
+        Shapes.shapeMap.put("foodcraft:crippled_milk_bucket", new int[][]{
+                {1, 3, 8}
         });
-        Shapes.shapeMap.put("minecraft:crippled_water_bucket", new int[][]{
-                {1, 1, 8}
+        Shapes.shapeMap.put("foodcraft:crippled_water_bucket", new int[][]{
+                {1, 3, 8}
         });
     }
 }

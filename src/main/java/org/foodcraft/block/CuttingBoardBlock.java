@@ -6,6 +6,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.ShapeContext;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.SwordItem;
 import net.minecraft.state.StateManager;
@@ -15,8 +16,8 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 import net.minecraft.util.shape.VoxelShape;
-import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import org.foodcraft.block.entity.CuttingBoardBlockEntity;
@@ -24,7 +25,8 @@ import org.foodcraft.block.entity.UpPlaceBlockEntity;
 import org.jetbrains.annotations.Nullable;
 
 public class CuttingBoardBlock extends UpPlaceBlock {
-    protected static final VoxelShape SHAPE = VoxelShapes.cuboid(0.0, 0.0, 0.0, 1.0, 0.125, 1.0);
+    protected static final VoxelShape SHAPE_X = Block.createCuboidShape(0.0, 0.0, 0.5, 16.0, 1.5, 15.5);
+    protected static final VoxelShape SHAPE_Z = Block.createCuboidShape(0.5, 0.0, 0.0, 15.5, 1.5, 16.0);
     public static final DirectionProperty FACING = Properties.HORIZONTAL_FACING;
 
     public CuttingBoardBlock(Settings settings) {
@@ -32,8 +34,14 @@ public class CuttingBoardBlock extends UpPlaceBlock {
     }
 
     @Override
+    public @Nullable BlockState getPlacementState(ItemPlacementContext ctx) {
+        return this.getDefaultState()
+                .with(FACING, ctx.getHorizontalPlayerFacing());
+    }
+
+    @Override
     public VoxelShape getBaseShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
-        return SHAPE;
+        return state.get(FACING).getAxis() == Direction.Axis.X? SHAPE_X: SHAPE_Z;
     }
 
     @Override

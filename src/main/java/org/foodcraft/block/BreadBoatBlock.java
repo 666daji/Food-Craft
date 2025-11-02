@@ -109,7 +109,7 @@ public class BreadBoatBlock extends SimpleFoodBlock {
         world.emitGameEvent(player, GameEvent.EAT, pos);
 
         // 更新喝汤次数
-        if (currentBites < maxUse - 1) {
+        if (currentBites < maxUse) {
             // 还有剩余次数，增加喝汤次数
             world.setBlockState(pos, state.with(BITES, currentBites + 1), Block.NOTIFY_ALL);
         } else {

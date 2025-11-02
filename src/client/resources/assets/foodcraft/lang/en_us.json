@@ -1,9 +1,60 @@
 {
   "item.foodcraft.wheat_flour": "Wheat Flour",
+  "item.foodcraft.lapis_lazuli_flour": "Lapis Lazuli Flour",
+  "item.foodcraft.cocoa_flour": "Cocoa Flour",
+  "item.foodcraft.amethyst_flour": "Amethyst Flour",
+  "item.foodcraft.flour_sack": "Flour Sack",
 
   "block.foodcraft.grinding_stone": "Grinding Stone",
+  "block.foodcraft.toast_mold": "Toast Mold",
+  "block.foodcraft.heat_resistant_slate": "Heat-Resistant Slate",
+  "item.foodcraft.firewood": "Firewood",
 
-  "grinding_stone.add.refused": "This cannot be ground",
+  "block.foodcraft.iron_dishes": "Iron Decorated Plate",
+  "block.foodcraft.wooden_shelf": "Wooden Shelf",
+  "block.foodcraft.cutting_board": "Cutting Board",
+
+  "item.foodcraft.milk_potion": "Milk Bottle",
+
+  "item.foodcraft.dough": "Dough",
+  "item.foodcraft.hard_bread": "Hard Bread",
+  "item.foodcraft.small_bread_embryo": "Small Bread Embryo",
+  "item.foodcraft.small_bread": "Small Bread",
+  "item.foodcraft.cake_embryo": "Cake Embryo",
+  "item.foodcraft.baguette": "Baguette",
+  "item.foodcraft.baguette_embryo": "Baguette Embryo",
+  "item.foodcraft.fluffy_bread_embryo": "Fluffy Bread Embryo",
+  "item.foodcraft.toast": "Toast",
+  "item.foodcraft.baked_cake_embryo": "Baked Cake Embryo",
+  "item.foodcraft.hard_bread_boat": "Hard Bread Boat",
+  "item.foodcraft.mushroom_stew_hard_bread_boat": "Hard Bread Boat with Mushroom Stew",
+  "item.foodcraft.beetroot_soup_hard_bread_boat": "Hard Bread Boat with Beetroot Soup",
+
+  "block.foodcraft.cake_embryo_mold": "Cake Embryo Mold",
+  "block.foodcraft.toast_embryo_mold": "Toast Embryo Mold",
+  "item.foodcraft.dough_cake_embryo_mold": "Cake Embryo Mold with Dough",
+  "item.foodcraft.fluffy_bread_embryo_toast_embryo_mold": "Toast Embryo Mold with Fluffy Bread Embryo",
+
+  "block.foodcraft.salt_ore": "Salt Ore",
+  "block.foodcraft.deepslate_salt_ore": "Deepslate Salt Ore",
+
+  "item.foodcraft.salt_shaker": "Salt Shaker",
+  "item.foodcraft.salt_cubes": "Salt Cubes",
+
+  "itemgroup.foodcraft": "FoodCraft",
+
+  "subtitles.foodcraft.stove_baking": "Stove: Baking",
+  "subtitle.foodcraft.stone_grinding": "Grinding Stone: Turning",
+  "subtitle.foodcraft.combustion_firewood": "Campfire: Burning",
+
+  "grinding_stone.add.refused": "This cannot be ground!",
   "grinding_stone.add.full": "It's already full!",
-  "grinding_stone.energy.full": "No need to push the grinding stone now..."
+  "grinding_stone.energy.full": "No need to push the grinding stone now...",
+  "grinding_stone.add.not_enough": "This doesn't seem to be enough...",
+
+  "item.foodcraft.flour_sack.fullness": "Capacity: %s/%s",
+  "item.foodcraft.flour_sack.content": "%s x%s",
+  "item.foodcraft.flour_sack.tooltip.empty": "Right-click to add flour",
+  "item.foodcraft.flour_sack.tooltip.non_empty": "Right-click to take flour",
+  "item.foodcraft.flour_sack.tooltip.contents": "Right-click to take flour"
 }

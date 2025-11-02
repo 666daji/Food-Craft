@@ -1,0 +1,60 @@
+{
+  "item.foodcraft.wheat_flour": "밀가루",
+  "item.foodcraft.lapis_lazuli_flour": "청금석 가루",
+  "item.foodcraft.cocoa_flour": "코코아 가루",
+  "item.foodcraft.amethyst_flour": "자수정 가루",
+  "item.foodcraft.flour_sack": "가루 주머니",
+
+  "block.foodcraft.grinding_stone": "맷돌",
+  "block.foodcraft.toast_mold": "토스트 틀",
+  "block.foodcraft.heat_resistant_slate": "내열성 슬레이트",
+  "item.foodcraft.firewood": "장작",
+
+  "block.foodcraft.iron_dishes": "철제 장식 접시",
+  "block.foodcraft.wooden_shelf": "나무 선반",
+  "block.foodcraft.cutting_board": "도마",
+
+  "item.foodcraft.milk_potion": "우유 병",
+
+  "item.foodcraft.dough": "반죽",
+  "item.foodcraft.hard_bread": "딱딱한 빵",
+  "item.foodcraft.small_bread_embryo": "작은 빵 태아",
+  "item.foodcraft.small_bread": "작은 빵",
+  "item.foodcraft.cake_embryo": "케이크 태아",
+  "item.foodcraft.baguette": "바게트",
+  "item.foodcraft.baguette_embryo": "바게트 태아",
+  "item.foodcraft.fluffy_bread_embryo": "푹신한 빵 태아",
+  "item.foodcraft.toast": "토스트",
+  "item.foodcraft.baked_cake_embryo": "구운 케이크 태아",
+  "item.foodcraft.hard_bread_boat": "딱딱한 빵 보트",
+  "item.foodcraft.mushroom_stew_hard_bread_boat": "버섯 스튜가 가득 담긴 딱딱한 빵 보트",
+  "item.foodcraft.beetroot_soup_hard_bread_boat": "비트 수프가 가득 담긴 딱딱한 빵 보트",
+
+  "block.foodcraft.cake_embryo_mold": "케이크 태아 틀",
+  "block.foodcraft.toast_embryo_mold": "토스트 태아 틀",
+  "item.foodcraft.dough_cake_embryo_mold": "반죽이 담긴 케이크 태아 틀",
+  "item.foodcraft.fluffy_bread_embryo_toast_embryo_mold": "푹신한 빵 태아가 담긴 토스트 태아 틀",
+
+  "block.foodcraft.salt_ore": "소금 광석",
+  "block.foodcraft.deepslate_salt_ore": "심층암 소금 광석",
+
+  "item.foodcraft.salt_shaker": "소금통",
+  "item.foodcraft.salt_cubes": "소금 덩어리",
+
+  "itemgroup.foodcraft": "푸드크래프트",
+
+  "subtitles.foodcraft.stove_baking": "화로: 굽는 중",
+  "subtitle.foodcraft.stone_grinding": "맷돌: 돌아가는 소리",
+  "subtitle.foodcraft.combustion_firewood": "모닥불: 타는 소리",
+
+  "grinding_stone.add.refused": "이것은 갈 수 없어요!",
+  "grinding_stone.add.full": "이미 가득 찼어요!",
+  "grinding_stone.energy.full": "지금은 맷돌을 돌릴 필요가 없어요...",
+  "grinding_stone.add.not_enough": "이것으론 좀 부족한 것 같아요...",
+
+  "item.foodcraft.flour_sack.fullness": "용량: %s/%s",
+  "item.foodcraft.flour_sack.content": "%s x%s",
+  "item.foodcraft.flour_sack.tooltip.empty": "오른쪽 클릭으로 가루 넣기",
+  "item.foodcraft.flour_sack.tooltip.non_empty": "오른쪽 클릭으로 가루 꺼내기",
+  "item.foodcraft.flour_sack.tooltip.contents": "오른쪽 클릭으로 가루 꺼내기"
+}

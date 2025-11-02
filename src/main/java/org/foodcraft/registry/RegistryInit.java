@@ -19,6 +19,11 @@ public class RegistryInit {
                 {1, 2, 8}
         });
 
+        // 奶制品
+        Shapes.shapeMap.put("foodcraft:milk_potion",new int[][]{
+                {1, 2, 8}, {3, 3, 1}
+        });
+
         // 面包
         Shapes.shapeMap.put("foodcraft:small_bread_embryo",new int[][]{
                 {1, 1, 12}
@@ -33,13 +38,22 @@ public class RegistryInit {
                 {1, 1, 2}
         });
         Shapes.shapeMap.put("foodcraft:hard_bread",new int[][]{
-                {1, 1, 12}
+                {1, 1, 8}
         });
         Shapes.shapeMap.put("foodcraft:dough",new int[][]{
                 {1, 1, 12}
         });
         Shapes.shapeMap.put("foodcraft:cake_embryo",new int[][]{
                 {1, 1, 1}
+        });
+        Shapes.shapeMap.put("foodcraft:hard_bread_boat",new int[][]{
+                {1, 1, 8}
+        });
+        Shapes.shapeMap.put("foodcraft:mushroom_stew_hard_bread_boat",new int[][]{
+                {1, 1, 8}
+        });
+        Shapes.shapeMap.put("foodcraft:beetroot_soup_hard_bread_boat",new int[][]{
+                {1, 1, 8}
         });
     }
 }

@@ -1,19 +1,19 @@
 {
   "variants": {
     "facing=north": {
-      "model": "foodcraft:block/cutting_board",
-      "y": 270
+      "model": "foodcraft:block/cutting_board"
     },
     "facing=south": {
       "model": "foodcraft:block/cutting_board",
-      "y": 90
+      "y": 180
     },
     "facing=east": {
-      "model": "foodcraft:block/cutting_board"
+      "model": "foodcraft:block/cutting_board",
+      "y": 90
     },
     "facing=west": {
       "model": "foodcraft:block/cutting_board",
-      "y": 180
+      "y": 270
     }
   }
 }

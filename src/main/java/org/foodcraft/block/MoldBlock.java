@@ -6,6 +6,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.ShapeContext;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.loot.context.LootContextParameterSet;
 import net.minecraft.loot.context.LootContextParameters;
@@ -15,6 +16,7 @@ import net.minecraft.state.property.Properties;
 import net.minecraft.util.BlockMirror;
 import net.minecraft.util.BlockRotation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
@@ -23,6 +25,7 @@ import org.foodcraft.block.entity.HeatResistantSlateBlockEntity;
 import org.foodcraft.block.entity.MoldBlockEntity;
 import org.foodcraft.block.entity.UpPlaceBlockEntity;
 import org.foodcraft.item.MoldContentItem;
+import org.foodcraft.registry.ModBlocks;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
@@ -31,7 +34,9 @@ import java.util.List;
 public class MoldBlock extends UpPlaceBlock {
     public static final Logger LOGGER = FoodCraft.LOGGER;
     public static final DirectionProperty FACING = Properties.HORIZONTAL_FACING;
-    public static final VoxelShape SHAPE = Block.createCuboidShape(0, 0, 0, 16, 9, 16);
+    public static final VoxelShape CAKE_EMBRYO_MOLD_SHAPE = Block.createCuboidShape(0, 0, 0, 16, 9, 16);
+    public static final VoxelShape TOAST_EMBRYO_MOLD_SHAPE_X = Block.createCuboidShape(3, 0, 0, 13, 8, 16);
+    public static final VoxelShape TOAST_EMBRYO_MOLD_SHAPE_Z = Block.createCuboidShape(0, 0, 3, 16, 8, 13);
 
     /** 是否可以放置在耐热石板上 */
     public final boolean canPlaceSlate;
@@ -42,8 +47,18 @@ public class MoldBlock extends UpPlaceBlock {
     }
 
     @Override
+    public @Nullable BlockState getPlacementState(ItemPlacementContext ctx) {
+        return this.getDefaultState()
+                .with(FACING, ctx.getHorizontalPlayerFacing());
+    }
+
+    @Override
     public VoxelShape getBaseShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
-        return SHAPE;
+        if (state.getBlock() == ModBlocks.TOAST_EMBRYO_MOLD) {
+            return state.get(FACING).getAxis() ==
+                    Direction.Axis.Z ? TOAST_EMBRYO_MOLD_SHAPE_Z : TOAST_EMBRYO_MOLD_SHAPE_X;
+        }
+        return CAKE_EMBRYO_MOLD_SHAPE;
     }
 
     /**

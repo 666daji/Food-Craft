@@ -1,0 +1,60 @@
+{
+  "item.foodcraft.wheat_flour": "小麦粉",
+  "item.foodcraft.lapis_lazuli_flour": "ラピスラズリ粉",
+  "item.foodcraft.cocoa_flour": "ココア粉",
+  "item.foodcraft.amethyst_flour": "アメジスト粉",
+  "item.foodcraft.flour_sack": "粉袋",
+
+  "block.foodcraft.grinding_stone": "石臼",
+  "block.foodcraft.toast_mold": "トースト型",
+  "block.foodcraft.heat_resistant_slate": "耐熱石板",
+  "item.foodcraft.firewood": "薪",
+
+  "block.foodcraft.iron_dishes": "鉄の飾り皿",
+  "block.foodcraft.wooden_shelf": "木の棚",
+  "block.foodcraft.cutting_board": "まな板",
+
+  "item.foodcraft.milk_potion": "ミルク瓶",
+
+  "item.foodcraft.dough": "生地",
+  "item.foodcraft.hard_bread": "ハードブレッド",
+  "item.foodcraft.small_bread_embryo": "小型パン胚",
+  "item.foodcraft.small_bread": "小型パン",
+  "item.foodcraft.cake_embryo": "ケーキ胚",
+  "item.foodcraft.baguette": "バゲット",
+  "item.foodcraft.baguette_embryo": "バゲット胚",
+  "item.foodcraft.fluffy_bread_embryo": "ふわふわパン胚",
+  "item.foodcraft.toast": "トースト",
+  "item.foodcraft.baked_cake_embryo": "焼けたケーキ胚",
+  "item.foodcraft.hard_bread_boat": "ハードブレッドの舟",
+  "item.foodcraft.mushroom_stew_hard_bread_boat": "キノコシチュー入りハードブレッドの舟",
+  "item.foodcraft.beetroot_soup_hard_bread_boat": "ビートルートスープ入りハードブレッドの舟",
+
+  "block.foodcraft.cake_embryo_mold": "ケーキ胚型",
+  "block.foodcraft.toast_embryo_mold": "トースト胚型",
+  "item.foodcraft.dough_cake_embryo_mold": "生地入りケーキ胚型",
+  "item.foodcraft.fluffy_bread_embryo_toast_embryo_mold": "ふわふわパン胚入りトースト胚型",
+
+  "block.foodcraft.salt_ore": "塩鉱石",
+  "block.foodcraft.deepslate_salt_ore": "深層塩鉱石",
+
+  "item.foodcraft.salt_shaker": "塩振り",
+  "item.foodcraft.salt_cubes": "塩の塊",
+
+  "itemgroup.foodcraft": "FoodCraft",
+
+  "subtitles.foodcraft.stove_baking": "ストーブ：焼成中",
+  "subtitle.foodcraft.stone_grinding": "石臼：回転中",
+  "subtitle.foodcraft.combustion_firewood": "焚き火：燃焼中",
+
+  "grinding_stone.add.refused": "これは挽けません！",
+  "grinding_stone.add.full": "もう満杯です！",
+  "grinding_stone.energy.full": "石臼を回す必要はありません…",
+  "grinding_stone.add.not_enough": "これでは足りないようです…",
+
+  "item.foodcraft.flour_sack.fullness": "容量: %s/%s",
+  "item.foodcraft.flour_sack.content": "%s x%s",
+  "item.foodcraft.flour_sack.tooltip.empty": "右クリックで粉を追加",
+  "item.foodcraft.flour_sack.tooltip.non_empty": "右クリックで粉を取り出し",
+  "item.foodcraft.flour_sack.tooltip.contents": "右クリックで粉を取り出し"
+}

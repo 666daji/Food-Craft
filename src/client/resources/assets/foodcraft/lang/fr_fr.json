@@ -1,0 +1,60 @@
+{
+  "item.foodcraft.wheat_flour": "Farine de Blé",
+  "item.foodcraft.lapis_lazuli_flour": "Farine de Lapis-Lazuli",
+  "item.foodcraft.cocoa_flour": "Farine de Cacao",
+  "item.foodcraft.amethyst_flour": "Farine d'Améthyste",
+  "item.foodcraft.flour_sack": "Sac de Farine",
+
+  "block.foodcraft.grinding_stone": "Pierre à Moudre",
+  "block.foodcraft.toast_mold": "Moule à Pain Grillé",
+  "block.foodcraft.heat_resistant_slate": "Ardoise Résistante à la Chaleur",
+  "item.foodcraft.firewood": "Bois de Chauffage",
+
+  "block.foodcraft.iron_dishes": "Assiette en Fer",
+  "block.foodcraft.wooden_shelf": "Étagère en Bois",
+  "block.foodcraft.cutting_board": "Planche à Découper",
+
+  "item.foodcraft.milk_potion": "Bouteille de Lait",
+
+  "item.foodcraft.dough": "Pâte",
+  "item.foodcraft.hard_bread": "Pain Dur",
+  "item.foodcraft.small_bread_embryo": "Ébauche de Petit Pain",
+  "item.foodcraft.small_bread": "Petit Pain",
+  "item.foodcraft.cake_embryo": "Ébauche de Gâteau",
+  "item.foodcraft.baguette": "Baguette",
+  "item.foodcraft.baguette_embryo": "Ébauche de Baguette",
+  "item.foodcraft.fluffy_bread_embryo": "Ébauche de Pain Moelleux",
+  "item.foodcraft.toast": "Pain Grillé",
+  "item.foodcraft.baked_cake_embryo": "Ébauche de Gâteau Cuite",
+  "item.foodcraft.hard_bread_boat": "Bateau en Pain Dur",
+  "item.foodcraft.mushroom_stew_hard_bread_boat": "Bateau en Pain Dur au Ragoût de Champignons",
+  "item.foodcraft.beetroot_soup_hard_bread_boat": "Bateau en Pain Dur à la Soupe de Betterave",
+
+  "block.foodcraft.cake_embryo_mold": "Moule à Ébauche de Gâteau",
+  "block.foodcraft.toast_embryo_mold": "Moule à Ébauche de Pain Grillé",
+  "item.foodcraft.dough_cake_embryo_mold": "Moule à Gâteau avec Pâte",
+  "item.foodcraft.fluffy_bread_embryo_toast_embryo_mold": "Moule à Pain Grillé avec Ébauche de Pain Moelleux",
+
+  "block.foodcraft.salt_ore": "Minerai de Sel",
+  "block.foodcraft.deepslate_salt_ore": "Minerai de Sel des Ardoises des Abîmes",
+
+  "item.foodcraft.salt_shaker": "Salière",
+  "item.foodcraft.salt_cubes": "Cubes de Sel",
+
+  "itemgroup.foodcraft": "FoodCraft",
+
+  "subtitles.foodcraft.stove_baking": "Fourneau : Cuisson",
+  "subtitle.foodcraft.stone_grinding": "Pierre à Moudre : Tourne",
+  "subtitle.foodcraft.combustion_firewood": "Feu de Camp : Brûle",
+
+  "grinding_stone.add.refused": "Ceci ne peut pas être moulu !",
+  "grinding_stone.add.full": "C'est déjà plein !",
+  "grinding_stone.energy.full": "Inutile de pousser la pierre maintenant...",
+  "grinding_stone.add.not_enough": "Ce n'est pas assez...",
+
+  "item.foodcraft.flour_sack.fullness": "Capacité : %s/%s",
+  "item.foodcraft.flour_sack.content": "%s x%s",
+  "item.foodcraft.flour_sack.tooltip.empty": "Clic-droit pour ajouter de la farine",
+  "item.foodcraft.flour_sack.tooltip.non_empty": "Clic-droit pour prendre de la farine",
+  "item.foodcraft.flour_sack.tooltip.contents": "Clic-droit pour prendre de la farine"
+}
