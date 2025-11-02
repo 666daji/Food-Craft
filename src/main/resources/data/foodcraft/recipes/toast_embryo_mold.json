@@ -2,20 +2,16 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "pattern": [
-    "   ",
-    "AAA",
-    "BBB"
+    "AA",
+    "AA"
   ],
   "key": {
     "A": {
       "item": "minecraft:iron_nugget"
-    },
-    "B": {
-      "item": "minecraft:stone_slab"
     }
   },
   "result": {
-    "item": "foodcraft:heat_resistant_slate",
+    "item": "foodcraft:toast_embryo_mold",
     "count": 2
   }
 }

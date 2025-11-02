@@ -11,6 +11,8 @@ import net.minecraft.network.listener.ClientPlayPacketListener;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 import net.minecraft.recipe.RecipeManager;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
@@ -22,6 +24,7 @@ import org.foodcraft.block.CuttingBoardBlock;
 import org.foodcraft.recipe.CutRecipe;
 import org.foodcraft.registry.ModBlockEntityTypes;
 import org.foodcraft.registry.ModRecipeTypes;
+import org.foodcraft.registry.ModSounds;
 import org.foodcraft.util.FoodCraftUtils;
 
 import java.util.Optional;
@@ -126,6 +129,17 @@ public class CuttingBoardBlockEntity extends UpPlaceBlockEntity {
             if (!player.isCreative()) {
                 tool.damage(1, player, p -> p.sendToolBreakStatus(Hand.MAIN_HAND));
             }
+
+            world.playSound(
+                    pos.getX() + 0.5,
+                    pos.getY() + 0.5,
+                    pos.getZ() + 0.5,
+                    SoundEvents.BLOCK_STONE_PLACE,
+                    SoundCategory.BLOCKS,
+                    1.0F,
+                    1.0F,
+                    true
+            );
 
             markDirtyAndSync();
             return ActionResult.SUCCESS;

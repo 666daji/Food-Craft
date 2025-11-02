@@ -9,6 +9,7 @@ import net.minecraft.registry.Registry;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.util.Identifier;
 import org.dfood.block.FoodBlock;
+import org.dfood.sound.ModSoundGroups;
 import org.dfood.util.DFoodUtils;
 import org.dfood.util.IntPropertyManager;
 import org.foodcraft.FoodCraft;
@@ -126,11 +127,11 @@ public class ModBlocks {
     // 模具
     public static final Block CAKE_EMBRYO_MOLD = registerBlock("cake_embryo_mold",
             new MoldBlock(AbstractBlock.Settings.create()
-                    .sounds(BlockSoundGroup.WOOL).strength(0.2F)
+                    .sounds(ModSoundGroups.BUCKET).strength(0.2F)
                     .nonOpaque().pistonBehavior(PistonBehavior.DESTROY), true));
     public static final Block TOAST_EMBRYO_MOLD = registerBlock("toast_embryo_mold",
             new MoldBlock(AbstractBlock.Settings.create()
-                    .sounds(BlockSoundGroup.WOOL).sounds(BlockSoundGroup.WOOL).strength(0.2F)
+                    .sounds(ModSoundGroups.BUCKET).sounds(BlockSoundGroup.WOOL).strength(0.2F)
                     .nonOpaque().pistonBehavior(PistonBehavior.DESTROY), true));
 
     // 调味料

@@ -69,7 +69,7 @@ public class CuttingBoardBlock extends UpPlaceBlock {
         }
 
         if (blockEntity instanceof CuttingBoardBlockEntity cuttingBoard) {
-            // 1. 先尝试切割操作（手持剑且菜板上有物品）
+            // 先尝试切割操作（手持剑且菜板上有物品）
             if (handStack.getItem() instanceof SwordItem && !cuttingBoard.isEmpty()) {
                 ActionResult cutResult = cuttingBoard.tryCutItem(player, handStack);
                 if (cutResult.isAccepted()) {
@@ -77,7 +77,7 @@ public class CuttingBoardBlock extends UpPlaceBlock {
                 }
             }
 
-            // 2. 如果切割失败或条件不满足，执行父类逻辑（取出和放置）
+            // 如果切割失败或条件不满足，执行父类逻辑（取出和放置）
             return super.onUse(state, world, pos, player, hand, hit);
         }
 
