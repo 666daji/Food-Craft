@@ -141,19 +141,17 @@ public class GrindingStoneBlock extends BlockWithEntity {
     public void randomDisplayTick(BlockState state, World world, BlockPos pos, Random random) {
         BlockEntity blockEntity = world.getBlockEntity(pos);
 
-        if (blockEntity instanceof GrindingStoneBlockEntity grindingStoneBlockEntity && grindingStoneBlockEntity.isGrinding()){
-            if (random.nextInt(2) == 0) {
-                world.playSound(
-                        pos.getX() + 0.5,
-                        pos.getY() + 0.5,
-                        pos.getZ() + 0.5,
-                        ModSounds.GRINDING_STONE_GRINDING,
-                        SoundCategory.BLOCKS,
-                        0.2F + random.nextFloat(),
-                        random.nextFloat() * 0.7F + 0.2F,
-                        false
-                );
-            }
+        if (blockEntity instanceof GrindingStoneBlockEntity grindingStoneBlockEntity && grindingStoneBlockEntity.canPlaySound()){
+            world.playSound(
+                    pos.getX() + 0.5,
+                    pos.getY() + 0.5,
+                    pos.getZ() + 0.5,
+                    ModSounds.GRINDING_STONE_GRINDING,
+                    SoundCategory.BLOCKS,
+                    1.0F,
+                    1.0F,
+                    true
+            );
         }
     }
 

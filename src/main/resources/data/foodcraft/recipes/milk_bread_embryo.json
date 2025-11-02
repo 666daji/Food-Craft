@@ -2,20 +2,20 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "pattern": [
-    "   ",
-    "ABA",
+    "BB ",
+    "AAA",
     "   "
   ],
   "key": {
     "A": {
-      "item": "minecraft:iron_nugget"
+      "item": "foodcraft:wheat_flour"
     },
     "B": {
-      "tag": "minecraft:wooden_slabs"
+      "item": "foodcraft:milk_potion"
     }
   },
   "result": {
-    "item": "foodcraft:iron_dishes",
-    "count": 2
+    "item": "foodcraft:milk_bread_embryo",
+    "count": 1
   }
 }

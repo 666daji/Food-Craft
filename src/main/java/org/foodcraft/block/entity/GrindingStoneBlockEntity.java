@@ -545,6 +545,10 @@ public class GrindingStoneBlockEntity extends BlockEntity implements SidedInvent
         return this.age;
     }
 
+    public boolean canPlaySound(){
+        return this.energy >= 20;
+    }
+
     public void sync() {
         if (this.world != null && !this.world.isClient) {
             this.world.updateListeners(this.pos, this.getCachedState(), this.getCachedState(), 3);

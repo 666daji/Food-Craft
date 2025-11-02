@@ -7,14 +7,17 @@
   },
   "grinding_stone_grinding": {
     "sounds": [
-      "foodcraft:block/grinding_stone_grinding_1"
+      "foodcraft:block/grinding_stone_grinding_1",
+      "foodcraft:block/grinding_stone_grinding_2"
     ],
     "subtitle": "subtitle.foodcraft.stone_grinding"
   },
   "combustion_firewood": {
     "sounds": [
       "foodcraft:block/combustion_firewood_1",
-      "foodcraft:block/combustion_firewood_2"
+      "foodcraft:block/combustion_firewood_2",
+      "foodcraft:block/combustion_firewood_3",
+      "foodcraft:block/combustion_firewood_4"
     ],
     "subtitle": "subtitle.foodcraft.combustion_firewood"
   }

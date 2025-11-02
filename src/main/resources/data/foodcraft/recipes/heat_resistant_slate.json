@@ -3,19 +3,19 @@
   "category": "misc",
   "pattern": [
     "   ",
-    "ABA",
-    "   "
+    "AAA",
+    "BBB"
   ],
   "key": {
     "A": {
       "item": "minecraft:iron_nugget"
     },
     "B": {
-      "tag": "minecraft:wooden_slabs"
+      "item": "minecraft:stone_slab"
     }
   },
   "result": {
-    "item": "foodcraft:iron_dishes",
-    "count": 2
+    "item": "foodcraft:heat_resistant_slate",
+    "count": 1
   }
 }

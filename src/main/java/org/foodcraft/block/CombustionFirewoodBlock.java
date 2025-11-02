@@ -147,16 +147,16 @@ public class CombustionFirewoodBlock extends BlockWithEntity {
         // 只有在燃烧状态下才显示粒子效果和声音
         if (currentState.isBurning()) {
             // 营火燃烧声音
-            if (random.nextInt(10) == 0) {
+            if (random.nextInt(5) == 0) {
                 world.playSound(
                         pos.getX() + 0.5,
                         pos.getY() + 0.5,
                         pos.getZ() + 0.5,
                         ModSounds.COMBUSTION_FIREWOOD,
                         SoundCategory.BLOCKS,
-                        0.2F + random.nextFloat(),
-                        random.nextFloat() * 0.7F + 0.2F,
-                        false
+                        0.3F,
+                        0.3F,
+                        true
                 );
             }
 

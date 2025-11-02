@@ -56,6 +56,7 @@ public class ModItemGroups {
                             entries.add(ModItems.BAGUETTE_EMBRYO);
                             entries.add(ModItems.FLUFFY_BREAD_EMBRYO);
                             entries.add(ModItems.TOAST);
+                            entries.add(ModItems.MILK_BREAD_EMBRYO);
                             entries.add(ModItems.BAKED_CAKE_EMBRYO);
                             entries.add(ModItems.HARD_BREAD_BOAT);
                             entries.add(ModItems.MUSHROOM_STEW_HARD_BREAD_BOAT);
@@ -64,7 +65,7 @@ public class ModItemGroups {
                             //模具
                             entries.add(ModItems.CAKE_EMBRYO_MOLD);
                             entries.add(ModItems.TOAST_EMBRYO_MOLD);
-                            entries.add(ModItems.DOUGH_CAKE_EMBRYO_MOLD);
+                            entries.add(ModItems.MILK_BREAD_EMBRYO_CAKE_EMBRYO_MOLD);
                             entries.add(ModItems.FLUFFY_BREAD_EMBRYO_TOAST_EMBRYO_MOLD);
 
                             // 调味料

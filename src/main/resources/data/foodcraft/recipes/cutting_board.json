@@ -3,19 +3,16 @@
   "category": "misc",
   "pattern": [
     "   ",
-    "ABA",
+    " A ",
     "   "
   ],
   "key": {
     "A": {
-      "item": "minecraft:iron_nugget"
-    },
-    "B": {
       "tag": "minecraft:wooden_slabs"
     }
   },
   "result": {
-    "item": "foodcraft:iron_dishes",
+    "item": "foodcraft:cutting_board",
     "count": 2
   }
 }

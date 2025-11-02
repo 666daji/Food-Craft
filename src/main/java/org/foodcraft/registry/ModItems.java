@@ -53,6 +53,7 @@ public class ModItems {
     public static final Item FLUFFY_BREAD_EMBRYO = registerItem("fluffy_bread_embryo", new Item(new Item.Settings()));
     public static final Item TOAST_EMBRYO = registerItem(ModBlocks.TOAST_EMBRYO);
     public static final Item TOAST = registerItem(ModBlocks.TOAST, new Item.Settings().food(ModFoodComponents.TOAST));
+    public static final Item MILK_BREAD_EMBRYO = registerItem("milk_bread_embryo", new Item(new Item.Settings()));
     public static final Item CAKE_EMBRYO = registerItem(ModBlocks.CAKE_EMBRYO);
     public static final Item BAKED_CAKE_EMBRYO = registerItem(ModBlocks.BAKED_CAKE_EMBRYO);
     public static final Item HARD_BREAD_BOAT = registerItem(ModBlocks.HARD_BREAD_BOAT);
@@ -60,8 +61,8 @@ public class ModItems {
     public static final Item BEETROOT_SOUP_HARD_BREAD_BOAT = registerItem(ModBlocks.BEETROOT_SOUP_HARD_BREAD_BOAT);
 
     // 模具
-    public static final Item DOUGH_CAKE_EMBRYO_MOLD = direcRegisterItem("dough_cake_embryo_mold",
-            new MoldContentItem(ModBlocks.CAKE_EMBRYO_MOLD, new Item.Settings(), DOUGH));
+    public static final Item MILK_BREAD_EMBRYO_CAKE_EMBRYO_MOLD = direcRegisterItem("milk_bread_embryo_cake_embryo_mold",
+            new MoldContentItem(ModBlocks.CAKE_EMBRYO_MOLD, new Item.Settings(), MILK_BREAD_EMBRYO));
     public static final Item FLUFFY_BREAD_EMBRYO_TOAST_EMBRYO_MOLD = direcRegisterItem("fluffy_bread_embryo_toast_embryo_mold",
             new MoldContentItem(ModBlocks.TOAST_EMBRYO_MOLD, new Item.Settings(), FLUFFY_BREAD_EMBRYO));
     public static final Item CAKE_EMBRYO_MOLD = registerItem(ModBlocks.CAKE_EMBRYO_MOLD);

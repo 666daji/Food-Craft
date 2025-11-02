@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    " CD",
+    " C ",
+    "AB "
+  ],
+  "key": {
+    "A": {
+      "item": "minecraft:flint"
+    },
+    "B": {
+      "item": "minecraft:smooth_stone"
+    },
+    "C": {
+      "item": "minecraft:stone_slab"
+    },
+    "D": {
+      "item": "minecraft:stick"
+    }
+  },
+  "result": {
+    "item": "foodcraft:grinding_stone",
+    "count": 1
+  }
+}

@@ -121,16 +121,16 @@ public class HeatResistantSlateBlock extends UpPlaceBlock {
                             0.0, 0.07, 0.0);
                 }
             }
-            if (random.nextInt(3) == 0) {
+            if (random.nextInt(5) == 0) {
                 world.playSound(
                         pos.getX() + 0.5,
                         pos.getY() + 0.5,
                         pos.getZ() + 0.5,
                         ModSounds.COOKING_SOUND,
                         SoundCategory.BLOCKS,
-                        0.2F + random.nextFloat(),
-                        random.nextFloat() * 0.7F + 0.2F,
-                        false
+                        0.3F,
+                        0.3F,
+                        true
                 );
             }
         }

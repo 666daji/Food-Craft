@@ -28,16 +28,16 @@ public class ModBlocks {
                     .sounds(BlockSoundGroup.STONE).strength(1.5F, 6.0F).requiresTool()
                     .nonOpaque().pistonBehavior(PistonBehavior.BLOCK)));
     public static final Block HEAT_RESISTANT_SLATE = registerBlock("heat_resistant_slate",
-            new HeatResistantSlateBlock(AbstractBlock.Settings.create()
+            new HeatResistantSlateBlock(AbstractBlock.Settings.create().requiresTool()
                     .sounds(BlockSoundGroup.STONE).strength(1.5F, 6.0F)));
     public static final Block COMBUSTION_FIREWOOD = registerBlock("combustion_firewood",
             new CombustionFirewoodBlock(AbstractBlock.Settings.create()
-                    .sounds(BlockSoundGroup.STONE).strength(1.5F, 6.0F)
+                    .sounds(BlockSoundGroup.STONE).strength(0.5F, 2.0F)
                     .nonOpaque().requiresTool().pistonBehavior(PistonBehavior.BLOCK)
                     .luminance(state -> state.get(CombustionFirewoodBlock.COMBUSTION_STATE).isBurning()? 15: 0)));
     public static final Block FIREWOOD = registerFoodBlock("firewood", 6,
             AbstractBlock.Settings.create()
-                    .sounds(BlockSoundGroup.STONE).strength(1.5F, 6.0F)
+                    .sounds(BlockSoundGroup.STONE).strength(0.5F, 2.0F)
                     .nonOpaque().requiresTool().pistonBehavior(PistonBehavior.BLOCK),
             (settings, integer) -> new FirewoodBlock(settings, integer, ModBlocks.COMBUSTION_FIREWOOD));
 

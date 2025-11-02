@@ -2,7 +2,7 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "pattern": [
-    "BB ",
+    "B  ",
     "AAA",
     "   "
   ],
@@ -11,7 +11,7 @@
       "item": "foodcraft:wheat_flour"
     },
     "B": {
-      "item": "foodcraft:milk_potion"
+      "item": "minecraft:water_bucket"
     }
   },
   "result": {
