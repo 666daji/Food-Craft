@@ -29,7 +29,7 @@ public class ModBlocks {
                     .nonOpaque().pistonBehavior(PistonBehavior.BLOCK)));
     public static final Block HEAT_RESISTANT_SLATE = registerBlock("heat_resistant_slate",
             new HeatResistantSlateBlock(AbstractBlock.Settings.create().requiresTool()
-                    .sounds(BlockSoundGroup.STONE).strength(1.5F, 6.0F)));
+                    .sounds(BlockSoundGroup.STONE).strength(1.2F, 6.0F)));
     public static final Block COMBUSTION_FIREWOOD = registerBlock("combustion_firewood",
             new CombustionFirewoodBlock(AbstractBlock.Settings.create()
                     .sounds(BlockSoundGroup.STONE).strength(0.5F, 2.0F)
