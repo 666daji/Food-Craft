@@ -24,6 +24,7 @@
   "item.foodcraft.baguette": "바게트",
   "item.foodcraft.baguette_embryo": "바게트 태아",
   "item.foodcraft.fluffy_bread_embryo": "푹신한 빵 태아",
+  "item.foodcraft.milk_bread_embryo": "밀크 브레드 태아",
   "item.foodcraft.toast": "토스트",
   "item.foodcraft.baked_cake_embryo": "구운 케이크 태아",
   "item.foodcraft.hard_bread_boat": "딱딱한 빵 보트",
@@ -32,7 +33,7 @@
 
   "block.foodcraft.cake_embryo_mold": "케이크 태아 틀",
   "block.foodcraft.toast_embryo_mold": "토스트 태아 틀",
-  "item.foodcraft.dough_cake_embryo_mold": "반죽이 담긴 케이크 태아 틀",
+  "item.foodcraft.milk_bread_embryo_cake_embryo_mold": "밀크 브레드 태아가 담긴 케이크 태아 틀",
   "item.foodcraft.fluffy_bread_embryo_toast_embryo_mold": "푹신한 빵 태아가 담긴 토스트 태아 틀",
 
   "block.foodcraft.salt_ore": "소금 광석",

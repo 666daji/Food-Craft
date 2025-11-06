@@ -55,5 +55,10 @@ public class RegistryInit {
         Shapes.shapeMap.put("foodcraft:beetroot_soup_hard_bread_boat",new int[][]{
                 {1, 1, 8}
         });
+
+        //其他
+        Shapes.shapeMap.put("foodcraft:firewood",new int[][]{
+                {1, 1, 1},{2, 2, 2},{3, 3, 3},{4, 4, 4},{5, 6, 5}
+        });
     }
 }

@@ -32,6 +32,8 @@ import org.foodcraft.registry.ModRecipeTypes;
 import org.foodcraft.util.FoodCraftUtils;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+
 public class MoldBlockEntity extends UpPlaceBlockEntity implements SidedInventory, RecipeUnlocker, RecipeInputProvider {
     protected static final int MAX_STACK_SIZE = 1;
 
@@ -111,8 +113,9 @@ public class MoldBlockEntity extends UpPlaceBlockEntity implements SidedInventor
     }
 
     @Override
-    public void onPlace(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
-      tryCraft();
+    public void onPlace(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit, ItemStack placeStack) {
+        tryCraft();
+        super.onPlace(state, world, pos, player, hand, hit, placeStack);
     }
 
     public void tryCraft(){
@@ -144,24 +147,20 @@ public class MoldBlockEntity extends UpPlaceBlockEntity implements SidedInventor
 
     @Override
     public ActionResult tryFetchItem(PlayerEntity player) {
-        ItemStack contentStack = this.getStack(0);
-        if (contentStack.isEmpty() || inputStack == null) {
-            return ActionResult.FAIL;
-        }
-        // 将输入物品原封不动地返还
-        if (!player.isCreative() && !player.giveItemStack(inputStack)) {
-            player.dropItem(inputStack, false); // 背包满时掉落
-        }
+        if (!isEmpty() && inputStack != null) {
+            removeStack(0, 1);
+            this.fetchStacks = List.of(inputStack.copy());
 
-        // 减少容器中的物品数量
-        contentStack.decrement(1);
-        inputStack = null;
-        if (contentStack.isEmpty()) {
-            this.setStack(0, ItemStack.EMPTY);
-        }
+            // 将输入物品原封不动地返还
+            if (!player.isCreative() && !player.giveItemStack(inputStack)) {
+                player.dropItem(inputStack, false); // 背包满时掉落
+            }
 
-        this.markDirtyAndSync();
-        return ActionResult.SUCCESS;
+            inputStack = null;
+            markDirtyAndSync();
+            return ActionResult.SUCCESS;
+        }
+        return ActionResult.FAIL;
     }
 
     /**

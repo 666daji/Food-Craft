@@ -350,11 +350,9 @@ public class HeatResistantSlateBlockEntity extends UpPlaceBlockEntity implements
             player.dropItem(contentStack, false);
         }
 
-        contentStack.decrement(1);
-        if (contentStack.isEmpty()) {
-            this.setStack(0, ItemStack.EMPTY);
-            this.originalInputStack = ItemStack.EMPTY;
-        }
+        this.fetchStacks = List.of(contentStack.copy());
+        this.setStack(0, ItemStack.EMPTY);
+        this.originalInputStack = ItemStack.EMPTY;
 
         this.markDirtyAndSync();
         return ActionResult.SUCCESS;
@@ -435,7 +433,7 @@ public class HeatResistantSlateBlockEntity extends UpPlaceBlockEntity implements
      */
     private ActionResult fetchMoldedItem(PlayerEntity player) {
         // 给予玩家原始输入物品
-        if (!player.isCreative() && !player.giveItemStack(originalInputStack.copy())) {
+        if (!player.giveItemStack(originalInputStack.copy())) {
             player.dropItem(originalInputStack.copy(), false);
         }
 
@@ -444,6 +442,8 @@ public class HeatResistantSlateBlockEntity extends UpPlaceBlockEntity implements
         if (!player.isCreative() && !player.giveItemStack(moldStack)) {
             player.dropItem(moldStack, false);
         }
+
+        this.fetchStacks = List.of(originalInputStack.copy(), moldStack.copy());
 
         // 清空所有库存
         this.setStack(0, ItemStack.EMPTY);
@@ -513,6 +513,7 @@ public class HeatResistantSlateBlockEntity extends UpPlaceBlockEntity implements
                 if (!player.isCreative() && !player.giveItemStack(stack)) {
                     player.dropItem(stack, false); // 背包满时掉落
                 }
+                this.fetchStacks = List.of(stack.copy());
 
                 otherStack.set(i, ItemStack.EMPTY);
                 this.markDirtyAndSync();
@@ -1157,7 +1158,7 @@ public class HeatResistantSlateBlockEntity extends UpPlaceBlockEntity implements
 
     @Override
     public int getMaxCountPerStack() {
-        return 1;
+        return 16;
     }
 
     @Override

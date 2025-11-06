@@ -22,7 +22,7 @@ public class StoveRecipeSerializer extends SimpleCraftRecipeSerializer<StoveReci
 
     @Override
     protected Object readExtraData(JsonObject json) {
-        // 读取烘烤时间，默认为200
+        int inputCount = JsonHelper.getInt(json, "inputCount", 1);
         int stoveTime = JsonHelper.getInt(json, "stoveTime", 200);
 
         // 读取模具信息（可以为null）
@@ -32,18 +32,20 @@ public class StoveRecipeSerializer extends SimpleCraftRecipeSerializer<StoveReci
             mold = new ItemStack(Registries.ITEM.getOrEmpty(new Identifier(moldId))
                     .orElseThrow(() -> new IllegalStateException("Item: " + moldId + " does not exist")));
         }
-        return new StoveExtraData(stoveTime, mold);
+        return new StoveExtraData(stoveTime, inputCount, mold);
     }
 
     @Override
     protected Object readExtraData(PacketByteBuf buf) {
+        int inputCount = buf.readInt();
         int stoveTime = buf.readVarInt();
         ItemStack mold = buf.readItemStack();
-        return new StoveExtraData(stoveTime, mold);
+        return new StoveExtraData(stoveTime, inputCount, mold);
     }
 
     @Override
     protected void writeExtraData(PacketByteBuf buf, StoveRecipe recipe) {
+        buf.writeInt(recipe.getInputCount());
         buf.writeVarInt(recipe.getBakingTime());
         if (recipe.getMold() == null) {
             buf.writeItemStack(ItemStack.EMPTY);
@@ -57,5 +59,5 @@ public class StoveRecipeSerializer extends SimpleCraftRecipeSerializer<StoveReci
      * @param stoveTime 烘烤时间
      * @param mold 基础模具
      */
-    public record StoveExtraData(int stoveTime, ItemStack mold) {}
+    public record StoveExtraData(int stoveTime, int inputCount, ItemStack mold) {}
 }

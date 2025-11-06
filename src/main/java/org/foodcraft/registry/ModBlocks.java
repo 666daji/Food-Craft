@@ -33,8 +33,8 @@ public class ModBlocks {
                     .sounds(BlockSoundGroup.STONE).strength(1.2F, 6.0F)));
     public static final Block COMBUSTION_FIREWOOD = registerBlock("combustion_firewood",
             new CombustionFirewoodBlock(AbstractBlock.Settings.create()
-                    .sounds(BlockSoundGroup.STONE).strength(0.5F, 2.0F)
-                    .nonOpaque().requiresTool().pistonBehavior(PistonBehavior.BLOCK)
+                    .sounds(BlockSoundGroup.STONE).strength(0.5F, 0.5F)
+                    .nonOpaque().pistonBehavior(PistonBehavior.BLOCK)
                     .luminance(state -> state.get(CombustionFirewoodBlock.COMBUSTION_STATE).isBurning()? 15: 0)));
     public static final Block FIREWOOD = registerFoodBlock("firewood", 6,
             AbstractBlock.Settings.create()

@@ -25,6 +25,7 @@
   "item.foodcraft.baguette_embryo": "Baguette-Embryo",
   "item.foodcraft.fluffy_bread_embryo": "Fluffiger Brot-Embryo",
   "item.foodcraft.toast": "Toast",
+  "item.foodcraft.milk_bread_embryo": "Milchbrot-Embryo",
   "item.foodcraft.baked_cake_embryo": "Gebackener Kuchen-Embryo",
   "item.foodcraft.hard_bread_boat": "Hartes Brot-Boot",
   "item.foodcraft.mushroom_stew_hard_bread_boat": "Hartes Brot-Boot mit Pilzeintopf",
@@ -32,7 +33,7 @@
 
   "block.foodcraft.cake_embryo_mold": "Kuchen-Embryo-Form",
   "block.foodcraft.toast_embryo_mold": "Toast-Embryo-Form",
-  "item.foodcraft.dough_cake_embryo_mold": "Kuchen-Embryo-Form mit Teig",
+  "item.foodcraft.milk_bread_embryo_cake_embryo_mold": "Kuchen-Embryo-Form mit Milchbrot-Embryo",
   "item.foodcraft.fluffy_bread_embryo_toast_embryo_mold": "Toast-Embryo-Form mit Fluffigem Brot-Embryo",
 
   "block.foodcraft.salt_ore": "Salzerz",

@@ -24,9 +24,9 @@ import org.foodcraft.block.CuttingBoardBlock;
 import org.foodcraft.recipe.CutRecipe;
 import org.foodcraft.registry.ModBlockEntityTypes;
 import org.foodcraft.registry.ModRecipeTypes;
-import org.foodcraft.registry.ModSounds;
 import org.foodcraft.util.FoodCraftUtils;
 
+import java.util.List;
 import java.util.Optional;
 
 public class CuttingBoardBlockEntity extends UpPlaceBlockEntity {
@@ -86,8 +86,9 @@ public class CuttingBoardBlockEntity extends UpPlaceBlockEntity {
     @Override
     public ActionResult tryFetchItem(PlayerEntity player) {
         if (!isEmpty()) {
-            ItemStack stack = removeStack(0);
-            if (!player.getInventory().insertStack(stack)) {
+            ItemStack stack = removeStack(0, 1);
+            this.fetchStacks = List.of(stack.copy());
+            if (!player.isCreative() && !player.giveItemStack(stack)) {
                 player.dropItem(stack, false);
             }
             markDirtyAndSync();

@@ -24,6 +24,7 @@
   "item.foodcraft.baguette": "Baguette",
   "item.foodcraft.baguette_embryo": "Embrión de Baguette",
   "item.foodcraft.fluffy_bread_embryo": "Embrión de Pan Esponjoso",
+  "item.foodcraft.milk_bread_embryo": "Embrión de Pan de Leche",
   "item.foodcraft.toast": "Tostada",
   "item.foodcraft.baked_cake_embryo": "Embrión de Pastel Horneado",
   "item.foodcraft.hard_bread_boat": "Barco de Pan Duro",
@@ -32,7 +33,7 @@
 
   "block.foodcraft.cake_embryo_mold": "Molde de Embrión de Pastel",
   "block.foodcraft.toast_embryo_mold": "Molde de Embrión de Tostada",
-  "item.foodcraft.dough_cake_embryo_mold": "Molde de Pastel con Masa",
+  "item.foodcraft.milk_bread_embryo_cake_embryo_mold": "Molde de Pastel con Embrión de Pan de Leche",
   "item.foodcraft.fluffy_bread_embryo_toast_embryo_mold": "Molde de Tostada con Embrión de Pan Esponjoso",
 
   "block.foodcraft.salt_ore": "Mena de Sal",

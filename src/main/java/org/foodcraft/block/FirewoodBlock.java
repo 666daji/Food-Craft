@@ -19,6 +19,7 @@ import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import net.minecraft.world.event.GameEvent;
 import org.dfood.block.FoodBlock;
+import org.dfood.shape.FoodShapeHandle;
 import org.foodcraft.block.entity.CombustionFirewoodBlockEntity;
 
 public class FirewoodBlock extends FoodBlock {
@@ -35,7 +36,7 @@ public class FirewoodBlock extends FoodBlock {
 
     @Override
     public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
-        return SHAPE;
+        return SHAPE_HANDLE.getShape(state, NUMBER_OF_FOOD, Shapes.class);
     }
 
     /**
@@ -99,7 +100,7 @@ public class FirewoodBlock extends FoodBlock {
             BlockPos checkPos = pos.up(i);
             BlockState state = world.getBlockState(checkPos);
 
-            // 检查方块是否为空气或可替换方块（如火把、草等）
+            // 检查方块是否为空气或可替换方块
             if (!state.isAir()) {
                 return false;
             }
@@ -112,5 +113,40 @@ public class FirewoodBlock extends FoodBlock {
      */
     public boolean canIgnite(World world, BlockPos pos) {
         return hasClearSpaceAbove(world, pos);
+    }
+
+    public enum Shapes implements FoodShapeHandle.ShapeConvertible {
+        SHAPE_A(1, Block.createCuboidShape(0,0,0,16,4,16)),
+        SHAPE_B(2, Block.createCuboidShape(0,0,0,16,8,16)),
+        SHAPE_C(3, Block.createCuboidShape(0,0,0,16,9,16)),
+        SHAPE_D(4, Block.createCuboidShape(0,0,0,16,13,16)),
+        SHAPE_E(5, Block.createCuboidShape(0,0,0,16,16,16));
+
+        private final VoxelShape shape;
+        private final int id;
+
+        Shapes(int id, VoxelShape shape) {
+            this.shape = shape;
+            this.id = id;
+        }
+
+        @Override
+        public int getId() {
+            return id;
+        }
+
+        @Override
+        public VoxelShape getShape() {
+            return shape;
+        }
+
+        public static VoxelShape getShape(int id) {
+            for (Shapes s : values()) {
+                if (s.id == id) {
+                    return s.shape;
+                }
+            }
+            return SHAPE_A.shape;
+        }
     }
 }

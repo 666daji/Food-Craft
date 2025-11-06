@@ -174,11 +174,11 @@ public class CombustionFirewoodBlock extends BlockWithEntity {
             // 火花粒子
             if (random.nextInt(3) == 0) {
                 for(int i = 0; i < random.nextInt(2) + 1; ++i) {
-                    world.addParticle(ParticleTypes.CAMPFIRE_SIGNAL_SMOKE,
+                    world.addParticle(ParticleTypes.LAVA,
                             pos.getX() + 0.5 + random.nextDouble() / 4.0 * (random.nextBoolean() ? 1 : -1),
                             pos.getY() + 0.4,
                             pos.getZ() + 0.5 + random.nextDouble() / 4.0 * (random.nextBoolean() ? 1 : -1),
-                            0.0, 0.07, 0.0);
+                            random.nextFloat() / 2.0F, 0.04, random.nextFloat() / 2.0F);
                 }
             }
 
@@ -249,8 +249,7 @@ public class CombustionFirewoodBlock extends BlockWithEntity {
     public List<ItemStack> getDroppedStacks(BlockState state, LootContextParameterSet.Builder builder) {
         // 检查是否为熄灭状态
         CombustionState combustionState = state.get(COMBUSTION_STATE);
-        if (combustionState == CombustionState.FIRST_EXTINGUISHED ||
-                combustionState == CombustionState.AGAIN_EXTINGUISHED) {
+        if (!combustionState.isBurning()) {
             // 只在熄灭状态时调用父类方法生成掉落物
             return super.getDroppedStacks(state, builder);
         }

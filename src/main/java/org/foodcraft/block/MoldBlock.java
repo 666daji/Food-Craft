@@ -10,6 +10,7 @@ import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.loot.context.LootContextParameterSet;
 import net.minecraft.loot.context.LootContextParameters;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.DirectionProperty;
 import net.minecraft.state.property.Properties;
@@ -42,7 +43,7 @@ public class MoldBlock extends UpPlaceBlock {
     public final boolean canPlaceSlate;
 
     public MoldBlock(Settings settings, boolean canPlaceSlate) {
-        super(settings);
+        super(settings, new UpSounds(SoundEvents.ENTITY_SALMON_DEATH, SoundEvents.ENTITY_SALMON_DEATH));
         this.canPlaceSlate = canPlaceSlate;
     }
 

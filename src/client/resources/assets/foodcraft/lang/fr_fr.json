@@ -24,6 +24,7 @@
   "item.foodcraft.baguette": "Baguette",
   "item.foodcraft.baguette_embryo": "Ébauche de Baguette",
   "item.foodcraft.fluffy_bread_embryo": "Ébauche de Pain Moelleux",
+  "item.foodcraft.milk_bread_embryo": "Ébauche de Pain au Lait",
   "item.foodcraft.toast": "Pain Grillé",
   "item.foodcraft.baked_cake_embryo": "Ébauche de Gâteau Cuite",
   "item.foodcraft.hard_bread_boat": "Bateau en Pain Dur",
@@ -32,7 +33,7 @@
 
   "block.foodcraft.cake_embryo_mold": "Moule à Ébauche de Gâteau",
   "block.foodcraft.toast_embryo_mold": "Moule à Ébauche de Pain Grillé",
-  "item.foodcraft.dough_cake_embryo_mold": "Moule à Gâteau avec Pâte",
+  "item.foodcraft.milk_bread_embryo_cake_embryo_mold": "Moule à Gâteau avec Ébauche de Pain au Lait",
   "item.foodcraft.fluffy_bread_embryo_toast_embryo_mold": "Moule à Pain Grillé avec Ébauche de Pain Moelleux",
 
   "block.foodcraft.salt_ore": "Minerai de Sel",

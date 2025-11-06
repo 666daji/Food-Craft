@@ -23,6 +23,8 @@ import org.foodcraft.block.DishesBlock;
 import org.foodcraft.registry.ModBlockEntityTypes;
 import org.foodcraft.util.FoodCraftUtils;
 
+import java.util.List;
+
 /**
  * 盘子方块实体，用于存储食物物品
  * 注意：item.getBlock()返回的Block必须是{@link FoodBlock}的实例，否则无法放入物品栏
@@ -103,28 +105,16 @@ public class DishesBlockEntity extends UpPlaceBlockEntity {
     }
 
     public ActionResult tryFetchItem(PlayerEntity player) {
-        ItemStack contentStack = this.getStack(0);
-        if (contentStack.isEmpty()) {
-            return ActionResult.FAIL;
+        if (!isEmpty()) {
+            ItemStack stack = removeStack(0, 1);
+            this.fetchStacks = List.of(stack.copy());
+            if (!player.isCreative() && !player.giveItemStack(stack)) {
+                player.dropItem(stack, false);
+            }
+            markDirtyAndSync();
+            return ActionResult.SUCCESS;
         }
-
-        // 创建一个物品堆栈副本用于给予玩家
-        ItemStack extractedStack = contentStack.copy();
-        extractedStack.setCount(1);
-
-        // 给予玩家物品
-        if (!player.isCreative() && !player.giveItemStack(extractedStack)) {
-            player.dropItem(extractedStack, false); // 背包满时掉落
-        }
-
-        // 减少容器中的物品数量
-        contentStack.decrement(1);
-        if (contentStack.isEmpty()) {
-            this.setStack(0, ItemStack.EMPTY);
-        }
-
-        this.markDirtyAndSync();
-        return ActionResult.SUCCESS;
+        return ActionResult.FAIL;
     }
 
     @Override

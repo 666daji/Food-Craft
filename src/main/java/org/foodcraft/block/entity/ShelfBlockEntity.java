@@ -207,15 +207,8 @@ public class ShelfBlockEntity extends UpPlaceBlockEntity {
             return ActionResult.FAIL;
         }
 
-        if (world == null) {
-            return ActionResult.FAIL;
-        }
-
         // 如果是花，尝试插入到空花盆中
         if (canInsertFlower(stack)) {
-            world.playSound(null, this.pos, SoundEvents.BLOCK_GRASS_PLACE,
-                    SoundCategory.BLOCKS, 0.5f, 0.5f);
-
             return tryInsertFlower(stack);
         }
 
@@ -235,9 +228,6 @@ public class ShelfBlockEntity extends UpPlaceBlockEntity {
             else if (isFlowerPot(newStack)) {
                 initFlowerPotData(emptySlot);
             }
-
-            world.playSound(null, this.pos, SoundEvents.BLOCK_STONE_PLACE,
-                    SoundCategory.BLOCKS, 0.5f, 0.5f);
 
             this.markDirtyAndSync();
             return ActionResult.SUCCESS;
@@ -284,10 +274,6 @@ public class ShelfBlockEntity extends UpPlaceBlockEntity {
 
     @Override
     public ActionResult tryFetchItem(PlayerEntity player) {
-        if (world == null) {
-            return ActionResult.FAIL;
-        }
-
         for (int i = this.size() - 1; i >= 0; i--) {
             ItemStack stack = this.getStack(i);
             if (!stack.isEmpty()) {
@@ -305,8 +291,8 @@ public class ShelfBlockEntity extends UpPlaceBlockEntity {
                 // 取出普通物品
                 ItemStack extractedStack = stack.copy();
                 extractedStack.setCount(1);
-                world.playSound(null, this.pos, SoundEvents.BLOCK_STONE_PLACE,
-                        SoundCategory.BLOCKS, 0.5f, 0.5f);
+
+                this.fetchStacks = List.of(extractedStack.copy());
 
                 if (!player.isCreative() && !player.giveItemStack(extractedStack)) {
                     player.dropItem(extractedStack, false);
@@ -370,13 +356,11 @@ public class ShelfBlockEntity extends UpPlaceBlockEntity {
         // 创建花的物品堆栈
         ItemStack flowerStack = new ItemStack(flowerBlock);
 
+        this.fetchStacks = List.of(flowerStack.copy());
         // 给予玩家花
         if (!player.isCreative() && !player.giveItemStack(flowerStack)) {
             player.dropItem(flowerStack, false);
         }
-
-        world.playSound(null, this.pos, SoundEvents.BLOCK_GRASS_PLACE,
-                SoundCategory.BLOCKS, 0.5f, 0.5f);
 
         // 清除花盆中的花数据
         clearFlowerData(slot);

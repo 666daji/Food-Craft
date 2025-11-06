@@ -25,6 +25,7 @@
   "item.foodcraft.baguette_embryo": "Baguette Embryo",
   "item.foodcraft.fluffy_bread_embryo": "Fluffy Bread Embryo",
   "item.foodcraft.toast": "Toast",
+  "item.foodcraft.milk_bread_embryo": "Milk Bread Embryo",
   "item.foodcraft.baked_cake_embryo": "Baked Cake Embryo",
   "item.foodcraft.hard_bread_boat": "Hard Bread Boat",
   "item.foodcraft.mushroom_stew_hard_bread_boat": "Hard Bread Boat with Mushroom Stew",
@@ -32,7 +33,7 @@
 
   "block.foodcraft.cake_embryo_mold": "Cake Embryo Mold",
   "block.foodcraft.toast_embryo_mold": "Toast Embryo Mold",
-  "item.foodcraft.dough_cake_embryo_mold": "Cake Embryo Mold with Dough",
+  "item.foodcraft.milk_bread_embryo_cake_embryo_mold": "Cake Embryo Mold with Milk Bread Embryo",
   "item.foodcraft.fluffy_bread_embryo_toast_embryo_mold": "Toast Embryo Mold with Fluffy Bread Embryo",
 
   "block.foodcraft.salt_ore": "Salt Ore",

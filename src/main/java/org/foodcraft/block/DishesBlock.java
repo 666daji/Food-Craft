@@ -65,7 +65,8 @@ public class DishesBlock extends UpPlaceBlock {
         Item contentItem = blockEntity.getContentItem();
 
         // 如果玩家手持物品为空或者与容器中物品不同，允许取出
-        return handStack.isEmpty() || (contentItem != null && handStack.getItem() != contentItem);
+        return handStack.isEmpty() ||
+                (contentItem != null && handStack.getItem() != contentItem) || blockEntity.isFull();
     }
 
     @Override

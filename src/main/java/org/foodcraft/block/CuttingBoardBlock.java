@@ -6,6 +6,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.ShapeContext;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.SwordItem;
@@ -46,12 +47,16 @@ public class CuttingBoardBlock extends UpPlaceBlock {
 
     @Override
     public boolean canFetched(UpPlaceBlockEntity blockEntity, ItemStack handStack) {
-        return handStack.isEmpty() && !blockEntity.isEmpty();
+        Item contentItem = blockEntity.getContentItem();
+
+        // 如果玩家手持物品为空或者与容器中物品不同，允许取出
+        return handStack.isEmpty() ||
+                (contentItem != null && handStack.getItem() != contentItem) || blockEntity.isFull();
     }
 
     @Override
     public boolean canPlace(UpPlaceBlockEntity blockEntity, ItemStack handStack) {
-        return blockEntity.isEmpty() && !handStack.isEmpty();
+        return blockEntity.isValidItem(handStack);
     }
 
     @Override

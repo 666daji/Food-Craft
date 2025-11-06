@@ -24,6 +24,7 @@
   "item.foodcraft.baguette": "バゲット",
   "item.foodcraft.baguette_embryo": "バゲット胚",
   "item.foodcraft.fluffy_bread_embryo": "ふわふわパン胚",
+  "item.foodcraft.milk_bread_embryo": "ミルクブレッド胚",
   "item.foodcraft.toast": "トースト",
   "item.foodcraft.baked_cake_embryo": "焼けたケーキ胚",
   "item.foodcraft.hard_bread_boat": "ハードブレッドの舟",
@@ -32,7 +33,7 @@
 
   "block.foodcraft.cake_embryo_mold": "ケーキ胚型",
   "block.foodcraft.toast_embryo_mold": "トースト胚型",
-  "item.foodcraft.dough_cake_embryo_mold": "生地入りケーキ胚型",
+  "item.foodcraft.milk_bread_embryo_cake_embryo_mold": "ミルクブレッド胚入りケーキ胚型",
   "item.foodcraft.fluffy_bread_embryo_toast_embryo_mold": "ふわふわパン胚入りトースト胚型",
 
   "block.foodcraft.salt_ore": "塩鉱石",

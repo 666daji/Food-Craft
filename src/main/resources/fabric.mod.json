@@ -1,11 +1,16 @@
 {
   "schemaVersion": 1,
-  "id": "food-craft",
+  "id": "baking-process",
   "version": "${version}",
-  "name": "Food Craft",
-  "description": "",
-  "authors": [],
-  "contact": {},
+  "name": "Tw`s Baking Process",
+  "description": "A rich dietary system is added.enhance your diet!",
+  "authors": [
+    "玉隐",
+    "理神"
+  ],
+  "contact": {
+    "sources": "https://github.com/666daji/Food-Craft"
+  },
   "license": "MIT",
   "icon": "assets/foodcraft/icon.png",
   "environment": "*",
@@ -32,6 +37,6 @@
     "fabric": "*",
     "minecraft": "~${minecraft_version}",
     "fabric-api": "*",
-    "decorative-food": ">=1.20.1-1.0.3"
+    "decorative-food": ">=1.20.1-1.0.4"
   }
 }
