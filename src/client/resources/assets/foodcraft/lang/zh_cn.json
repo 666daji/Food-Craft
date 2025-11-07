@@ -1,4 +1,6 @@
 {
+  "itemgroup.foodcraft": "Tw的烘培工艺",
+
   "item.foodcraft.wheat_flour": "小麦粉",
   "item.foodcraft.lapis_lazuli_flour": "青金石粉",
   "item.foodcraft.cocoa_flour": "可可粉",
@@ -41,8 +43,6 @@
 
   "item.foodcraft.salt_shaker": "盐罐",
   "item.foodcraft.salt_cubes": "盐块",
-
-  "itemgroup.foodcraft": "食物工艺",
 
   "subtitles.foodcraft.stove_baking": "炉子:烘烤",
   "subtitle.foodcraft.stone_grinding": "石磨:转动",

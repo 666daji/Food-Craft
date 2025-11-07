@@ -1,4 +1,6 @@
 {
+  "itemgroup.foodcraft": "Twのベーキングプロセス",
+
   "item.foodcraft.wheat_flour": "小麦粉",
   "item.foodcraft.lapis_lazuli_flour": "ラピスラズリ粉",
   "item.foodcraft.cocoa_flour": "ココア粉",
@@ -41,8 +43,6 @@
 
   "item.foodcraft.salt_shaker": "塩振り",
   "item.foodcraft.salt_cubes": "塩の塊",
-
-  "itemgroup.foodcraft": "FoodCraft",
 
   "subtitles.foodcraft.stove_baking": "ストーブ：焼成中",
   "subtitle.foodcraft.stone_grinding": "石臼：回転中",

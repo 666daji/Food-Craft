@@ -1,4 +1,6 @@
 {
+  "itemgroup.foodcraft": "Tws Backprozess",
+
   "item.foodcraft.wheat_flour": "Weizenmehl",
   "item.foodcraft.lapis_lazuli_flour": "Lapislazuli-Mehl",
   "item.foodcraft.cocoa_flour": "Kakaomehl",
@@ -41,8 +43,6 @@
 
   "item.foodcraft.salt_shaker": "Salzstreuer",
   "item.foodcraft.salt_cubes": "Salzwürfel",
-
-  "itemgroup.foodcraft": "FoodCraft",
 
   "subtitles.foodcraft.stove_baking": "Herd: Backt",
   "subtitle.foodcraft.stone_grinding": "Mahlstein: Dreht sich",

@@ -1,4 +1,6 @@
 {
+  "itemgroup.foodcraft": "Tw's Baking Process",
+
   "item.foodcraft.wheat_flour": "Wheat Flour",
   "item.foodcraft.lapis_lazuli_flour": "Lapis Lazuli Flour",
   "item.foodcraft.cocoa_flour": "Cocoa Flour",
@@ -41,8 +43,6 @@
 
   "item.foodcraft.salt_shaker": "Salt Shaker",
   "item.foodcraft.salt_cubes": "Salt Cubes",
-
-  "itemgroup.foodcraft": "FoodCraft",
 
   "subtitles.foodcraft.stove_baking": "Stove: Baking",
   "subtitle.foodcraft.stone_grinding": "Grinding Stone: Turning",

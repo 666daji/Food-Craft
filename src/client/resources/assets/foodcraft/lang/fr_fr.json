@@ -1,4 +1,6 @@
 {
+  "itemgroup.foodcraft": "Processus de Cuisson de Tw",
+
   "item.foodcraft.wheat_flour": "Farine de Blé",
   "item.foodcraft.lapis_lazuli_flour": "Farine de Lapis-Lazuli",
   "item.foodcraft.cocoa_flour": "Farine de Cacao",
@@ -41,8 +43,6 @@
 
   "item.foodcraft.salt_shaker": "Salière",
   "item.foodcraft.salt_cubes": "Cubes de Sel",
-
-  "itemgroup.foodcraft": "FoodCraft",
 
   "subtitles.foodcraft.stove_baking": "Fourneau : Cuisson",
   "subtitle.foodcraft.stone_grinding": "Pierre à Moudre : Tourne",

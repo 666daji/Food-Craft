@@ -1,4 +1,6 @@
 {
+  "itemgroup.foodcraft": "Proceso de Horneado de Tw",
+
   "item.foodcraft.wheat_flour": "Harina de Trigo",
   "item.foodcraft.lapis_lazuli_flour": "Harina de Lapislázuli",
   "item.foodcraft.cocoa_flour": "Harina de Cacao",
@@ -41,8 +43,6 @@
 
   "item.foodcraft.salt_shaker": "Salero",
   "item.foodcraft.salt_cubes": "Cubos de Sal",
-
-  "itemgroup.foodcraft": "FoodCraft",
 
   "subtitles.foodcraft.stove_baking": "Horno: Horneando",
   "subtitle.foodcraft.stone_grinding": "Piedra de Moler: Girando",

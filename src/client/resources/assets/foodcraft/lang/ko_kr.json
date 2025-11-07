@@ -1,4 +1,6 @@
 {
+  "itemgroup.foodcraft": "Tw의 베이킹 공정",
+
   "item.foodcraft.wheat_flour": "밀가루",
   "item.foodcraft.lapis_lazuli_flour": "청금석 가루",
   "item.foodcraft.cocoa_flour": "코코아 가루",
@@ -41,8 +43,6 @@
 
   "item.foodcraft.salt_shaker": "소금통",
   "item.foodcraft.salt_cubes": "소금 덩어리",
-
-  "itemgroup.foodcraft": "푸드크래프트",
 
   "subtitles.foodcraft.stove_baking": "화로: 굽는 중",
   "subtitle.foodcraft.stone_grinding": "맷돌: 돌아가는 소리",
