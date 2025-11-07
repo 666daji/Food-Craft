@@ -223,15 +223,12 @@ public abstract class UpPlaceBlock extends BlockWithEntity {
             }
         }
 
-        public static void playSound(World world, BlockPos pos, SoundEvent sound){
-            world.playSound(
-                    null,
-                    pos,
-                    sound,
-                    SoundCategory.BLOCKS,
-                    1.0F,
-                    1.0F
-            );
+        public void playSound(World world, BlockPos pos, boolean isPlaceSound) {
+            if (isPlaceSound) {
+                playPlaceSound(world, pos);
+            } else {
+                playFetchSound(world, pos);
+            }
         }
 
         public boolean isDefault() {

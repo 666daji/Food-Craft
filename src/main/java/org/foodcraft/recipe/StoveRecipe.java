@@ -12,20 +12,33 @@ import org.jetbrains.annotations.Nullable;
 
 public class StoveRecipe extends SimpleCraftRecipe {
     protected final int bakingTime;
-    protected final int inputCount;
+    protected final int MaxInputCount;
     /** 基础模具为null时表示该配方无需模具 */
     @Nullable
     protected final ItemStack mold;
 
     public StoveRecipe(Identifier id, Ingredient input, ItemStack output, StoveRecipeSerializer.StoveExtraData data) {
         super(id, input, output);
-        this.inputCount = data.inputCount();
+        this.MaxInputCount = data.inputCount();
         this.bakingTime = data.stoveTime();
         this.mold = !data.mold().isEmpty() ? data.mold() : null;
     }
 
-    public int getInputCount() {
-        return inputCount;
+    public int getMaxInputCount() {
+        return MaxInputCount;
+    }
+
+    /**
+     * 获取烘培该配方需要的总时间，这与输入的数量有关。
+     * <p>输入的数量如果超过了此配方的{@linkplain StoveRecipe#MaxInputCount}</p>，则会按照配方的最大数量处理
+     * @param count 烘烤的数量
+     * @return 烘烤需要的总时间
+     */
+    public int getBakingTimeForInput(int count) {
+        if (count <= 0){
+            return bakingTime;
+        }
+        return bakingTime * Math.min(MaxInputCount, count);
     }
 
     public int getBakingTime() {

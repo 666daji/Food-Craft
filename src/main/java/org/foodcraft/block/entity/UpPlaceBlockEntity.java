@@ -12,6 +12,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.sound.BlockSoundGroup;
+import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
@@ -207,13 +208,7 @@ public abstract class UpPlaceBlockEntity extends BlockEntity implements Inventor
      * @param fetchStacks 此次取出操作获得的所有物品堆栈
      */
     public void onFetch(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit, List<ItemStack> fetchStacks) {
-        if (getCachedState().getBlock() instanceof UpPlaceBlock upPlaceBlock){
-            if (upPlaceBlock.upSounds.isDefault()){
-                UpPlaceBlock.UpSounds.playSound(world, pos, getSoundForItem(fetchStacks.get(0), false));
-            }else {
-                upPlaceBlock.upSounds.playFetchSound(world, pos);
-            }
-        }
+        playSound(world, pos, fetchStacks.get(0), false);
     }
 
     /**
@@ -233,14 +228,7 @@ public abstract class UpPlaceBlockEntity extends BlockEntity implements Inventor
      * @param placeStack 放置的物品堆栈
      */
     public void onPlace(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit, ItemStack placeStack) {
-        if (getCachedState().getBlock() instanceof UpPlaceBlock upPlaceBlock){
-            if (upPlaceBlock.upSounds.isDefault()){
-                // 根据物品播放声音
-                UpPlaceBlock.UpSounds.playSound(world, pos, getSoundForItem(placeStack, true));
-            }else {
-                upPlaceBlock.upSounds.playPlaceSound(world, pos);
-            }
-        }
+        playSound(world, pos, placeStack, true);
 
         if (!player.isCreative()) {
             placeStack.decrement(1);
@@ -265,7 +253,6 @@ public abstract class UpPlaceBlockEntity extends BlockEntity implements Inventor
         }
 
         // 创建副本并清空原列表
-        System.out.println(fetchStacks);
         List<ItemStack> result = new ArrayList<>(fetchStacks);
         fetchStacks = new CopyOnWriteArrayList<>();
         return result;
@@ -309,6 +296,29 @@ public abstract class UpPlaceBlockEntity extends BlockEntity implements Inventor
         }
 
         return null;
+    }
+
+    /**
+     * 默认的播放物品取回和放出的声音，子类在重写onPlace和onFetch方法时可以选择性地调用
+     * @param world 当前的世界
+     * @param pos 播放声音的位置
+     * @param isPlaceSound 是否是放置的声音
+     */
+    protected void playSound(World world, BlockPos pos, ItemStack stack, boolean isPlaceSound){
+        if (getCachedState().getBlock() instanceof UpPlaceBlock upPlaceBlock) {
+            if (upPlaceBlock.upSounds.isDefault()) {
+                world.playSound(
+                        null,
+                        pos,
+                        getSoundForItem(stack, isPlaceSound),
+                        SoundCategory.BLOCKS,
+                        1.0F,
+                        1.0F
+                );
+            } else {
+                upPlaceBlock.upSounds.playSound(world, pos, isPlaceSound);
+            }
+        }
     }
 
     @Override

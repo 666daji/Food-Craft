@@ -24,8 +24,10 @@ import net.minecraft.recipe.*;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.ActionResult;
+import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.collection.DefaultedList;
+import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.shape.VoxelShape;
@@ -278,7 +280,7 @@ public class HeatResistantSlateBlockEntity extends UpPlaceBlockEntity implements
     @Override
     public ActionResult tryAddItem(ItemStack stack) {
         // 首先尝试处理装有定型内容的模具
-        if (stack.getItem() instanceof MoldContentItem && ((MoldContentItem) stack.getItem()).hasContent(stack)) {
+        if (stack.getItem() instanceof MoldContentItem moldContentItem && moldContentItem.hasContent(stack)) {
             ActionResult result = handleFilledMoldPlacement(stack);
             if (result.isAccepted()) {
                 return result;
@@ -294,12 +296,13 @@ public class HeatResistantSlateBlockEntity extends UpPlaceBlockEntity implements
             return ActionResult.FAIL;
         }
 
+        // 尝试放置的新堆栈
         ItemStack newStack = stack.copy();
-        newStack.setCount(1);
 
         // 如果有模具在额外库存中，只能放置可以被该模具定型的物品
         ItemStack moldStack = this.otherStack.get(0);
         if (!moldStack.isEmpty()) {
+            newStack.setCount(1);
             ItemStack moldedItem = tryMoldItemWithMold(newStack, moldStack);
             if (!moldedItem.isEmpty()) {
                 // 定型成功，放置定型后的物品
@@ -313,13 +316,24 @@ public class HeatResistantSlateBlockEntity extends UpPlaceBlockEntity implements
             }
         }
 
-        // 没有模具，直接放置物品（检查是否是有效的炉子配方输入）
-        if (isEmpty() && isValidGrindingInput(newStack)) {
+        // 没有模具，直接放置物品
+        int maxCount = getMaxInputCount(newStack);
+        if (isEmpty() && maxCount != 0) {
+            newStack.setCount(Math.min(newStack.getCount(), maxCount));
             this.setStack(0, newStack);
             this.markDirtyAndSync();
             return ActionResult.SUCCESS;
         }
         return ActionResult.FAIL;
+    }
+
+    @Override
+    public void onPlace(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit, ItemStack placeStack) {
+        playSound(world, pos, placeStack, true);
+
+        if (!player.isCreative()) {
+            placeStack.decrement(getStack(0).getCount());
+        }
     }
 
     @Override
@@ -345,12 +359,13 @@ public class HeatResistantSlateBlockEntity extends UpPlaceBlockEntity implements
             return ActionResult.FAIL;
         }
 
+        this.fetchStacks = List.of(contentStack.copy());
+
         // 普通物品的取出逻辑
         if (!player.isCreative() && !player.giveItemStack(contentStack)) {
             player.dropItem(contentStack, false);
         }
 
-        this.fetchStacks = List.of(contentStack.copy());
         this.setStack(0, ItemStack.EMPTY);
         this.originalInputStack = ItemStack.EMPTY;
 
@@ -869,7 +884,7 @@ public class HeatResistantSlateBlockEntity extends UpPlaceBlockEntity implements
 
         // 初始化烘烤总时间
         if (bakingTimeTotal == 0) {
-            bakingTimeTotal = Math.max(recipe.getBakingTime(), MIN_BAKING_TIME);
+            bakingTimeTotal = Math.max(recipe.getBakingTimeForInput(getStack(0).getCount()), MIN_BAKING_TIME);
         }
 
         // 根据热量等级决定烘烤速度
@@ -926,15 +941,17 @@ public class HeatResistantSlateBlockEntity extends UpPlaceBlockEntity implements
      */
     private void completeBaking(World world, StoveRecipe recipe) {
         ItemStack inputStack = getStack(0);
-        ItemStack outputStack = recipe.getOutput(world.getRegistryManager());
+        ItemStack outputStack = recipe.craft(this, world.getRegistryManager());
 
         if (inputStack.isEmpty() || outputStack.isEmpty()) {
             resetBakingProgress();
             return;
         }
 
+        outputStack.setCount(inputStack.getCount());
+
         // 消耗输入物品
-        setStack(0, recipe.craft(this, world.getRegistryManager()));
+        setStack(0, outputStack);
 
         // 烘烤完成后，清空原始输入（因为现在已经是烘烤后的物品）
         this.originalInputStack = ItemStack.EMPTY;
@@ -1011,6 +1028,18 @@ public class HeatResistantSlateBlockEntity extends UpPlaceBlockEntity implements
 
         Inventory tempInventory = new SimpleInventory(stack);
         return this.matchGetter.getFirstMatch(tempInventory, this.world).isPresent();
+    }
+
+    /**
+     * 获取该配方允许的最大输入数量
+     * @param stack 要输入的物品堆栈
+     * @return 该配方允许的最大输入数量，如果为0，表示为未找到匹配的配方
+     */
+    protected int getMaxInputCount(ItemStack stack){
+        Inventory tempInventory = new SimpleInventory(stack);
+        Optional<? extends StoveRecipe> expectedRecipe = this.matchGetter.getFirstMatch(tempInventory, this.world);
+
+        return expectedRecipe.map(StoveRecipe::getMaxInputCount).orElse(0);
     }
 
     /**

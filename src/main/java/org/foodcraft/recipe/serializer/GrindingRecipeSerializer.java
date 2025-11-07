@@ -21,7 +21,7 @@ public class GrindingRecipeSerializer extends SimpleCraftRecipeSerializer<Grindi
 
     @Override
     protected Object readExtraData(JsonObject json) {
-        int inputCount = JsonHelper.getInt(json, "inputCount", 1);
+        int inputCount = JsonHelper.getInt(json, "MaxInputCount", 1);
         int grindingTime = JsonHelper.getInt(json, "grindingTime", 200);
         return new GrindingExtraData(inputCount, grindingTime);
     }

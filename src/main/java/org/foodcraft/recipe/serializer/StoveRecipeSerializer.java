@@ -22,7 +22,7 @@ public class StoveRecipeSerializer extends SimpleCraftRecipeSerializer<StoveReci
 
     @Override
     protected Object readExtraData(JsonObject json) {
-        int inputCount = JsonHelper.getInt(json, "inputCount", 1);
+        int inputCount = JsonHelper.getInt(json, "MaxInputCount", 1);
         int stoveTime = JsonHelper.getInt(json, "stoveTime", 200);
 
         // 读取模具信息（可以为null）
@@ -45,7 +45,7 @@ public class StoveRecipeSerializer extends SimpleCraftRecipeSerializer<StoveReci
 
     @Override
     protected void writeExtraData(PacketByteBuf buf, StoveRecipe recipe) {
-        buf.writeInt(recipe.getInputCount());
+        buf.writeInt(recipe.getMaxInputCount());
         buf.writeVarInt(recipe.getBakingTime());
         if (recipe.getMold() == null) {
             buf.writeItemStack(ItemStack.EMPTY);
