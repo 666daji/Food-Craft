@@ -28,7 +28,10 @@ public class MultiBlockPersistentState extends PersistentState {
     private static final Logger LOGGER = FoodCraft.LOGGER;
     private static final String PERSISTENT_ID = "multiblocks";
 
-    // 存储结构：世界ID -> 主方块位置 -> 多方块数据
+    /**
+     * 临时存储的方块堆数据
+     * @see MultiBlockManager#multiBlockRegistry
+     */
     private final Map<Identifier, Map<BlockPos, MultiBlockData>> worldData = new ConcurrentHashMap<>();
 
     public MultiBlockPersistentState() {

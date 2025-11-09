@@ -54,8 +54,18 @@ public class HeatResistantSlateBlock extends UpPlaceBlock {
         super.onBlockAdded(state, world, pos, oldState, notify);
 
         if (!world.isClient) {
-            // 处理核心方块放置
-            MultiBlockHelper.onCoreBlockPlaced(world, pos, this);
+            // 处理方块放置
+            MultiBlockHelper.onBlockPlaced(world, pos, this);
+        }
+    }
+
+    @Override
+    public void neighborUpdate(BlockState state, World world, BlockPos pos, Block sourceBlock, BlockPos fromPos, boolean notify) {
+        super.neighborUpdate(state, world, pos, sourceBlock, fromPos, notify);
+
+        if (!world.isClient) {
+            // 处理相邻方块更新，检查多方块结构完整性
+            MultiBlockHelper.onNeighborUpdate(world, pos, this);
         }
     }
 
@@ -81,6 +91,9 @@ public class HeatResistantSlateBlock extends UpPlaceBlock {
 
                 world.updateComparators(pos, this);
             }
+
+            // 处理方块破坏
+            MultiBlockHelper.onBlockBroken(world, pos, this);
         }
 
         super.onStateReplaced(state, world, pos, newState, moved);
@@ -174,16 +187,6 @@ public class HeatResistantSlateBlock extends UpPlaceBlock {
             return blockEntity.isValidItem(handStack);
         }
         return false;
-    }
-
-    @Override
-    public void neighborUpdate(BlockState state, World world, BlockPos pos, Block sourceBlock, BlockPos fromPos, boolean notify) {
-        super.neighborUpdate(state, world, pos, sourceBlock, fromPos, notify);
-
-        if (!world.isClient) {
-            // 处理相邻方块更新，检查多方块结构完整性
-            MultiBlockHelper.onNeighborUpdate(world, pos, this);
-        }
     }
 
     @Nullable

@@ -15,36 +15,18 @@ import java.util.Objects;
 /**
  * 客户端多方块引用实现
  * 只包含显示所需的信息，不包含实际功能，数据完全从服务器同步
- * @see ServerMultiBlockReference
  */
 public class ClientMultiBlockReference implements MultiBlockReference {
     private static final Logger LOGGER = FoodCraft.LOGGER;
-
-    // 序列化键名
-    private static final String MASTER_POS_KEY = "MasterPos";
-    private static final String RELATIVE_POS_KEY = "RelativePos";
-    private static final String BASE_BLOCK_KEY = "BaseBlock";
 
     private final BlockPos masterWorldPos;
     private final BlockPos relativePos;
     private final Block baseBlock;
     private final BlockPos worldPos;
-    private final int volume;
-
-    private ClientMultiBlockReference(@NotNull BlockPos masterWorldPos, @NotNull BlockPos relativePos,
-                                     @NotNull Block baseBlock, int volume) {
-        this.masterWorldPos = Objects.requireNonNull(masterWorldPos, "Master world position cannot be null");
-        this.relativePos = Objects.requireNonNull(relativePos, "Relative position cannot be null");
-        this.baseBlock = Objects.requireNonNull(baseBlock, "Base block cannot be null");
-        this.volume = volume;
-
-        // 计算世界坐标
-        this.worldPos = new BlockPos(
-                masterWorldPos.getX() + relativePos.getX(),
-                masterWorldPos.getY() + relativePos.getY(),
-                masterWorldPos.getZ() + relativePos.getZ()
-        );
-    }
+    private final int structureWidth;
+    private final int structureHeight;
+    private final int structureDepth;
+    private boolean disposed = false;
 
     public ClientMultiBlockReference(@NotNull NbtCompound nbt) {
         // 从NBT反序列化
@@ -52,10 +34,12 @@ public class ClientMultiBlockReference implements MultiBlockReference {
         this.relativePos = NbtHelper.toBlockPos(nbt.getCompound(RELATIVE_POS_KEY));
 
         String blockId = nbt.getString(BASE_BLOCK_KEY);
-        this.baseBlock = net.minecraft.registry.Registries.BLOCK.get(new net.minecraft.util.Identifier(blockId));
+        this.baseBlock = net.minecraft.registry.Registries.BLOCK.get(net.minecraft.util.Identifier.tryParse(blockId));
 
-        // 客户端无法知道实际体积，使用默认值或从NBT读取（如果有的话）
-        this.volume = nbt.contains("Volume") ? nbt.getInt("Volume") : 1;
+        // 读取结构尺寸
+        this.structureWidth = nbt.getInt(STRUCTURE_WIDTH_KEY);
+        this.structureHeight = nbt.getInt(STRUCTURE_HEIGHT_KEY);
+        this.structureDepth = nbt.getInt(STRUCTURE_DEPTH_KEY);
 
         // 计算世界坐标
         this.worldPos = new BlockPos(
@@ -64,8 +48,27 @@ public class ClientMultiBlockReference implements MultiBlockReference {
                 masterWorldPos.getZ() + relativePos.getZ()
         );
 
-        LOGGER.debug("Created ClientMultiBlockReference: master={}, relative={}, block={}",
-                masterWorldPos, relativePos, baseBlock);
+        LOGGER.debug("Created ClientMultiBlockReference: master={}, relative={}, block={}, size={}x{}x{}",
+                masterWorldPos, relativePos, baseBlock, structureWidth, structureHeight, structureDepth);
+    }
+
+    /**
+     * 从服务端引用创建客户端引用
+     */
+    public static ClientMultiBlockReference fromServerReference(@NotNull MultiBlockReference serverReference) {
+        if (serverReference.isDisposed()) {
+            throw new IllegalArgumentException("Cannot create client reference from disposed server reference");
+        }
+
+        NbtCompound nbt = serverReference.toNbt();
+        // 确保包含结构尺寸信息
+        if (!nbt.contains(STRUCTURE_WIDTH_KEY)) {
+            nbt.putInt(STRUCTURE_WIDTH_KEY, serverReference.getStructureWidth());
+            nbt.putInt(STRUCTURE_HEIGHT_KEY, serverReference.getStructureHeight());
+            nbt.putInt(STRUCTURE_DEPTH_KEY, serverReference.getStructureDepth());
+        }
+
+        return new ClientMultiBlockReference(nbt);
     }
 
     @Override
@@ -80,10 +83,16 @@ public class ClientMultiBlockReference implements MultiBlockReference {
         nbt.put(RELATIVE_POS_KEY, NbtHelper.fromBlockPos(relativePos));
 
         // 基础方块
-        nbt.putString(BASE_BLOCK_KEY, baseBlock.getRegistryEntry().registryKey().getValue().toString());
+        if (baseBlock != null) {
+            nbt.putString(BASE_BLOCK_KEY, net.minecraft.registry.Registries.BLOCK.getId(baseBlock).toString());
+        } else {
+            nbt.putString(BASE_BLOCK_KEY, "minecraft:air");
+        }
 
-        // 体积
-        nbt.putInt("Volume", volume);
+        // 结构尺寸
+        nbt.putInt(STRUCTURE_WIDTH_KEY, structureWidth);
+        nbt.putInt(STRUCTURE_HEIGHT_KEY, structureHeight);
+        nbt.putInt(STRUCTURE_DEPTH_KEY, structureDepth);
 
         LOGGER.debug("Serialized ClientMultiBlockReference: master={}, relative={}, block={}",
                 masterWorldPos, relativePos, baseBlock);
@@ -93,12 +102,15 @@ public class ClientMultiBlockReference implements MultiBlockReference {
 
     @Override
     public boolean matchesBlock(Block block) {
-        return baseBlock == block;
+        return !disposed && baseBlock == block;
     }
 
     @Override
     public boolean matchesBlockState(BlockState blockState) {
-        return matchesBlock(blockState.getBlock());
+        if (blockState != null) {
+            return matchesBlock(blockState.getBlock());
+        }
+        return false;
     }
 
     @Override
@@ -111,50 +123,54 @@ public class ClientMultiBlockReference implements MultiBlockReference {
 
     @Override
     public boolean isMasterBlock() {
-        return relativePos.getX() == 0 && relativePos.getY() == 0 && relativePos.getZ() == 0;
+        return !disposed && relativePos.getX() == 0 && relativePos.getY() == 0 && relativePos.getZ() == 0;
     }
 
     @Override
-    public BlockPos getMasterWorldPos() {
+    public @NotNull BlockPos getMasterWorldPos() {
+        if (disposed) {
+            throw new IllegalStateException("ClientMultiBlockReference has been disposed");
+        }
         return masterWorldPos;
     }
 
     @Override
-    public BlockPos getWorldPos() {
+    public @NotNull BlockPos getWorldPos() {
+        if (disposed) {
+            throw new IllegalStateException("ClientMultiBlockReference has been disposed");
+        }
         return worldPos;
     }
 
     @Override
-    public BlockPos getRelativePos() {
+    public @NotNull BlockPos getRelativePos() {
+        if (disposed) {
+            throw new IllegalStateException("ClientMultiBlockReference has been disposed");
+        }
         return relativePos;
     }
 
     @Override
-    public Block getBaseBlock() {
+    public @NotNull Block getBaseBlock() {
+        if (disposed) {
+            throw new IllegalStateException("ClientMultiBlockReference has been disposed");
+        }
         return baseBlock;
     }
 
     @Override
     public int getVolume() {
-        return volume;
+        return disposed ? 0 : structureWidth * structureHeight * structureDepth;
     }
 
     @Override
-    public boolean containsWorldPos(BlockPos worldPos) {
-        // 客户端无法精确判断，基于已知信息估算范围
-        int width = 1, height = 1, depth = 1; // 默认大小
-
-        // 如果是主方块，可以假设有一定的大小范围
-        if (isMasterBlock() && volume > 1) {
-            // 简单估算：假设是立方体
-            int side = (int) Math.cbrt(volume);
-            width = height = depth = Math.max(1, side);
-        }
+    public boolean containsWorldPos(@NotNull BlockPos worldPos) {
+        if (disposed) return false;
 
         BlockPos endPos = new BlockPos(
-                masterWorldPos.getX() + width - 1,
-                masterWorldPos.getY() + height - 1,
-                masterWorldPos.getZ() + depth - 1
+                masterWorldPos.getX() + structureWidth - 1,
+                masterWorldPos.getY() + structureHeight - 1,
+                masterWorldPos.getZ() + structureDepth - 1
         );
 
         return worldPos.getX() >= masterWorldPos.getX() && worldPos.getX() <= endPos.getX() &&
@@ -165,18 +181,23 @@ public class ClientMultiBlockReference implements MultiBlockReference {
     @Override
     public boolean checkIntegrity() {
         // 客户端无法检查完整性，默认返回true
-        return true;
+        return !disposed;
     }
 
     @Override
     public boolean isDisposed() {
-        // 客户端引用不会被dispose，由服务器同步状态
-        return false;
+        return disposed;
+    }
+
+    @Override
+    public boolean isValid() {
+        return !disposed && masterWorldPos != null && relativePos != null && baseBlock != null &&
+                structureWidth > 0 && structureHeight > 0 && structureDepth > 0;
     }
 
     @Override
     public void dispose() {
-        // 客户端引用不需要dispose，由服务器同步管理
+        disposed = true;
         LOGGER.debug("ClientMultiBlockReference disposed at relative position {}", relativePos);
     }
 
@@ -196,6 +217,21 @@ public class ClientMultiBlockReference implements MultiBlockReference {
     }
 
     @Override
+    public int getStructureWidth() {
+        return structureWidth;
+    }
+
+    @Override
+    public int getStructureHeight() {
+        return structureHeight;
+    }
+
+    @Override
+    public int getStructureDepth() {
+        return structureDepth;
+    }
+
+    @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
         if (obj == null || getClass() != obj.getClass()) return false;
@@ -212,7 +248,7 @@ public class ClientMultiBlockReference implements MultiBlockReference {
 
     @Override
     public String toString() {
-        return String.format("ClientMultiBlockReference{masterPos=%s, relativePos=%s, worldPos=%s, isMaster=%b}",
-                masterWorldPos, relativePos, worldPos, isMasterBlock());
+        return String.format("ClientMultiBlockReference{masterPos=%s, relativePos=%s, worldPos=%s, isMaster=%b, size=%dx%dx%d}",
+                masterWorldPos, relativePos, worldPos, isMasterBlock(), structureWidth, structureHeight, structureDepth);
     }
 }

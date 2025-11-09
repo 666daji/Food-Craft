@@ -44,12 +44,18 @@ import java.util.function.Consumer;
 public class MultiBlockManager {
     private static final Logger LOGGER = FoodCraft.LOGGER;
 
-    // 使用WorldView作为一级键，BlockPos作为二级键
+    /**
+     * 存储了所有方块堆的映射。
+     * <P>一级键存储不同世界中的方块堆映射，二级键使用主方块的坐标来标识一个方块堆</P>
+     * <strong>注意：</strong>作为键的世界必须是一个服务器世界。
+     */
     private static final Map<WorldView, Map<BlockPos, MultiBlock>> multiBlockRegistry = new WeakHashMap<>();
     private static final Object lock = new Object();
 
     /**
      * 注册一个新的MultiBlock
+     * @param multiBlock 要注册的多方块实例
+     * @return 如果成功注册返回true，否则返回false
      */
     public static boolean registerMultiBlock(MultiBlock multiBlock) {
         if (multiBlock == null) {
@@ -105,7 +111,9 @@ public class MultiBlockManager {
 
     /**
      * 注销一个MultiBlock。
-     * 请不要直接调用该方法，如果需要注销方块堆，请直接调用MultiBlock.dispose()
+     * @param multiBlock 要注销的多方块实例
+     * @return 如果成功注销返回true，否则返回false
+     * @apiNote 请不要直接调用该方法，如果需要注销方块堆，请直接调用{@link MultiBlock#dispose()}
      */
     public static boolean unregisterMultiBlock(MultiBlock multiBlock) {
         if (multiBlock == null) {

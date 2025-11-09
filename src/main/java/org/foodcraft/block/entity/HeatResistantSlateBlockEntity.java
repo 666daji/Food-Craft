@@ -52,7 +52,7 @@ import org.slf4j.Logger;
 
 import java.util.*;
 
-public class HeatResistantSlateBlockEntity extends UpPlaceBlockEntity implements SidedInventory, RecipeUnlocker, RecipeInputProvider {
+public class HeatResistantSlateBlockEntity extends UpPlaceBlockEntity implements MultiBlockEntity, SidedInventory, RecipeUnlocker, RecipeInputProvider {
     protected static final int MIN_CHECK_INTERVAL = 10;
     protected static final String MULTIBLOCK_REF_KEY = "MultiBlockRef";
     protected static final double INPUT_OFFSET_Y = 0.1;
@@ -526,6 +526,7 @@ public class HeatResistantSlateBlockEntity extends UpPlaceBlockEntity implements
     /**
      * 设置多方块引用，并标记需要同步
      */
+    @Override
     public void setMultiBlockReference(@Nullable MultiBlockReference ref) {
         // 客户端不允许直接设置引用
         if (world != null && (world.isClient || ref instanceof ClientMultiBlockReference)) {
@@ -557,8 +558,14 @@ public class HeatResistantSlateBlockEntity extends UpPlaceBlockEntity implements
      * 获取多方块引用
      */
     @Nullable
+    @Override
     public MultiBlockReference getMultiBlockReference() {
         return multiBlockRef;
+    }
+
+    @Override
+    public BlockPos getMultiBlockPos() {
+        return this.pos;
     }
 
     /**

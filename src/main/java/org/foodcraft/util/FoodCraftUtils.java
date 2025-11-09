@@ -8,9 +8,7 @@ import net.minecraft.block.pattern.CachedBlockPosition;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.potion.PotionUtil;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.Properties;
 import net.minecraft.state.property.Property;
@@ -21,7 +19,6 @@ import net.minecraft.util.shape.VoxelShapes;
 import org.dfood.block.FoodBlock;
 import org.dfood.item.DoubleBlockItem;
 import org.foodcraft.FoodCraft;
-import org.foodcraft.item.ModPotions;
 import org.slf4j.Logger;
 
 import java.util.HashSet;

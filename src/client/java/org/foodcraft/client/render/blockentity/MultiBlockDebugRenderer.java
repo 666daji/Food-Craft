@@ -60,9 +60,9 @@ public abstract class MultiBlockDebugRenderer<T extends BlockEntity> implements 
         BlockPos currentPos = entity.getPos();
 
         // 构建显示的文本
-        String masterText = String.format("Master: %d,%d,%d", masterPos.getX(), masterPos.getY(), masterPos.getZ());
-        String relativeText = String.format("Relative: %d,%d,%d", relativePos.getX(), relativePos.getY(), relativePos.getZ());
-        String currentText = String.format("Current: %d,%d,%d", currentPos.getX(), currentPos.getY(), currentPos.getZ());
+        String masterText = String.format("%d,%d,%d", masterPos.getX(), masterPos.getY(), masterPos.getZ());
+        String relativeText = String.format("%d,%d,%d", relativePos.getX(), relativePos.getY(), relativePos.getZ());
+        String currentText = String.format("%d,%d,%d", currentPos.getX(), currentPos.getY(), currentPos.getZ());
 
         // 检查是否为master方块
         boolean isMaster = multiBlockRef.isMasterBlock();

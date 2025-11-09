@@ -21,11 +21,6 @@ import java.util.Objects;
 public class ServerMultiBlockReference implements MultiBlockReference {
     private static final Logger LOGGER = FoodCraft.LOGGER;
 
-    // 序列化键名
-    private static final String MASTER_POS_KEY = "MasterPos";
-    private static final String RELATIVE_POS_KEY = "RelativePos";
-    private static final String BASE_BLOCK_KEY = "BaseBlock";
-
     private final MultiBlock multiBlock;
     private final BlockPos relativePos;
     private final BlockPos worldPos;
@@ -51,9 +46,12 @@ public class ServerMultiBlockReference implements MultiBlockReference {
         }
     }
 
+    /**
+     * 从世界坐标创建服务端引用
+     */
     @Nullable
-    public static ServerMultiBlockReference fromWorldPos(MultiBlock multiBlock, BlockPos worldPos) {
-        if (multiBlock == null || multiBlock.isDisposed()) {
+    public static ServerMultiBlockReference fromWorldPos(@NotNull MultiBlock multiBlock, @NotNull BlockPos worldPos) {
+        if (multiBlock.isDisposed()) {
             return null;
         }
 
@@ -74,10 +72,10 @@ public class ServerMultiBlockReference implements MultiBlockReference {
     }
 
     /**
-     * 创建从世界坐标到相对坐标的引用
+     * 从世界坐标创建通用引用（服务端或客户端）
      */
     @Nullable
-    public static MultiBlockReference fromWorldPos(WorldView world, BlockPos worldPos) {
+    public static MultiBlockReference fromWorldPos(@NotNull WorldView world, @NotNull BlockPos worldPos, boolean createClientReference) {
         MultiBlock multiBlock = MultiBlockManager.findMultiBlock(world, worldPos);
         if (multiBlock == null || multiBlock.isDisposed()) {
             return null;
@@ -91,7 +89,14 @@ public class ServerMultiBlockReference implements MultiBlockReference {
         );
 
         try {
-            return new ServerMultiBlockReference(multiBlock, relativePos);
+            if (createClientReference && world.isClient()) {
+                // 在客户端创建客户端引用
+                ServerMultiBlockReference serverRef = new ServerMultiBlockReference(multiBlock, relativePos);
+                return ClientMultiBlockReference.fromServerReference(serverRef);
+            } else {
+                // 在服务端创建服务端引用
+                return new ServerMultiBlockReference(multiBlock, relativePos);
+            }
         } catch (IllegalArgumentException e) {
             LOGGER.warn("World position {} is not within MultiBlock range", worldPos);
             return null;
@@ -99,9 +104,10 @@ public class ServerMultiBlockReference implements MultiBlockReference {
     }
 
     /**
-     * 创建从已知方块堆和相对坐标的引用
+     * 从相对坐标创建引用
      */
-    public static MultiBlockReference fromRelativePos(MultiBlock multiBlock, BlockPos relativePos) {
+    @NotNull
+    public static MultiBlockReference fromRelativePos(@NotNull MultiBlock multiBlock, @NotNull BlockPos relativePos) {
         return new ServerMultiBlockReference(multiBlock, relativePos);
     }
 
@@ -119,9 +125,9 @@ public class ServerMultiBlockReference implements MultiBlockReference {
 
             // 读取基础方块
             String blockId = nbt.getString(BASE_BLOCK_KEY);
-            Block baseBlock = net.minecraft.registry.Registries.BLOCK.get(new Identifier(blockId));
+            Block baseBlock = net.minecraft.registry.Registries.BLOCK.get(Identifier.tryParse(blockId));
 
-            // 查找对应的MultiBlock
+            // 查找对应的MultiBlock（服务端引用）
             MultiBlock multiBlock = MultiBlockManager.findMultiBlock(world, masterPos);
             if (multiBlock == null || multiBlock.isDisposed()) {
                 LOGGER.warn("MultiBlock at {} not found or disposed during deserialization", masterPos);
@@ -135,10 +141,10 @@ public class ServerMultiBlockReference implements MultiBlockReference {
                 return null;
             }
 
-            // 创建引用
+            // 创建服务端引用
             ServerMultiBlockReference ref = new ServerMultiBlockReference(multiBlock, relativePos);
 
-            LOGGER.debug("Deserialized MultiBlockReference: master={}, relative={}, block={}",
+            LOGGER.debug("Deserialized ServerMultiBlockReference: master={}, relative={}, block={}",
                     masterPos, relativePos, baseBlock);
 
             return ref;
@@ -161,7 +167,12 @@ public class ServerMultiBlockReference implements MultiBlockReference {
         nbt.put(RELATIVE_POS_KEY, NbtHelper.fromBlockPos(relativePos));
 
         // 基础方块
-        nbt.putString(BASE_BLOCK_KEY, multiBlock.getBaseBlock().getRegistryEntry().registryKey().getValue().toString());
+        nbt.putString(BASE_BLOCK_KEY, net.minecraft.registry.Registries.BLOCK.getId(multiBlock.getBaseBlock()).toString());
+
+        // 结构尺寸
+        nbt.putInt(STRUCTURE_WIDTH_KEY, getStructureWidth());
+        nbt.putInt(STRUCTURE_HEIGHT_KEY, getStructureHeight());
+        nbt.putInt(STRUCTURE_DEPTH_KEY, getStructureDepth());
 
         LOGGER.debug("Serialized ServerMultiBlockReference: master={}, relative={}, block={}",
                 multiBlock.getMasterPos(), relativePos, multiBlock.getBaseBlock());
@@ -180,7 +191,10 @@ public class ServerMultiBlockReference implements MultiBlockReference {
 
     @Override
     public boolean matchesBlockState(BlockState blockState) {
-        return matchesBlock(blockState.getBlock());
+        if (blockState != null) {
+            return matchesBlock(blockState.getBlock());
+        }
+        return false;
     }
 
     @Override
@@ -197,33 +211,39 @@ public class ServerMultiBlockReference implements MultiBlockReference {
     }
 
     @Override
-    public BlockPos getMasterWorldPos() {
+    public @NotNull BlockPos getMasterWorldPos() {
+        if (multiBlock.isDisposed()) {
+            throw new IllegalStateException("MultiBlock has been disposed");
+        }
         return multiBlock.getMasterPos();
     }
 
     @Override
-    public BlockPos getWorldPos() {
+    public @NotNull BlockPos getWorldPos() {
         return worldPos;
     }
 
     @Override
-    public BlockPos getRelativePos() {
+    public @NotNull BlockPos getRelativePos() {
         return relativePos;
     }
 
     @Override
-    public Block getBaseBlock() {
+    public @NotNull Block getBaseBlock() {
+        if (multiBlock.isDisposed()) {
+            throw new IllegalStateException("MultiBlock has been disposed");
+        }
         return multiBlock.getBaseBlock();
     }
 
     @Override
     public int getVolume() {
-        return multiBlock.getVolume();
+        return multiBlock.isDisposed() ? 0 : multiBlock.getVolume();
     }
 
     @Override
-    public boolean containsWorldPos(BlockPos worldPos) {
-        return multiBlock.getRange().contains(worldPos);
+    public boolean containsWorldPos(@NotNull BlockPos worldPos) {
+        return !multiBlock.isDisposed() && multiBlock.getRange().contains(worldPos);
     }
 
     @Override
@@ -238,6 +258,11 @@ public class ServerMultiBlockReference implements MultiBlockReference {
     @Override
     public boolean isDisposed() {
         return multiBlock.isDisposed();
+    }
+
+    @Override
+    public boolean isValid() {
+        return !multiBlock.isDisposed() && multiBlock.checkIntegrity();
     }
 
     @Override
@@ -259,6 +284,21 @@ public class ServerMultiBlockReference implements MultiBlockReference {
     @Override
     public int getRelativeZ() {
         return relativePos.getZ();
+    }
+
+    @Override
+    public int getStructureWidth() {
+        return multiBlock.isDisposed() ? 0 : multiBlock.getRange().getWidth();
+    }
+
+    @Override
+    public int getStructureHeight() {
+        return multiBlock.isDisposed() ? 0 : multiBlock.getRange().getHeight();
+    }
+
+    @Override
+    public int getStructureDepth() {
+        return multiBlock.isDisposed() ? 0 : multiBlock.getRange().getDepth();
     }
 
     /**
@@ -284,7 +324,8 @@ public class ServerMultiBlockReference implements MultiBlockReference {
 
     @Override
     public String toString() {
-        return String.format("ServerMultiBlockReference{multiBlock=%s, relativePos=%s, worldPos=%s, isMaster=%b}",
-                multiBlock.getMasterPos(), relativePos, worldPos, isMasterBlock());
+        return String.format("ServerMultiBlockReference{multiBlock=%s, relativePos=%s, worldPos=%s, isMaster=%b, size=%dx%dx%d}",
+                multiBlock.getMasterPos(), relativePos, worldPos, isMasterBlock(),
+                getStructureWidth(), getStructureHeight(), getStructureDepth());
     }
 }

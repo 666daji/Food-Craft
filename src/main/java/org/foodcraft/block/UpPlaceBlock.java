@@ -50,7 +50,7 @@ public abstract class UpPlaceBlock extends BlockWithEntity {
     /**
      * 当方块被替换或破坏时，将方块实体中的库存物品掉落出来
      * <p>
-     * 确保方块被破坏时不会丢失其中的物品，符合Minecraft的物品保留机制。
+     * 确保方块被破坏时不会丢失其中的物品。
      * </p>
      */
     @Override
