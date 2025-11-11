@@ -3,6 +3,7 @@
   "ingredient": {
     "item": "minecraft:mutton"
   },
+  "MaxInputCount": 2,
   "result": "minecraft:cooked_mutton",
   "stoveTime": 9000
 }

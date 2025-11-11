@@ -3,6 +3,7 @@
   "ingredient": {
     "item": "minecraft:beef"
   },
+  "MaxInputCount": 2,
   "result": "minecraft:cooked_beef",
   "stoveTime": 9000
 }

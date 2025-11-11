@@ -6,6 +6,7 @@
   "client": [
     "BlockColorsMixin",
     "BlockEntityRendererFactoriesMixin",
+    "BlockModelRendererMixin",
     "ItemRendererAccessor",
     "ItemRendererMixin",
     "RenderLayerMixin"

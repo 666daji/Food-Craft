@@ -1,0 +1,7 @@
+{
+  "parent": "foodcraft:other/porkchop_cooking_2",
+  "textures": {
+    "3_0": "minecraft:block/cooked_porkchop",
+    "particle": "minecraft:item/cooked_porkchop"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "parent": "foodcraft:other/beef_cooking_2",
+  "textures": {
+    "0": "minecraft:block/cooked_beef",
+    "particle": "minecraft:item/cooked_beef"
+  }
+}

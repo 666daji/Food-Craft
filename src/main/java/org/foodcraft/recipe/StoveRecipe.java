@@ -10,7 +10,12 @@ import org.foodcraft.registry.ModRecipeSerializers;
 import org.foodcraft.registry.ModRecipeTypes;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class StoveRecipe extends SimpleCraftRecipe {
+    public static final Set<StoveRecipe> needOtherModelRecipes = new HashSet<>();
+
     protected final int bakingTime;
     protected final int MaxInputCount;
     /** 基础模具为null时表示该配方无需模具 */
@@ -22,6 +27,10 @@ public class StoveRecipe extends SimpleCraftRecipe {
         this.MaxInputCount = data.inputCount();
         this.bakingTime = data.stoveTime();
         this.mold = !data.mold().isEmpty() ? data.mold() : null;
+
+        if (MaxInputCount > 1){
+            needOtherModelRecipes.add(this);
+        }
     }
 
     public int getMaxInputCount() {

@@ -1,0 +1,7 @@
+{
+  "parent": "foodcraft:other/mutton_cooking_2",
+  "textures": {
+    "0": "minecraft:block/cooked_mutton",
+    "particle": "minecraft:item/cooked_mutton"
+  }
+}

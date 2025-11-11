@@ -45,7 +45,6 @@ import java.util.*;
  *
  * @see MultiBlockManager
  * @see MultiBlockHelper
- * @since 1.0
  */
 public class MultiBlock implements AutoCloseable {
     private static final Logger LOGGER = FoodCraft.LOGGER;
