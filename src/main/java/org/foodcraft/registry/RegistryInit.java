@@ -11,6 +11,7 @@ public class RegistryInit {
         ModRecipeTypes.initialize();
         ModItemGroups.RegistryModItemGroups();
         ModSounds.initialize();
+        ModScreenHandlerTypes.registerScreenHandlerTypes();
         registerShapes();
     }
 

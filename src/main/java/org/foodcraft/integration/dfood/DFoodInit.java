@@ -2,7 +2,7 @@ package org.foodcraft.integration.dfood;
 
 import org.dfood.shape.Shapes;
 
-public class dfoodInit {
+public class DFoodInit {
     public static void init() {
         FoodBlocksModifier.FoodBlockAdd();
         AssistedBlocks.registerAssistedBlocks();

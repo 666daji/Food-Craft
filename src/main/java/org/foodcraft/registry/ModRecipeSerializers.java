@@ -12,6 +12,7 @@ public class ModRecipeSerializers {
     public static final RecipeSerializer<?> STOVE = register("stove", new StoveRecipeSerializer());
     public static final RecipeSerializer<?> MOLD = register("mold", new MoldRecipeSerializer());
     public static final RecipeSerializer<?> CUT = register("cut", new CutRecipeSerializer());
+    public static final RecipeSerializer<?> POTTERY = register("pottery", new PotteryRecipeSerializer());
 
     private static <S extends RecipeSerializer<?>> S register(String id, S serializer) {
         return Registry.register(Registries.RECIPE_SERIALIZER, new Identifier(FoodCraft.MOD_ID, id), serializer);

@@ -1,7 +1,6 @@
 package org.foodcraft.client.render.blockentity;
 
 import net.minecraft.block.BlockState;
-import net.minecraft.block.ChestBlock;
 import net.minecraft.client.model.*;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
@@ -15,6 +14,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.RotationAxis;
 import net.minecraft.world.World;
 import org.foodcraft.FoodCraft;
+import org.foodcraft.block.GrindingStoneBlock;
 import org.foodcraft.registry.ModBlocks;
 import org.foodcraft.block.entity.GrindingStoneBlockEntity;
 import org.foodcraft.client.render.model.ModModelLayers;
@@ -108,7 +108,7 @@ public class GrindingStoneBlockEntityRenderer extends WithAnimationBlockEntityRe
             matrices.push();
             // 将模型平移到方块中心（默认原点在方块左下角）
             matrices.translate(0.5, 1.5, 0.5);
-            float facing = state.get(ChestBlock.FACING).asRotation();
+            float facing = state.get(GrindingStoneBlock.FACING).asRotation();
             matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(-facing + 90));
             // 如果模型是"倒着"建的，绕 X 轴旋转 180 度
             matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(180));

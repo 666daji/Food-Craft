@@ -9,18 +9,21 @@ import org.foodcraft.FoodCraft;
 import org.foodcraft.block.entity.*;
 
 public class ModBlockEntityTypes {
-    public static final BlockEntityType<BracketBlockEntity> BRACKET = create("bracket",
-            BlockEntityType.Builder.create(
-                    BracketBlockEntity::new,
-                    ModBlocks.BRACKET
-            )
-    );
+    // 工作方块
     public static final BlockEntityType<GrindingStoneBlockEntity> GRINDING_STONE = create("grinding_stone",
             BlockEntityType.Builder.create(
                     GrindingStoneBlockEntity::new,
                     ModBlocks.GRINDING_STONE
             )
     );
+    public static final BlockEntityType<PotteryTableBlockEntity> POTTERY_TABLE = create("pottery_table",
+            BlockEntityType.Builder.create(
+                    PotteryTableBlockEntity::new,
+                    ModBlocks.POTTERY_TABLE
+            )
+    );
+
+    // UpPlaceBlock
     public static final BlockEntityType<HeatResistantSlateBlockEntity> HEAT_RESISTANT_SLATE = create("heat_resistant_slate",
             BlockEntityType.Builder.create(
                     HeatResistantSlateBlockEntity::new,
@@ -39,12 +42,6 @@ public class ModBlockEntityTypes {
                     ModBlocks.WOODEN_SHELF
             )
     );
-    public static final BlockEntityType<CombustionFirewoodBlockEntity> COMBUSTION_FIREWOOD = create("combustion_firewood",
-            BlockEntityType.Builder.create(
-                    CombustionFirewoodBlockEntity::new,
-                    ModBlocks.COMBUSTION_FIREWOOD
-            )
-    );
     public static final BlockEntityType<MoldBlockEntity> MOLD = create("mold",
             BlockEntityType.Builder.create(
                     MoldBlockEntity::new,
@@ -52,16 +49,32 @@ public class ModBlockEntityTypes {
                     ModBlocks.TOAST_EMBRYO_MOLD
             )
     );
+    public static final BlockEntityType<CuttingBoardBlockEntity> CUTTING_BOARD = create("cutting_board",
+            BlockEntityType.Builder.create(
+                    CuttingBoardBlockEntity::new,
+                    ModBlocks.CUTTING_BOARD
+            )
+    );
+
+    // FoodBlock
     public static final BlockEntityType<FlourSackBlockEntity> FLOUR_SACK = create("flour_sack",
             BlockEntityType.Builder.create(
                     FlourSackBlockEntity::new,
                     ModBlocks.FLOUR_SACK
             )
     );
-    public static final BlockEntityType<CuttingBoardBlockEntity> CUTTING_BOARD = create("cutting_board",
+
+    // 其他
+    public static final BlockEntityType<CombustionFirewoodBlockEntity> COMBUSTION_FIREWOOD = create("combustion_firewood",
             BlockEntityType.Builder.create(
-                    CuttingBoardBlockEntity::new,
-                    ModBlocks.CUTTING_BOARD
+                    CombustionFirewoodBlockEntity::new,
+                    ModBlocks.COMBUSTION_FIREWOOD
+            )
+    );
+    public static final BlockEntityType<BracketBlockEntity> BRACKET = create("bracket",
+            BlockEntityType.Builder.create(
+                    BracketBlockEntity::new,
+                    ModBlocks.BRACKET
             )
     );
 

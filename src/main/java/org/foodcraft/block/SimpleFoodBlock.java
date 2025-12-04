@@ -15,6 +15,10 @@ public class SimpleFoodBlock extends FoodBlock {
         super(settings, 1);
     }
 
+    public SimpleFoodBlock(Settings settings, boolean isFood){
+        super(settings, 1, isFood);
+    }
+
     @Override
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
         builder.add(FACING);

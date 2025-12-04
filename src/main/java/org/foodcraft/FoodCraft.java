@@ -5,7 +5,7 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents;
 import org.foodcraft.block.multi.MultiBlockManager;
 import org.foodcraft.registry.*;
-import org.foodcraft.integration.dfood.dfoodInit;
+import org.foodcraft.integration.dfood.DFoodInit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,7 +15,7 @@ public class FoodCraft implements ModInitializer {
 
     @Override
     public void onInitialize() {
-        dfoodInit.init();
+        DFoodInit.init();
         RegistryInit.init();
         multiBlockInit();
         ModOreGeneration.registerOres();

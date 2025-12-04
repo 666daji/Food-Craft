@@ -41,6 +41,10 @@ public class ModBlocks {
                     .sounds(BlockSoundGroup.STONE).strength(0.5F, 2.0F)
                     .nonOpaque().requiresTool().pistonBehavior(PistonBehavior.BLOCK),
             (settings, integer) -> new FirewoodBlock(settings, integer, ModBlocks.COMBUSTION_FIREWOOD));
+    public static final Block POTTERY_TABLE = registerBlock("pottery_table",
+            new PotteryTableBlock(AbstractBlock.Settings.create().requiresTool()
+                    .sounds(BlockSoundGroup.STONE).strength(1.2F, 6.0F)
+                    .nonOpaque().pistonBehavior(PistonBehavior.BLOCK)));
 
     // 工具
     public static final Block IRON_DISHES = registerBlock("iron_dishes",
@@ -148,17 +152,31 @@ public class ModBlocks {
             new ExperienceDroppingBlock(AbstractBlock.Settings.create()
                     .sounds(BlockSoundGroup.STONE).strength(2.0F, 6.0F).requiresTool()));
 
+    // 陶制品
+    public static final Block CLAY_POTS_EMBRYO = registerBlock("clay_pots_embryo",
+            new SimpleFoodBlock(AbstractBlock.Settings.create()
+                    .sounds(BlockSoundGroup.STONE).strength(0.5F, 0.6F).nonOpaque(), false));
+    public static final Block CLAY_POTS = registerBlock("clay_pots",
+            new PotsBlock(AbstractBlock.Settings.create()
+                    .sounds(BlockSoundGroup.STONE).strength(0.5F, 0.6F).nonOpaque()));
+
+    /**
+     * 注册一般方块
+     * @param name 方块id
+     * @param block 方块
+     * @return 成功注册的方块
+     */
     public static Block registerBlock(String name, Block block) {
         return Registry.register(Registries.BLOCK, new Identifier(FoodCraft.MOD_ID, name), block);
     }
 
     /**
      * 注册食物方块
-     * @param name 方块的id
+     * @param name 方块id
      * @param foodValue 食物方块的最大堆叠数量
      * @param settings 方块设置
      * @param blockCreator 食物方块的构造函数
-     * @return 注册后的方块
+     * @return 成功注册的食物方块
      */
     public static Block registerFoodBlock(String name, int foodValue, AbstractBlock.Settings settings,
                                           BiFunction<AbstractBlock.Settings, Integer, Block> blockCreator) {

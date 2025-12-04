@@ -1,0 +1,7 @@
+{
+  "type": "foodcraft:pottery",
+  "ingredient": {
+    "item": "minecraft:clay_ball"
+  },
+  "result": "foodcraft:clay_pots_embryo"
+}

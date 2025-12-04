@@ -29,6 +29,7 @@ public class ModItemGroups {
                             entries.add(ModItems.GRINDING_STONE);
                             entries.add(ModItems.HEAT_RESISTANT_SLATE);
                             entries.add(ModItems.FIREWOOD);
+                            entries.add(ModItems.POTTERY_TABLE);
 
                             // 工具
                             entries.add(ModItems.IRON_DISHES);
@@ -74,6 +75,10 @@ public class ModItemGroups {
                             // 矿物
                             entries.add(ModItems.SALT_ORE);
                             entries.add(ModItems.DEEPSLATE_SALT_ORE);
+
+                            // 陶制品
+                            entries.add(ModItems.CLAY_POTS_EMBRYO);
+                            entries.add(ModItems.CLAY_POTS);
                         }))
                         .build()
         );

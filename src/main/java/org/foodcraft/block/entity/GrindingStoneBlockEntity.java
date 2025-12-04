@@ -354,7 +354,7 @@ public class GrindingStoneBlockEntity extends BlockEntity implements SidedInvent
             return 0;
         }
 
-        // 当前正在研磨的物品还需要 (grindingTimeForRecipe - grindingTime) 能量
+        // 当前正在研磨的物品还需要 (grindingTimeForRecipe - craftTime) 能量
         // 剩余物品每个配方需要 grindingTimeForRecipe 能量
         int remainingEnergyForCurrent = Math.max(0, grindingTimeForRecipe - this.grindingTime);
         int energyForRemainingItems = (grindTimes - 1) * grindingTimeForRecipe;

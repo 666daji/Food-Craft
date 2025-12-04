@@ -1,0 +1,7 @@
+{
+  "parent": "foodcraft:block/pots",
+  "textures": {
+    "pots": "foodcraft:block/clay_pots_embryo",
+    "particle": "foodcraft:block/clay_pots_embryo"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "foodcraft:block/clay_pots_embryo",
+      "y": 270
+    },
+    "facing=south": {
+      "model": "foodcraft:block/clay_pots_embryo",
+      "y": 90
+    },
+    "facing=east": {
+      "model": "foodcraft:block/clay_pots_embryo"
+    },
+    "facing=west": {
+      "model": "foodcraft:block/clay_pots_embryo",
+      "y": 180
+    }
+  }
+}

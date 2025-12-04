@@ -21,6 +21,7 @@ public class ModItems {
     public static final Item GRINDING_STONE = registerItem(ModBlocks.GRINDING_STONE);
     public static final Item HEAT_RESISTANT_SLATE = registerItem(ModBlocks.HEAT_RESISTANT_SLATE);
     public static final Item FIREWOOD = registerItem(ModBlocks.FIREWOOD);
+    public static final Item POTTERY_TABLE = registerItem(ModBlocks.POTTERY_TABLE);
 
     // 工具
     public static final Item IRON_DISHES = registerItem(ModBlocks.IRON_DISHES);
@@ -75,6 +76,10 @@ public class ModItems {
     // 矿物
     public static final Item SALT_ORE = registerItem(ModBlocks.SALT_ORE);
     public static final Item DEEPSLATE_SALT_ORE = registerItem(ModBlocks.DEEPSLATE_SALT_ORE);
+
+    // 陶制品
+    public static final Item CLAY_POTS_EMBRYO = registerItem(ModBlocks.CLAY_POTS_EMBRYO);
+    public static final Item CLAY_POTS = registerItem(ModBlocks.CLAY_POTS);
 
     public static Item registerItem(String name, Item item) {
         if (item instanceof BlockItem) {
