@@ -8,6 +8,7 @@ import net.minecraft.block.ShapeContext;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.pattern.BlockPattern;
 import net.minecraft.block.pattern.CachedBlockPosition;
+import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.SidedInventory;
@@ -43,6 +44,7 @@ import org.foodcraft.block.HeatResistantSlateBlock;
 import org.foodcraft.block.MoldBlock;
 import org.foodcraft.block.multi.*;
 import org.foodcraft.item.MoldContentItem;
+import org.foodcraft.item.SpatulaItem;
 import org.foodcraft.recipe.MoldRecipe;
 import org.foodcraft.recipe.StoveRecipe;
 import org.foodcraft.registry.ModBlockEntityTypes;
@@ -373,6 +375,15 @@ public class HeatResistantSlateBlockEntity extends UpPlaceBlockEntity implements
         return ActionResult.SUCCESS;
     }
 
+    @Override
+    public void onFetch(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit, List<ItemStack> fetchStacks) {
+        super.onFetch(state, world, pos, player, hand, hit, fetchStacks);
+        ItemStack handStack = player.getStackInHand(hand);
+
+        if (handStack.getItem() instanceof SpatulaItem){
+            handStack.damage(1, player, e -> e.sendEquipmentBreakStatus(EquipmentSlot.MAINHAND));
+        }
+    }
 
     private ActionResult handleFilledMoldPlacement(ItemStack stack) {
         if (!(stack.getItem() instanceof MoldContentItem moldContentItem)) {

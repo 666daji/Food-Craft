@@ -6,12 +6,10 @@ import net.minecraft.item.Item;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
+import org.dfood.item.HaveBlock;
 import org.foodcraft.FoodCraft;
 import org.foodcraft.component.ModFoodComponents;
-import org.foodcraft.item.FlourItem;
-import org.foodcraft.item.FlourSackItem;
-import org.foodcraft.item.FoodPotionItem;
-import org.foodcraft.item.MoldContentItem;
+import org.foodcraft.item.*;
 
 import java.util.function.BiFunction;
 
@@ -27,6 +25,9 @@ public class ModItems {
     public static final Item IRON_DISHES = registerItem(ModBlocks.IRON_DISHES);
     public static final Item WOODEN_SHELF = registerItem(ModBlocks.WOODEN_SHELF);
     public static final Item CUTTING_BOARD = registerItem(ModBlocks.CUTTING_BOARD);
+    public static final Item IRON_POTS = registerItem(ModBlocks.IRON_POTS);
+    public static final Item BREAD_SPATULA = registerItem(ModBlocks.BREAD_SPATULA, new Item.Settings(),
+            ((block, settings) -> new SpatulaItem(block, settings, SpatulaItem.SpatulaMaterials.IRON)));
 
     // 粉尘
     public static final Item WHEAT_FLOUR = registerItem("wheat_flour",
@@ -84,6 +85,8 @@ public class ModItems {
     public static Item registerItem(String name, Item item) {
         if (item instanceof BlockItem) {
             ((BlockItem)item).appendBlocks(Item.BLOCK_ITEMS, item);
+        } else if (item instanceof HaveBlock){
+            ((HaveBlock)item).appendBlocks(Item.BLOCK_ITEMS, item);
         }
         return Registry.register(Registries.ITEM, new Identifier(FoodCraft.MOD_ID, name), item);
     }
@@ -100,7 +103,7 @@ public class ModItems {
         return registerItem(block, settings, BlockItem::new);
     }
 
-    private static Item registerItem(Block block, Item.Settings settings, BiFunction<Block, Item.Settings, BlockItem> blockItemCreator){
+    private static Item registerItem(Block block, Item.Settings settings, BiFunction<Block, Item.Settings, Item> blockItemCreator){
         return registerItem(Registries.BLOCK.getId(block).getPath(), blockItemCreator.apply(block, settings));
     }
 

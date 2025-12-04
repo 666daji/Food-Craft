@@ -35,6 +35,8 @@ public class ModItemGroups {
                             entries.add(ModItems.IRON_DISHES);
                             entries.add(ModItems.WOODEN_SHELF);
                             entries.add(ModItems.CUTTING_BOARD);
+                            entries.add(ModItems.IRON_POTS);
+                            entries.add(ModItems.BREAD_SPATULA);
 
                             // 粉尘
                             entries.add(ModItems.WHEAT_FLOUR);

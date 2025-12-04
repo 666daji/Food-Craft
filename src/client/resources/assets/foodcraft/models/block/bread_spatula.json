@@ -1,0 +1,6 @@
+{
+  "parent": "foodcraft:block/spatula",
+  "textures": {
+    "spatula": "foodcraft:block/bread_spatula"
+  }
+}

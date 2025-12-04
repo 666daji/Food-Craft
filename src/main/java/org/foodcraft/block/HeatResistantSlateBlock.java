@@ -31,6 +31,7 @@ import org.foodcraft.block.entity.HeatResistantSlateBlockEntity;
 import org.foodcraft.block.entity.UpPlaceBlockEntity;
 import org.foodcraft.block.multi.MultiBlockHelper;
 import org.foodcraft.item.MoldContentItem;
+import org.foodcraft.item.SpatulaItem;
 import org.foodcraft.registry.ModBlockEntityTypes;
 import org.foodcraft.registry.ModSounds;
 import org.jetbrains.annotations.Nullable;
@@ -166,13 +167,13 @@ public class HeatResistantSlateBlock extends UpPlaceBlock {
     @Override
     public boolean canFetched(UpPlaceBlockEntity blockEntity, ItemStack handStack) {
         boolean moldFetched = blockEntity.isEmpty() && !(blockEntity instanceof HeatResistantSlateBlockEntity heatResistantSlateBlockEntity
-                && heatResistantSlateBlockEntity.isOtherEmpty()) && !blockEntity.isValidItem(handStack);
-        return !blockEntity.isEmpty() || moldFetched;
+                && heatResistantSlateBlockEntity.isOtherEmpty());
+        return (!blockEntity.isEmpty() || moldFetched) && handStack.getItem() instanceof SpatulaItem;
     }
 
     @Override
     public boolean canPlace(UpPlaceBlockEntity blockEntity, ItemStack handStack) {
-        if (blockEntity instanceof HeatResistantSlateBlockEntity slateEntity) {
+        if (blockEntity instanceof HeatResistantSlateBlockEntity) {
             // 检查是否是装有内容的模具
             if (handStack.getItem() instanceof MoldContentItem moldContentItem && moldContentItem.hasContent(handStack)) {
                 return true;

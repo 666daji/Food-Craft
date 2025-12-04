@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "foodcraft:block/bread_spatula",
+      "y": 270
+    },
+    "facing=south": {
+      "model": "foodcraft:block/bread_spatula",
+      "y": 90
+    },
+    "facing=east": {
+      "model": "foodcraft:block/bread_spatula"
+    },
+    "facing=west": {
+      "model": "foodcraft:block/bread_spatula",
+      "y": 180
+    }
+  }
+}

@@ -59,6 +59,13 @@ public class ModBlocks {
             new CuttingBoardBlock(AbstractBlock.Settings.create()
                     .sounds(BlockSoundGroup.WOOL).sounds(BlockSoundGroup.WOOL).strength(0.2F)
                     .nonOpaque().pistonBehavior(PistonBehavior.DESTROY)));
+    public static final Block IRON_POTS = registerBlock("iron_pots",
+            new PotsBlock(AbstractBlock.Settings.create()
+                    .sounds(BlockSoundGroup.STONE).strength(0.5F, 0.6F).nonOpaque()));
+    public static final Block BREAD_SPATULA = registerBlock("bread_spatula",
+            new SimpleFoodBlock(AbstractBlock.Settings.create()
+                    .sounds(BlockSoundGroup.STONE).strength(0.5F, 2.0F)
+                    .nonOpaque().requiresTool().pistonBehavior(PistonBehavior.BLOCK)));
 
     // 粉尘袋
     public static final Block FLOUR_SACK = registerFoodBlock("flour_sack", FlourSackBlockEntity.MAX_SACK_STACK,

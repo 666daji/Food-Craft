@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "foodcraft:block/iron_pots",
+      "y": 270
+    },
+    "facing=south": {
+      "model": "foodcraft:block/iron_pots",
+      "y": 90
+    },
+    "facing=east": {
+      "model": "foodcraft:block/iron_pots"
+    },
+    "facing=west": {
+      "model": "foodcraft:block/iron_pots",
+      "y": 180
+    }
+  }
+}
