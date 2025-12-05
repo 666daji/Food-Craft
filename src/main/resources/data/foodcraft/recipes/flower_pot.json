@@ -3,7 +3,7 @@
   "ingredient": {
     "item": "minecraft:clay_ball"
   },
-  "inputCount": 3,
+  "inputCount": 2,
   "craftTime": 100,
-  "result": "foodcraft:clay_pots_embryo"
+  "result": "minecraft:flower_pot"
 }

@@ -8,6 +8,7 @@ import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.util.Identifier;
+import org.dfood.block.ComplexFoodBlock;
 import org.dfood.block.FoodBlock;
 import org.dfood.sound.ModSoundGroups;
 import org.dfood.util.DFoodUtils;
@@ -62,10 +63,11 @@ public class ModBlocks {
     public static final Block IRON_POTS = registerBlock("iron_pots",
             new PotsBlock(AbstractBlock.Settings.create()
                     .sounds(BlockSoundGroup.STONE).strength(0.5F, 0.6F).nonOpaque()));
-    public static final Block BREAD_SPATULA = registerBlock("bread_spatula",
-            new SimpleFoodBlock(AbstractBlock.Settings.create()
+    public static final Block BREAD_SPATULA = registerFoodBlock("bread_spatula", 1,
+            AbstractBlock.Settings.create()
                     .sounds(BlockSoundGroup.STONE).strength(0.5F, 2.0F)
-                    .nonOpaque().requiresTool().pistonBehavior(PistonBehavior.BLOCK)));
+                    .nonOpaque().requiresTool().pistonBehavior(PistonBehavior.BLOCK),
+            ComplexFoodBlock::new);
 
     // 粉尘袋
     public static final Block FLOUR_SACK = registerFoodBlock("flour_sack", FlourSackBlockEntity.MAX_SACK_STACK,
