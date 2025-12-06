@@ -65,9 +65,6 @@ public class PotteryTableScreen extends HandledScreen<PotteryTableScreenHandler>
     private static final int BUTTON_OVERLAY_WIDTH = 9;   // 按钮覆盖纹理宽度
     private static final int BUTTON_OVERLAY_HEIGHT = 8;  // 按钮覆盖纹理高度
 
-    /** 输入要求背景尺寸 */
-    private static final int INPUT_BG_WIDTH = 20;
-    private static final int INPUT_BG_HEIGHT = 9;
     /** 输入物品图标缩放比例 */
     private static final float INPUT_ITEM_SCALE = 0.5f;
 
@@ -289,17 +286,17 @@ public class PotteryTableScreen extends HandledScreen<PotteryTableScreenHandler>
     private void drawInputRequirement(DrawContext context, ItemStack inputStack, int requiredCount, int iconX, int iconY) {
         // 绘制背景框 - 缩小尺寸
         int bgX = iconX + 8;  // 从图标中间开始
-        int textY = iconY + 8;  // 从图标中间开始
+        int bgy = iconY + 8;  // 从图标中间开始
 
         // 绘制输入物品图标（缩小版）
-        int itemIconX = bgX + 1;
-        int itemIconY = textY + 1;
+        int itemIconX = bgX - 2;
+        int itemIconY = bgy + 2;
 
         // 保存当前变换
         context.getMatrices().push();
         // 缩小物品图标
-        context.getMatrices().translate(itemIconX, itemIconY, 0);
-        context.getMatrices().scale(0.5f, 0.5f, 1.0f);
+        context.getMatrices().translate(itemIconX, itemIconY, 100);
+        context.getMatrices().scale(0.4f, 0.4f, 1.0f);
 
         // 绘制物品图标（不使用计数，只显示图标）
         ItemStack displayStack = inputStack.copy();
@@ -311,14 +308,15 @@ public class PotteryTableScreen extends HandledScreen<PotteryTableScreenHandler>
 
         // 绘制所需数量（使用缩小的文本）
         String countText = String.valueOf(requiredCount);
-        int textX = bgX + 6; // 调整文本位置
+        int textX = bgX + 4; // 调整文本位置
+        int textY = bgy + 2;
 
         // 保存当前变换
         context.getMatrices().push();
 
-        // 缩小文本到75%大小
-        float scale = 0.75f;
-        context.getMatrices().translate(textX, textY + (1 - scale) * 4, 0); // 调整位置以居中
+        // 缩小文本
+        float scale = 0.5f;
+        context.getMatrices().translate(textX, textY + (1 - scale) * 4, 101); // 调整位置以居中
         context.getMatrices().scale(scale, scale, 1.0f);
 
         // 绘制文本（白色）
