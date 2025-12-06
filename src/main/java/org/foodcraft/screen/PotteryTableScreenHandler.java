@@ -47,6 +47,7 @@ public class PotteryTableScreenHandler extends ScreenHandler {
     protected final Inventory inventory;
     protected final World world;
     protected final BlockPos pos;
+    protected final PlayerEntity player;
 
     /** 内容变化监听器 */
     Runnable contentsChangedListener = () -> {};
@@ -77,6 +78,7 @@ public class PotteryTableScreenHandler extends ScreenHandler {
         this.propertyDelegate = propertyDelegate;
         this.context = context;
         this.inventory = inventory;
+        this.player = playerInventory.player;
 
         // 从上下文获取世界和位置
         this.world = playerInventory.player.getWorld();
@@ -440,13 +442,19 @@ public class PotteryTableScreenHandler extends ScreenHandler {
     }
 
     /**
-     * 当屏幕关闭时调用，清理输入槽位。
+     * 当屏幕关闭时调用，通知方块实体玩家已关闭界面。
      *
      * @param player 关闭屏幕的玩家
      */
     @Override
     public void onClosed(PlayerEntity player) {
         super.onClosed(player);
+
+        // 只在服务器端通知方块实体
+        if (!player.getWorld().isClient && inventory instanceof PotteryTableBlockEntity potteryTable) {
+            potteryTable.unregisterPlayerClosing(player);
+        }
+
 //        this.context.run((world, pos) -> dropInventory(player, inventory));
     }
 

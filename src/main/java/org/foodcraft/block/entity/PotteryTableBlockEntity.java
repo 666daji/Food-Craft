@@ -33,7 +33,7 @@ import org.foodcraft.util.ModAnimationState;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
-import java.util.List;
+import java.util.*;
 
 public class PotteryTableBlockEntity extends BlockEntity implements SidedInventory, RecipeUnlocker, RecipeInputProvider, NamedScreenHandlerFactory {
     /** 顶部可访问的槽位（输入槽） */
@@ -58,6 +58,11 @@ public class PotteryTableBlockEntity extends BlockEntity implements SidedInvento
     /** 是否正在制作属性 */
     public static final int IS_CRAFTING_PROPERTY = 3;
 
+    /** 最大交互距离（方块） */
+    private static final double MAX_INTERACTION_DISTANCE = 8.0;
+    /** 最大交互距离平方 */
+    private static final double MAX_INTERACTION_DISTANCE_SQUARED = MAX_INTERACTION_DISTANCE * MAX_INTERACTION_DISTANCE;
+
     private static final Logger LOGGER = FoodCraft.LOGGER;
 
     private DefaultedList<ItemStack> inventory = DefaultedList.ofSize(2, ItemStack.EMPTY);
@@ -66,8 +71,18 @@ public class PotteryTableBlockEntity extends BlockEntity implements SidedInvento
     private boolean isCrafting = false;
     private PotteryRecipe currentRecipe;
 
+    /** 当前正在使用界面的玩家UUID集合 */
+    private final Set<UUID> playersUsing = new HashSet<>();
+
+    /** 玩家使用界面时间戳映射，用于清理过期的玩家 */
+    private final Map<UUID, Long> playerUsageTimestamps = new HashMap<>();
+
+    /** 工作台面旋转动画状态 */
     public final ModAnimationState workSurfaceAnimationState = new ModAnimationState();
+
+    /** 陶球旋转动画状态 */
     public final ModAnimationState clayBallAnimationState = new ModAnimationState();
+
     protected int age;
 
     /**
@@ -113,7 +128,7 @@ public class PotteryTableBlockEntity extends BlockEntity implements SidedInvento
     }
 
     /**
-     * 每tick更新的逻辑，处理陶艺制作进度。
+     * 每tick更新的逻辑，处理陶艺制作进度、动画状态和清理非法操作者。
      *
      * @param world 世界实例
      * @param pos 方块位置
@@ -128,7 +143,11 @@ public class PotteryTableBlockEntity extends BlockEntity implements SidedInvento
 
         if (world.isClient) return;
 
-        boolean dirty = false;
+        // 更新动画状态
+        boolean dirty = blockEntity.updateAnimationStates();
+
+        // 清理非法的界面使用者（玩家离线、死亡、距离过远等）
+        blockEntity.cleanupInvalidUsers();
 
         // 检查是否可以继续制作
         if (blockEntity.isCrafting && !blockEntity.canContinueCrafting()) {
@@ -150,6 +169,178 @@ public class PotteryTableBlockEntity extends BlockEntity implements SidedInvento
         if (dirty) {
             blockEntity.markDirty();
         }
+    }
+
+    /**
+     * 更新动画状态
+     * <p>
+     * 根据当前状态管理两个动画：
+     * 1. 工作台面旋转动画：当有玩家打开界面时播放
+     * 2. 陶球旋转动画：当正在制作时播放
+     * </p>
+     * @return 是否开始或者停止了动画
+     */
+    private boolean updateAnimationStates() {
+        return updateWorkSurfaceAnimation() || updateClayBallAnimation();
+    }
+
+    /**
+     * 更新工作台面旋转动画状态
+     * <p>
+     * 规则：
+     * 1. 当有玩家打开界面时，启动动画
+     * 2. 当没有玩家打开界面且不在制作时，停止动画
+     * 3. 当正在制作时，无论是否有玩家打开界面，都要播放工作台面动画
+     * 4. 避免动画运行时间过大，超过阈值时重置
+     * </p>
+     * @return 是否开始或者停止了动画
+     */
+    private boolean updateWorkSurfaceAnimation() {
+        boolean shouldPlay = (hasPlayersUsing() || isCrafting) && getStack(1).isEmpty();
+
+        if (shouldPlay) {
+            // 启动或继续动画
+            if (!workSurfaceAnimationState.isRunning()) {
+                workSurfaceAnimationState.start(age);
+                return true;
+            }
+        } else {
+            // 停止动画
+            if (workSurfaceAnimationState.isRunning()) {
+                workSurfaceAnimationState.stop();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 更新陶球旋转动画状态
+     * <p>
+     * 规则：
+     * 1. 当正在制作时，启动动画
+     * 2. 当制作完成或停止时，停止动画并重置进度
+     * </p>
+     * @return 是否开始或者停止了动画
+     */
+    private boolean updateClayBallAnimation() {
+        if (isCrafting) {
+            // 启动或继续动画
+            if (!clayBallAnimationState.isRunning()) {
+                clayBallAnimationState.start(age);
+                return true;
+            }
+        } else {
+            // 停止动画并重置进度
+            if (clayBallAnimationState.isRunning()) {
+                clayBallAnimationState.stop();
+                clayBallAnimationState.resetRunningTime();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 清理非法的界面使用者
+     */
+    private void cleanupInvalidUsers() {
+        if (world == null || playersUsing.isEmpty()) return;
+
+        Set<UUID> invalidUsers = new HashSet<>();
+
+        for (UUID playerId : playersUsing) {
+            PlayerEntity player = world.getPlayerByUuid(playerId);
+            if (!isPlayerValidForInteraction(player)) {
+                invalidUsers.add(playerId);
+                LOGGER.debug("Removed invalid player {} from pottery table at {}", playerId, pos);
+            }
+        }
+
+        // 移除所有无效用户
+        for (UUID invalidId : invalidUsers) {
+            playersUsing.remove(invalidId);
+            playerUsageTimestamps.remove(invalidId);
+        }
+
+        // 清理过期的使用记录（5分钟无活动）
+        long currentTime = world.getTime();
+        Set<UUID> expiredUsers = new HashSet<>();
+
+        for (Map.Entry<UUID, Long> entry : playerUsageTimestamps.entrySet()) {
+            if (currentTime - entry.getValue() > 6000) { // 5分钟（6000 tick）
+                expiredUsers.add(entry.getKey());
+            }
+        }
+
+        for (UUID expiredId : expiredUsers) {
+            playersUsing.remove(expiredId);
+            playerUsageTimestamps.remove(expiredId);
+            LOGGER.debug("Removed expired player {} from pottery table at {}", expiredId, pos);
+        }
+    }
+
+    /**
+     * 检查玩家是否可以进行有效交互
+     *
+     * @param player 要检查的玩家
+     * @return 如果玩家有效返回true，否则返回false
+     */
+    private boolean isPlayerValidForInteraction(@Nullable PlayerEntity player) {
+        if (player == null) return false;
+        if (player.isRemoved() || !player.isAlive()) return false;
+
+        // 检查距离
+        double distanceSq = player.squaredDistanceTo(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
+        return distanceSq <= MAX_INTERACTION_DISTANCE_SQUARED;
+    }
+
+    /**
+     * 注册玩家打开界面
+     *
+     * @param player 打开界面的玩家
+     */
+    public void registerPlayerOpening(PlayerEntity player) {
+        if (world == null || world.isClient) return;
+
+        UUID playerId = player.getUuid();
+        playersUsing.add(playerId);
+        playerUsageTimestamps.put(playerId, world.getTime());
+
+        LOGGER.debug("Player {} opened pottery table interface at {}", playerId, pos);
+    }
+
+    /**
+     * 注销玩家关闭界面
+     *
+     * @param player 关闭界面的玩家
+     */
+    public void unregisterPlayerClosing(PlayerEntity player) {
+        if (world == null || world.isClient) return;
+
+        UUID playerId = player.getUuid();
+        playersUsing.remove(playerId);
+        playerUsageTimestamps.remove(playerId);
+
+        LOGGER.debug("Player {} closed pottery table interface at {}", playerId, pos);
+    }
+
+    /**
+     * 检查是否有玩家正在使用界面
+     *
+     * @return 如果有玩家正在使用返回true，否则返回false
+     */
+    public boolean hasPlayersUsing() {
+        return !playersUsing.isEmpty();
+    }
+
+    /**
+     * 获取当前使用界面的玩家数量
+     *
+     * @return 玩家数量
+     */
+    public int getPlayerUsageCount() {
+        return playersUsing.size();
     }
 
     /**
@@ -204,6 +395,10 @@ public class PotteryTableBlockEntity extends BlockEntity implements SidedInvento
 
         this.isCrafting = true;
         this.craftProgress = 0;
+
+        // 重置陶球动画进度，准备开始新的制作
+        clayBallAnimationState.resetRunningTime();
+
         this.markDirty();
 
         LOGGER.debug("Started crafting recipe {} at pottery table at {}", recipe.getId(), pos);
@@ -236,6 +431,8 @@ public class PotteryTableBlockEntity extends BlockEntity implements SidedInvento
         if (getStack(INPUT_SLOT).isEmpty()){
             setStack(INPUT_SLOT, ItemStack.EMPTY);
         }
+
+        workSurfaceAnimationState.resetRunningTime();
 
         // 重置制作状态
         resetCrafting();
@@ -353,6 +550,15 @@ public class PotteryTableBlockEntity extends BlockEntity implements SidedInvento
         craftProgress = nbt.getInt("CraftProgress");
         craftTime = nbt.getInt("CraftTime");
         isCrafting = nbt.getBoolean("IsCrafting");
+
+        // 读取动画状态
+        if (nbt.contains("WorkSurfaceAnimation")) {
+            workSurfaceAnimationState.simpleReadFromNbt(nbt.getCompound("WorkSurfaceAnimation"));
+        }
+
+        if (nbt.contains("ClayBallAnimation")) {
+            clayBallAnimationState.simpleReadFromNbt(nbt.getCompound("ClayBallAnimation"));
+        }
     }
 
     @Override
@@ -362,6 +568,10 @@ public class PotteryTableBlockEntity extends BlockEntity implements SidedInvento
         nbt.putInt("CraftProgress", craftProgress);
         nbt.putInt("CraftTime", craftTime);
         nbt.putBoolean("IsCrafting", isCrafting);
+
+        // 保存动画状态
+        nbt.put("WorkSurfaceAnimation", workSurfaceAnimationState.toNbt());
+        nbt.put("ClayBallAnimation", clayBallAnimationState.toNbt());
     }
 
     // NameScreenHandlerFactory implementation
@@ -375,6 +585,9 @@ public class PotteryTableBlockEntity extends BlockEntity implements SidedInvento
      */
     @Override
     public ScreenHandler createMenu(int syncId, PlayerInventory inventory, PlayerEntity player) {
+        // 注册玩家打开界面
+        registerPlayerOpening(player);
+
         return new PotteryTableScreenHandler(syncId, inventory, this, ScreenHandlerContext.create(world, pos), getPropertyDelegate());
     }
 

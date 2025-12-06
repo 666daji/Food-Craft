@@ -5,15 +5,13 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityTicker;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.Inventory;
 import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.DirectionProperty;
 import net.minecraft.state.property.Properties;
 import net.minecraft.text.Text;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.BlockMirror;
-import net.minecraft.util.BlockRotation;
-import net.minecraft.util.Hand;
+import net.minecraft.util.*;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.shape.VoxelShape;
@@ -48,6 +46,25 @@ public class PotteryTableBlock extends BlockWithEntity {
                 player.openHandledScreen((NamedScreenHandlerFactory) blockEntity);
             }
             return ActionResult.CONSUME;
+        }
+    }
+
+    @Override
+    public void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
+        if (!state.isOf(newState.getBlock())) {
+            BlockEntity blockEntity = world.getBlockEntity(pos);
+            if (blockEntity instanceof PotteryTableBlockEntity potteryTable) {
+                if (potteryTable.hasPlayersUsing()) {
+                    world.updateListeners(pos, state, newState, 3);
+                }
+            }
+
+            // 处理物品掉落
+            if (blockEntity instanceof Inventory inventory) {
+                ItemScatterer.spawn(world, pos, inventory);
+                world.updateComparators(pos, this);
+            }
+            super.onStateReplaced(state, world, pos, newState, moved);
         }
     }
 

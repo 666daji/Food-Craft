@@ -20,13 +20,6 @@ import org.foodcraft.client.render.model.ModModelLayers;
 import org.foodcraft.registry.ModBlocks;
 import org.foodcraft.util.FoodCraftUtils;
 
-/**
- * 陶艺工作台方块实体渲染器
- * <p>
- * 使用 {@link WithAnimationBlockEntityRenderer} 基类实现动画功能。
- * 支持陶球旋转动画和输出物品渲染。
- * </p>
- */
 public class PotteryTableBlockEntityRenderer extends WithAnimationBlockEntityRenderer<PotteryTableBlockEntity> {
     private final ModelPart root;
     private final ModelPart base;
@@ -162,21 +155,24 @@ public class PotteryTableBlockEntityRenderer extends WithAnimationBlockEntityRen
      * @param tickDelta  部分时间
      */
     private void manageAnimationState(PotteryTableBlockEntity entity, float tickDelta) {
-        // 更新动画状态
-        if (entity.isCrafting()) {
-            if (!entity.workSurfaceAnimationState.isRunning()) {
-                entity.workSurfaceAnimationState.start(entity.getAge());
-            }
-        } else {
-            entity.workSurfaceAnimationState.stop();
-        }
-
         resetAllModelParts();
+
+        if (!entity.getStack(1).isEmpty()){
+            entity.workSurfaceAnimationState.resetRunningTime();
+        }
 
         // 应用动画
         updateAnimation(
-                entity.workSurfaceAnimationState,
+                entity.clayBallAnimationState,
                 BlockAnimations.POTTERY_TABLE_CLAY_SPIN,
+                getAnimationProgress(entity.getAge(), tickDelta),
+                1.0F,
+                1.0F
+        );
+
+        alwaysUpdateAnimation(
+                entity.workSurfaceAnimationState,
+                BlockAnimations.POTTERY_TABLE_WORK_SURFACE_SPIN,
                 getAnimationProgress(entity.getAge(), tickDelta),
                 1.0F,
                 1.0F
