@@ -447,7 +447,7 @@ public class PotteryTableScreenHandler extends ScreenHandler {
     @Override
     public void onClosed(PlayerEntity player) {
         super.onClosed(player);
-        this.context.run((world, pos) -> dropInventory(player, inventory));
+//        this.context.run((world, pos) -> dropInventory(player, inventory));
     }
 
     /**

@@ -34,11 +34,8 @@ public class GrindingStoneBlockEntityRenderer extends WithAnimationBlockEntityRe
         this.top = root.getChild("top");
         this.handle = root.getChild("handle");
 
-        // 填充模型部件映射
-        modelParts.put("top", top);
-
-        // 保存模型部件的初始状态
-        saveInitialState("top", top);
+        // 注册模型部件
+        registerModelPart("top", top);
     }
 
     public static TexturedModelData getTexturedModelData() {
@@ -76,36 +73,17 @@ public class GrindingStoneBlockEntityRenderer extends WithAnimationBlockEntityRe
 
     @Override
     public void render(GrindingStoneBlockEntity entity, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay) {
-        PartState savedState = new PartState(top);
-        int seed = (int)entity.getPos().asLong();
         World world = entity.getWorld();
         ItemStack output = new ItemStack(entity.getExpectedOutput());
-        BlockState state = world != null?
-                entity.getCachedState():
+        BlockState state = world != null ?
+                entity.getCachedState() :
                 ModBlocks.GRINDING_STONE.getDefaultState();
 
+        // 管理动画状态
+        manageAnimationState(entity, tickDelta, state);
+
+        matrices.push();
         try {
-            // 重置模型部件到初始状态
-            resetPart("top", top);
-            // 更新动画状态
-            if (entity.isGrinding()) {
-                if (!entity.grindingAnimationState.isRunning()) {
-                    entity.grindingAnimationState.start(entity.getAge());
-                }
-            } else {
-                entity.grindingAnimationState.stop();
-            }
-
-            // 应用动画
-            alwaysUpdateAnimation(
-                    entity.grindingAnimationState,
-                    BlockAnimations.GRINDING_STONE_SPIN,
-                    getAnimationProgress(entity.getAge(), tickDelta),
-                    1.0F,
-                    1.0F
-            );
-
-            matrices.push();
             // 将模型平移到方块中心（默认原点在方块左下角）
             matrices.translate(0.5, 1.5, 0.5);
             float facing = state.get(GrindingStoneBlock.FACING).asRotation();
@@ -117,22 +95,57 @@ public class GrindingStoneBlockEntityRenderer extends WithAnimationBlockEntityRe
             this.base.render(matrices, vertexConsumer, light, overlay);
             this.top.render(matrices, vertexConsumer, light, overlay);
             this.handle.render(matrices, vertexConsumer, light, overlay);
+
             // 渲染产出物品
             if (!output.isEmpty()) {
-                matrices.pop();
-                matrices.push();
-                float grindingProgress = entity.getGrindingProgress();
-                matrices.translate(0.5, grindingProgress * 0.005f + 0.45, 0.5);
-                matrices.scale(0.5f, 0.5f, 0.5f);
-                matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(-facing));
-                matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(90));
-                this.itemRenderer.renderItem(output, ModelTransformationMode.FIXED,
-                        light, overlay, matrices, vertexConsumers, world, seed);
+                renderOutputItem(entity, tickDelta, matrices, vertexConsumers, light, overlay, output, state);
             }
         } finally {
-            // 恢复模型部件状态
-            savedState.applyTo(top);
             matrices.pop();
         }
+    }
+
+    /**
+     * 管理动画状态的更新逻辑
+     */
+    private void manageAnimationState(GrindingStoneBlockEntity entity, float tickDelta, BlockState state) {
+        // 更新动画状态
+        if (entity.isGrinding()) {
+            if (!entity.grindingAnimationState.isRunning()) {
+                entity.grindingAnimationState.start(entity.getAge());
+            }
+        } else {
+            entity.grindingAnimationState.stop();
+        }
+
+        // 应用动画
+        applyAnimation(
+                entity.grindingAnimationState,
+                BlockAnimations.GRINDING_STONE_SPIN,
+                getAnimationProgress(entity.getAge(), tickDelta),
+                1.0F,
+                1.0F
+        );
+    }
+
+    /**
+     * 渲染产出物品
+     */
+    private void renderOutputItem(GrindingStoneBlockEntity entity, float tickDelta, MatrixStack matrices,
+                                  VertexConsumerProvider vertexConsumers, int light, int overlay,
+                                  ItemStack output, BlockState state) {
+        int seed = (int) entity.getPos().asLong();
+        World world = entity.getWorld();
+
+        matrices.pop();
+        matrices.push();
+        float grindingProgress = entity.getGrindingProgress();
+        matrices.translate(0.5, grindingProgress * 0.005f + 0.45, 0.5);
+        matrices.scale(0.5f, 0.5f, 0.5f);
+        float facing = state.get(GrindingStoneBlock.FACING).asRotation();
+        matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(-facing));
+        matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(90));
+        this.itemRenderer.renderItem(output, ModelTransformationMode.FIXED,
+                light, overlay, matrices, vertexConsumers, world, seed);
     }
 }

@@ -29,6 +29,7 @@ import org.foodcraft.recipe.PotteryRecipe;
 import org.foodcraft.registry.ModBlockEntityTypes;
 import org.foodcraft.registry.ModRecipeTypes;
 import org.foodcraft.screen.PotteryTableScreenHandler;
+import org.foodcraft.util.ModAnimationState;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
@@ -64,6 +65,10 @@ public class PotteryTableBlockEntity extends BlockEntity implements SidedInvento
     private int craftTime;
     private boolean isCrafting = false;
     private PotteryRecipe currentRecipe;
+
+    public final ModAnimationState workSurfaceAnimationState = new ModAnimationState();
+    public final ModAnimationState clayBallAnimationState = new ModAnimationState();
+    protected int age;
 
     /**
      * 属性委托，用于在服务器和客户端之间同步方块实体状态。
@@ -116,6 +121,11 @@ public class PotteryTableBlockEntity extends BlockEntity implements SidedInvento
      * @param blockEntity 陶艺台方块实体实例
      */
     public static void tick(World world, BlockPos pos, BlockState state, PotteryTableBlockEntity blockEntity) {
+        blockEntity.age++;
+        if (blockEntity.age == Integer.MAX_VALUE) {
+            blockEntity.age = 0;
+        }
+
         if (world.isClient) return;
 
         boolean dirty = false;
@@ -512,5 +522,9 @@ public class PotteryTableBlockEntity extends BlockEntity implements SidedInvento
     @Override
     public Packet<ClientPlayPacketListener> toUpdatePacket() {
         return BlockEntityUpdateS2CPacket.create(this);
+    }
+
+    public int getAge() {
+        return this.age;
     }
 }
