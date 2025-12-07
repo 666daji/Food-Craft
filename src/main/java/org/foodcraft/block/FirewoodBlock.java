@@ -61,7 +61,7 @@ public class FirewoodBlock extends FoodBlock {
      */
     public boolean tryIgnite(BlockState state, World world, BlockPos pos, PlayerEntity player) {
         int currentCount = state.get(NUMBER_OF_FOOD);
-        if (currentCount != 2 || world.isClient()) {
+        if (currentCount != 2) {
             return false;
         }
 
@@ -71,6 +71,8 @@ public class FirewoodBlock extends FoodBlock {
             world.playSound(null, pos, SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.BLOCKS, 0.5f, 1.0f);
             return false;
         }
+
+        world.playSound(player, pos, SoundEvents.ITEM_FLINTANDSTEEL_USE, SoundCategory.BLOCKS, 1.0F, world.getRandom().nextFloat() * 0.4F + 0.8F);
 
         // 设置燃烧柴火方块状态为首次点燃
         world.setBlockState(pos, targetBlock.getDefaultState()

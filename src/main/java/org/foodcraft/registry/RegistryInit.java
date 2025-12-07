@@ -1,6 +1,8 @@
 package org.foodcraft.registry;
 
 import org.dfood.shape.Shapes;
+import org.foodcraft.block.PotsBlock;
+import org.foodcraft.block.SimpleFoodBlock;
 
 public class RegistryInit {
     public static void init() {
@@ -61,5 +63,8 @@ public class RegistryInit {
         Shapes.shapeMap.put("foodcraft:firewood",new int[][]{
                 {1, 1, 1},{2, 2, 2},{3, 3, 3},{4, 4, 4},{5, 6, 5}
         });
+
+        // 简单食物方块
+        ((SimpleFoodBlock) ModBlocks.CLAY_POTS_EMBRYO).setShape(PotsBlock.SHAPE);
     }
 }

@@ -5,7 +5,7 @@
 	"textures": {
 		"0": "foodcraft:block/beetroot_soup_hard_bread_boat_2",
 		"1": "foodcraft:block/beetroot_soup_hard_bread_boat_3",
-		"particle": "foodcraft:block/beetroot_soup_hard_bread_boat"
+		"particle": "foodcraft:item/hard_bread"
 	},
 	"elements": [
 		{

@@ -4,7 +4,7 @@
 	"textures": {
       "5": "foodcraft:block/mushroom_stew_hard_bread_boat",
       "6": "foodcraft:block/hard_bread_boat",
-      "particle": "foodcraft:block/mushroom_stew_hard_bread_boat"
+      "particle": "foodcraft:item/hard_bread"
 	},
 	"elements": [
 		{

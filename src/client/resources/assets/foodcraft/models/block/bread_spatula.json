@@ -1,6 +1,9 @@
 {
-  "parent": "foodcraft:block/spatula",
-  "textures": {
-    "spatula": "foodcraft:block/bread_spatula"
-  }
+	"format_version": "1.21.6",
+	"credit": "Made with Blockbench",
+	"parent": "foodcraft:block/spatula",
+	"textures": {
+		"spatula": "foodcraft:block/bread_spatula",
+		"particle": "foodcraft:block/bread_spatula_pa"
+	}
 }

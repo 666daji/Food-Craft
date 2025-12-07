@@ -3,7 +3,7 @@
 	"credit": "Made with Blockbench",
 	"textures": {
 		"3": "foodcraft:block/first_extinguished",
-		"particle": "foodcraft:block/first_extinguished"
+		"particle": "foodcraft:block/extinguished_pa"
 	},
 	"elements": [
 		{

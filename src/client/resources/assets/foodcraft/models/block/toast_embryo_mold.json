@@ -4,7 +4,7 @@
 	"texture_size": [64, 64],
 	"textures": {
 		"2": "foodcraft:block/toast_embryo_mold",
-		"particle": "foodcraft:block/toast_embryo_mold"
+		"particle": "foodcraft:block/mold_pa"
 	},
 	"elements": [
 		{

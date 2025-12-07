@@ -65,7 +65,7 @@ public class ModBlocks {
                     .sounds(BlockSoundGroup.STONE).strength(0.5F, 0.6F).nonOpaque()));
     public static final Block BREAD_SPATULA = registerFoodBlock("bread_spatula", 1,
             AbstractBlock.Settings.create()
-                    .sounds(BlockSoundGroup.STONE).strength(0.5F, 2.0F)
+                    .sounds(BlockSoundGroup.STONE).strength(0.5F, 0.2F)
                     .nonOpaque().requiresTool().pistonBehavior(PistonBehavior.BLOCK),
             ComplexFoodBlock::new);
 

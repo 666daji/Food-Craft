@@ -2,32 +2,32 @@
 	"format_version": "1.21.6",
 	"credit": "Made with Blockbench",
 	"textures": {
-		"0": "foodcraft:block/cake_embryo_mold",
-		"particle": "foodcraft:block/cake_embryo_mold"
+		"cake_embryo_mold": "foodcraft:block/cake_embryo_mold",
+		"particle": "foodcraft:block/mold_pa"
 	},
 	"elements": [
 		{
 			"from": [0, 0, 0],
 			"to": [16, 9, 1],
 			"faces": {
-				"north": {"uv": [3.5, 0, 7.5, 2.25], "texture": "#0"},
-				"east": {"uv": [8.5, 8.75, 8.75, 11], "texture": "#0"},
-				"south": {"uv": [3.5, 2.25, 7.5, 4.5], "texture": "#0"},
-				"west": {"uv": [8.75, 8.75, 9, 11], "texture": "#0"},
-				"up": {"uv": [11.5, 7, 7.5, 6.75], "texture": "#0"},
-				"down": {"uv": [11.5, 7, 7.5, 7.25], "texture": "#0"}
+				"north": {"uv": [3.5, 0, 7.5, 2.25], "texture": "#cake_embryo_mold"},
+				"east": {"uv": [8.5, 8.75, 8.75, 11], "texture": "#cake_embryo_mold"},
+				"south": {"uv": [3.5, 2.25, 7.5, 4.5], "texture": "#cake_embryo_mold"},
+				"west": {"uv": [8.75, 8.75, 9, 11], "texture": "#cake_embryo_mold"},
+				"up": {"uv": [11.5, 7, 7.5, 6.75], "texture": "#cake_embryo_mold"},
+				"down": {"uv": [11.5, 7, 7.5, 7.25], "texture": "#cake_embryo_mold"}
 			}
 		},
 		{
 			"from": [1, 0, 1],
 			"to": [15, 1, 15],
 			"faces": {
-				"north": {"uv": [7.5, 7.75, 11, 8], "texture": "#0"},
-				"east": {"uv": [7.5, 8, 11, 8.25], "texture": "#0"},
-				"south": {"uv": [7.5, 8.25, 11, 8.5], "texture": "#0"},
-				"west": {"uv": [7.5, 8.5, 11, 8.75], "texture": "#0"},
-				"up": {"uv": [3.5, 3.5, 0, 0], "texture": "#0"},
-				"down": {"uv": [3.5, 3.5, 0, 7], "texture": "#0"}
+				"north": {"uv": [7.5, 7.75, 11, 8], "texture": "#cake_embryo_mold"},
+				"east": {"uv": [7.5, 8, 11, 8.25], "texture": "#cake_embryo_mold"},
+				"south": {"uv": [7.5, 8.25, 11, 8.5], "texture": "#cake_embryo_mold"},
+				"west": {"uv": [7.5, 8.5, 11, 8.75], "texture": "#cake_embryo_mold"},
+				"up": {"uv": [3.5, 3.5, 0, 0], "texture": "#cake_embryo_mold"},
+				"down": {"uv": [3.5, 3.5, 0, 7], "texture": "#cake_embryo_mold"}
 			}
 		},
 		{
@@ -35,24 +35,24 @@
 			"to": [16, 9, 16],
 			"rotation": {"angle": 0, "axis": "y", "origin": [0, 0, 15]},
 			"faces": {
-				"north": {"uv": [3.5, 4.5, 7.5, 6.75], "texture": "#0"},
-				"east": {"uv": [3.5, 9, 3.75, 11.25], "texture": "#0"},
-				"south": {"uv": [3.5, 6.75, 7.5, 9], "texture": "#0"},
-				"west": {"uv": [3.75, 9, 4, 11.25], "texture": "#0"},
-				"up": {"uv": [11.5, 7.5, 7.5, 7.25], "texture": "#0"},
-				"down": {"uv": [11.5, 7.5, 7.5, 7.75], "texture": "#0"}
+				"north": {"uv": [3.5, 4.5, 7.5, 6.75], "texture": "#cake_embryo_mold"},
+				"east": {"uv": [3.5, 9, 3.75, 11.25], "texture": "#cake_embryo_mold"},
+				"south": {"uv": [3.5, 6.75, 7.5, 9], "texture": "#cake_embryo_mold"},
+				"west": {"uv": [3.75, 9, 4, 11.25], "texture": "#cake_embryo_mold"},
+				"up": {"uv": [11.5, 7.5, 7.5, 7.25], "texture": "#cake_embryo_mold"},
+				"down": {"uv": [11.5, 7.5, 7.5, 7.75], "texture": "#cake_embryo_mold"}
 			}
 		},
 		{
 			"from": [0, 0, 1],
 			"to": [1, 9, 15],
 			"faces": {
-				"north": {"uv": [4, 9, 4.25, 11.25], "texture": "#0"},
-				"east": {"uv": [0, 7, 3.5, 9.25], "texture": "#0"},
-				"south": {"uv": [4.25, 9, 4.5, 11.25], "texture": "#0"},
-				"west": {"uv": [7.5, 0, 11, 2.25], "texture": "#0"},
-				"up": {"uv": [7.75, 12.25, 7.5, 8.75], "texture": "#0"},
-				"down": {"uv": [8, 8.75, 7.75, 12.25], "texture": "#0"}
+				"north": {"uv": [4, 9, 4.25, 11.25], "texture": "#cake_embryo_mold"},
+				"east": {"uv": [0, 7, 3.5, 9.25], "texture": "#cake_embryo_mold"},
+				"south": {"uv": [4.25, 9, 4.5, 11.25], "texture": "#cake_embryo_mold"},
+				"west": {"uv": [7.5, 0, 11, 2.25], "texture": "#cake_embryo_mold"},
+				"up": {"uv": [7.75, 12.25, 7.5, 8.75], "texture": "#cake_embryo_mold"},
+				"down": {"uv": [8, 8.75, 7.75, 12.25], "texture": "#cake_embryo_mold"}
 			}
 		},
 		{
@@ -60,12 +60,12 @@
 			"to": [16, 9, 15],
 			"rotation": {"angle": 0, "axis": "y", "origin": [15, 0, 0]},
 			"faces": {
-				"north": {"uv": [4.5, 9, 4.75, 11.25], "texture": "#0"},
-				"east": {"uv": [7.5, 2.25, 11, 4.5], "texture": "#0"},
-				"south": {"uv": [4.75, 9, 5, 11.25], "texture": "#0"},
-				"west": {"uv": [7.5, 4.5, 11, 6.75], "texture": "#0"},
-				"up": {"uv": [8.25, 12.25, 8, 8.75], "texture": "#0"},
-				"down": {"uv": [8.5, 8.75, 8.25, 12.25], "texture": "#0"}
+				"north": {"uv": [4.5, 9, 4.75, 11.25], "texture": "#cake_embryo_mold"},
+				"east": {"uv": [7.5, 2.25, 11, 4.5], "texture": "#cake_embryo_mold"},
+				"south": {"uv": [4.75, 9, 5, 11.25], "texture": "#cake_embryo_mold"},
+				"west": {"uv": [7.5, 4.5, 11, 6.75], "texture": "#cake_embryo_mold"},
+				"up": {"uv": [8.25, 12.25, 8, 8.75], "texture": "#cake_embryo_mold"},
+				"down": {"uv": [8.5, 8.75, 8.25, 12.25], "texture": "#cake_embryo_mold"}
 			}
 		}
 	],
