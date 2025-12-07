@@ -181,62 +181,60 @@ public class PotteryTableBlockEntity extends BlockEntity implements SidedInvento
      * @return 是否开始或者停止了动画
      */
     private boolean updateAnimationStates() {
-        return updateWorkSurfaceAnimation() || updateClayBallAnimation();
+        boolean workSurfaceChanged = updateWorkSurfaceAnimation();
+        boolean clayBallChanged = updateClayBallAnimation();
+        return workSurfaceChanged || clayBallChanged;
     }
 
     /**
      * 更新工作台面旋转动画状态
-     * <p>
-     * 规则：
-     * 1. 当有玩家打开界面时，启动动画
-     * 2. 当没有玩家打开界面且不在制作时，停止动画
-     * 3. 当正在制作时，无论是否有玩家打开界面，都要播放工作台面动画
-     * 4. 避免动画运行时间过大，超过阈值时重置
-     * </p>
+     * <ul>
+     * <li>当有玩家打开界面时，启动动画</li>
+     * <li>当没有玩家打开界面且不在制作时，停止动画</li>
+     * <li>当正在制作时，无论是否有玩家打开界面，都要播放工作台面动画</li>
+     * </ul>
      * @return 是否开始或者停止了动画
      */
     private boolean updateWorkSurfaceAnimation() {
-        boolean shouldPlay = (hasPlayersUsing() || isCrafting) && getStack(1).isEmpty();
+        boolean shouldPlay = (hasPlayersUsing() || isCrafting) && getStack(OUTPUT_SLOT).isEmpty();
+        boolean wasRunning = workSurfaceAnimationState.isEffectivelyRunning();
 
         if (shouldPlay) {
             // 启动或继续动画
-            if (!workSurfaceAnimationState.isRunning()) {
-                workSurfaceAnimationState.start(age);
+            if (!wasRunning) {
+                workSurfaceAnimationState.isRunning = true;
+                workSurfaceAnimationState.startIfNotRunning(getAge());
                 return true;
             }
-        } else {
-            // 停止动画
-            if (workSurfaceAnimationState.isRunning()) {
-                workSurfaceAnimationState.stop();
-                return true;
-            }
+        } else if (wasRunning) {
+            workSurfaceAnimationState.isRunning = false;
+            workSurfaceAnimationState.stop();
+            return true;
         }
         return false;
     }
-
     /**
      * 更新陶球旋转动画状态
-     * <p>
-     * 规则：
-     * 1. 当正在制作时，启动动画
-     * 2. 当制作完成或停止时，停止动画并重置进度
-     * </p>
+     * <ul>
+     * <li>当正在制作时，启动动画</li>
+     * <li>当制作完成或停止时，停止动画并重置进度</li>
+     * </ul>
      * @return 是否开始或者停止了动画
      */
     private boolean updateClayBallAnimation() {
+        boolean wasRunning = clayBallAnimationState.isEffectivelyRunning();
+
         if (isCrafting) {
             // 启动或继续动画
-            if (!clayBallAnimationState.isRunning()) {
-                clayBallAnimationState.start(age);
+            if (!wasRunning) {
+                clayBallAnimationState.isRunning = true;
+                clayBallAnimationState.startIfNotRunning(getAge());
                 return true;
             }
-        } else {
-            // 停止动画并重置进度
-            if (clayBallAnimationState.isRunning()) {
-                clayBallAnimationState.stop();
-                clayBallAnimationState.resetRunningTime();
-                return true;
-            }
+        } else if (wasRunning) {
+            clayBallAnimationState.isRunning = false;
+            clayBallAnimationState.stop();
+            return true;
         }
         return false;
     }
@@ -396,9 +394,6 @@ public class PotteryTableBlockEntity extends BlockEntity implements SidedInvento
         this.isCrafting = true;
         this.craftProgress = 0;
 
-        // 重置陶球动画进度，准备开始新的制作
-        clayBallAnimationState.resetRunningTime();
-
         this.markDirty();
 
         LOGGER.debug("Started crafting recipe {} at pottery table at {}", recipe.getId(), pos);
@@ -553,11 +548,11 @@ public class PotteryTableBlockEntity extends BlockEntity implements SidedInvento
 
         // 读取动画状态
         if (nbt.contains("WorkSurfaceAnimation")) {
-            workSurfaceAnimationState.simpleReadFromNbt(nbt.getCompound("WorkSurfaceAnimation"));
+            workSurfaceAnimationState.readFromNbt(nbt.getCompound("WorkSurfaceAnimation"));
         }
 
         if (nbt.contains("ClayBallAnimation")) {
-            clayBallAnimationState.simpleReadFromNbt(nbt.getCompound("ClayBallAnimation"));
+            clayBallAnimationState.readFromNbt(nbt.getCompound("ClayBallAnimation"));
         }
     }
 

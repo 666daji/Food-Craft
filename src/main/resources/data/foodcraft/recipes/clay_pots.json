@@ -1,0 +1,8 @@
+{
+  "type": "foodcraft:stove",
+  "ingredient": {
+    "item": "foodcraft:clay_pots_embryo"
+  },
+  "result": "foodcraft:clay_pots",
+  "stoveTime": 2400
+}

@@ -168,6 +168,14 @@ public class ModBlocks {
     public static final Block CLAY_POTS = registerBlock("clay_pots",
             new PotsBlock(AbstractBlock.Settings.create()
                     .sounds(BlockSoundGroup.STONE).strength(0.5F, 0.6F).nonOpaque()));
+    public static final Block FLOWER_POT_EMBRYO = registerFoodBlock("flower_pot_embryo", 4,
+            AbstractBlock.Settings.create()
+                    .sounds(BlockSoundGroup.STONE).strength(0.5F, 0.6F).nonOpaque(),
+            FoodBlock::new);
+    public static final Block FLOWER_POT_COOKING = registerFoodBlock("flower_pot_cooking", 4,
+            AbstractBlock.Settings.create()
+                    .sounds(BlockSoundGroup.STONE).strength(0.5F, 0.6F).nonOpaque(),
+            FoodBlock::new);
 
     /**
      * 注册一般方块

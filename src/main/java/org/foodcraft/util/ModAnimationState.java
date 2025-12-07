@@ -19,16 +19,12 @@ public class ModAnimationState {
     /** 停止状态的特殊标记值 */
     private static final long STOPPED = Long.MAX_VALUE;
 
-    /** NBT 键名常量 */
-    private static final String NBT_KEY_UPDATED_AT = "UpdatedAt";
-    private static final String NBT_KEY_TIME_RUNNING = "TimeRunning";
-    private static final String NBT_KEY_PARTIAL_TIME = "PartialTime";
-    private static final String NBT_KEY_LOOPING = "Looping";
-    private static final String NBT_KEY_ANIMATION_LENGTH = "AnimationLength";
-    private static final String NBT_KEY_LAST_TIME_RUNNING = "LastTimeRunning";
+
     private static final String NBT_KEY_IS_RUNNING = "IsRunning";
 
     // 状态字段
+    /** 动画是否正在运行 。一般由服务端保存 ，因为服务端无法直接操作{@linkplain #updatedAt}。*/
+    public boolean isRunning;
 
     /** 上次更新时间（毫秒） */
     public long updatedAt = STOPPED;
@@ -55,90 +51,32 @@ public class ModAnimationState {
         // 默认构造函数
     }
 
-    /**
-     * 从 NBT 数据创建动画状态实例
-     *
-     * @param nbt 包含动画状态的 NBT 数据
-     */
-    public ModAnimationState(NbtCompound nbt) {
-        this.readFromNbt(nbt);
-    }
-
     // NBT 序列化方法
 
     /**
      * 将动画状态写入 NBT 数据
-     * <p>
-     * 保存所有必要的状态信息，以便在服务端和客户端之间同步。
-     * </p>
      *
      * @param nbt 要写入的 NBT 数据对象
-     * @return 包含动画状态的 NBT 数据
+     * @return NBT 数据
      */
     public NbtCompound writeToNbt(NbtCompound nbt) {
-        // 保存核心状态
-        nbt.putLong(NBT_KEY_UPDATED_AT, this.updatedAt);
-        nbt.putLong(NBT_KEY_TIME_RUNNING, this.timeRunning);
-        nbt.putFloat(NBT_KEY_PARTIAL_TIME, this.partialTime);
-        nbt.putBoolean(NBT_KEY_LOOPING, this.looping);
-        nbt.putFloat(NBT_KEY_ANIMATION_LENGTH, this.animationLength);
-        nbt.putLong(NBT_KEY_LAST_TIME_RUNNING, this.lastTimeRunning);
-        nbt.putBoolean(NBT_KEY_IS_RUNNING, this.isRunning());
+        nbt.putBoolean(NBT_KEY_IS_RUNNING, this.isRunning);
 
         return nbt;
     }
 
     /**
      * 从 NBT 数据读取动画状态
-     * <p>
-     * 恢复之前保存的状态，包括播放状态、时间进度和循环设置。
-     * </p>
      *
-     * @param nbt 包含动画状态的 NBT 数据
+     * @param nbt NBT 数据
      */
     public void readFromNbt(NbtCompound nbt) {
         if (nbt == null) {
             return;
         }
 
-        // 读取核心状态
-        if (nbt.contains(NBT_KEY_UPDATED_AT)) {
-            this.updatedAt = nbt.getLong(NBT_KEY_UPDATED_AT);
-        }
-
-        if (nbt.contains(NBT_KEY_TIME_RUNNING)) {
-            this.timeRunning = nbt.getLong(NBT_KEY_TIME_RUNNING);
-        }
-
-        if (nbt.contains(NBT_KEY_PARTIAL_TIME)) {
-            this.partialTime = nbt.getFloat(NBT_KEY_PARTIAL_TIME);
-        }
-
-        if (nbt.contains(NBT_KEY_LOOPING)) {
-            this.looping = nbt.getBoolean(NBT_KEY_LOOPING);
-        }
-
-        if (nbt.contains(NBT_KEY_ANIMATION_LENGTH)) {
-            this.animationLength = nbt.getFloat(NBT_KEY_ANIMATION_LENGTH);
-        }
-
-        if (nbt.contains(NBT_KEY_LAST_TIME_RUNNING)) {
-            this.lastTimeRunning = nbt.getLong(NBT_KEY_LAST_TIME_RUNNING);
-        }
-
-        // 对于旧版本 NBT 数据，如果包含 IsRunning 键，但 UpdatedAt 不是 STOPPED，需要确保状态一致
         if (nbt.contains(NBT_KEY_IS_RUNNING)) {
-            boolean wasRunning = nbt.getBoolean(NBT_KEY_IS_RUNNING);
-            if (wasRunning && this.updatedAt == STOPPED) {
-                // 恢复运行状态，使用当前时间作为近似值
-                this.updatedAt = System.currentTimeMillis();
-            }
-        }
-    }
-
-    public void simpleReadFromNbt(NbtCompound nbt) {
-        if (nbt.contains(NBT_KEY_UPDATED_AT)) {
-            this.updatedAt = nbt.getLong(NBT_KEY_UPDATED_AT);
+            this.isRunning = nbt.getBoolean(NBT_KEY_IS_RUNNING);
         }
     }
 
@@ -149,18 +87,6 @@ public class ModAnimationState {
      */
     public NbtCompound toNbt() {
         return writeToNbt(new NbtCompound());
-    }
-
-    /**
-     * 从 NBT 数据复制动画状态
-     * <p>
-     * 将另一个动画状态的 NBT 数据应用到当前实例。
-     * </p>
-     *
-     * @param nbt 包含动画状态的 NBT 数据
-     */
-    public void copyFromNbt(NbtCompound nbt) {
-        this.readFromNbt(nbt);
     }
 
     /**
@@ -178,6 +104,41 @@ public class ModAnimationState {
     }
 
     // 动画控制方法
+
+    /**
+     * 检查动画是否应该运行（用于服务端逻辑判断）
+     *
+     * @param shouldRun 根据业务逻辑判断是否应该运行
+     * @param age 实体年龄（tick数）
+     */
+    public void updateRunningState(boolean shouldRun, int age) {
+        if (shouldRun && !this.isRunning()) {
+            this.startIfNotRunning(age);
+        } else if (!shouldRun && this.isRunning()) {
+            this.stop();
+        }
+    }
+
+    /**
+     * 安全地设置运行状态（避免不必要的状态切换）
+     *
+     * @param running 是否运行
+     * @param age 实体年龄（tick数）
+     */
+    public void setRunningSafely(boolean running, int age) {
+        if (running && !this.isRunning()) {
+            this.startIfNotRunning(age);
+        } else if (!running && this.isRunning()) {
+            this.stop();
+        }
+    }
+
+    /**
+     * 检查动画是否处于有效运行状态（同时检查标记和更新时间）
+     */
+    public boolean isEffectivelyRunning() {
+        return this.isRunning && this.isRunning();
+    }
 
     /**
      * 强制启动动画（无论是否已在运行）

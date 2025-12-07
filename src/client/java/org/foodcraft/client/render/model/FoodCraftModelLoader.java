@@ -8,6 +8,7 @@ import net.minecraft.util.Identifier;
 import org.dfood.block.FoodBlocks;
 import org.foodcraft.FoodCraft;
 import org.foodcraft.item.FlourItem;
+import org.foodcraft.registry.ModBlocks;
 import org.slf4j.Logger;
 
 import java.util.ArrayList;
@@ -44,6 +45,7 @@ public class FoodCraftModelLoader implements ModelLoadingPlugin {
         registerCookingModelsForBlock(FoodBlocks.COOKED_MUTTON, 2);
         registerCookingModelsForBlock(FoodBlocks.PORKCHOP, 2);
         registerCookingModelsForBlock(FoodBlocks.COOKED_PORKCHOP, 2);
+        registerCookingModelsForBlock(ModBlocks.FLOWER_POT_EMBRYO, 4);
     }
 
     /**

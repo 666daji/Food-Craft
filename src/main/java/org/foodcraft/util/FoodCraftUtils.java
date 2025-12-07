@@ -10,6 +10,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.state.StateManager;
+import net.minecraft.state.property.IntProperty;
 import net.minecraft.state.property.Properties;
 import net.minecraft.state.property.Property;
 import net.minecraft.util.math.BlockPos;
@@ -19,6 +20,7 @@ import net.minecraft.util.shape.VoxelShapes;
 import org.dfood.block.FoodBlock;
 import org.dfood.item.DoubleBlockItem;
 import org.foodcraft.FoodCraft;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
 import java.util.HashSet;
@@ -83,6 +85,19 @@ public class FoodCraftUtils {
             }
         }
         return TargetPos;
+    }
+
+    /**
+     * 获取FoodBlock的NUMBER_OF_FOOD属性
+     * @param block 要检查的Block实例
+     * @return 如果是FoodBlock则返回NUMBER_OF_FOOD属性，否则返回null
+     */
+    @Nullable
+    public static IntProperty getFoodBlockProperty(Block block) {
+        if (block instanceof FoodBlock foodBlock) {
+            return foodBlock.NUMBER_OF_FOOD;
+        }
+        return null;
     }
 
     /**

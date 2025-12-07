@@ -11,10 +11,15 @@ import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.render.model.json.ModelTransformationMode;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.RotationAxis;
 import net.minecraft.util.math.random.Random;
+import org.dfood.block.FoodBlock;
+import org.foodcraft.FoodCraft;
 import org.foodcraft.block.entity.HeatResistantSlateBlockEntity;
 import org.foodcraft.block.multi.MultiBlockReference;
+import org.foodcraft.registry.ModBlocks;
+import org.foodcraft.util.FoodCraftUtils;
 
 public class HeatResistantSlateBlockEntityRenderer extends MultiBlockDebugRenderer<HeatResistantSlateBlockEntity> {
     private final BlockRenderManager blockRenderManager;
@@ -34,6 +39,14 @@ public class HeatResistantSlateBlockEntityRenderer extends MultiBlockDebugRender
         if (!entity.isEmpty()) {
             matrices.push();
             BlockState blockState = entity.getInventoryBlockState();
+
+            // 针对花盆的特殊处理
+            if (blockState.getBlock() == Blocks.FLOWER_POT && entity.getStack(0).getCount() > 1){
+                blockState = ModBlocks.FLOWER_POT_COOKING.getDefaultState()
+                        .with(FoodBlock.FACING, entity.getResultDirection() == null ? Direction.EAST : entity.getResultDirection())
+                        .with(FoodCraftUtils.getFoodBlockProperty(ModBlocks.FLOWER_POT_COOKING), entity.getStack(0).getCount());
+            }
+
             matrices.translate(0.0, 0.125, 0.0);
             if (!otherStack.isEmpty()){
                 matrices.translate(0.0, 0.125, 0.0);

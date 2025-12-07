@@ -25,20 +25,23 @@ public class BlockModelRendererMixin {
             argsOnly = true)
     public BakedModel renderCookingModel(BakedModel model, BlockRenderView world, BakedModel bakedModel, BlockState state, BlockPos pos, MatrixStack matrices) {
         if (state.getBlock() instanceof FoodBlock foodBlock &&
-                world.getBlockEntity(pos) instanceof HeatResistantSlateBlockEntity){
+                world.getBlockEntity(pos) instanceof HeatResistantSlateBlockEntity) {
             int foodValue = state.get(foodBlock.NUMBER_OF_FOOD);
 
-            if (foodValue > 1){
-                // 手动旋转模型
-                matrices.translate(0.5, 0.5, 0.5);
-                float facing = state.get(FoodBlock.FACING).asRotation();
-                matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(facing));
-                matrices.translate(-0.5, -0.5, -0.5);
-
+            if (foodValue > 1) {
                 BakedModelManager manager = MinecraftClient.getInstance().getBakedModelManager();
                 BakedModel model1 = RenderUtils.getCookingModel(state, foodValue, manager);
-                return model1 == null || model1 == manager.getMissingModel()?
-                        model : model1;
+
+                // 只在成功获取到有效模型时才执行旋转并返回新模型
+                if (model1 != null && model1 != manager.getMissingModel()) {
+                    // 手动旋转模型
+                    matrices.translate(0.5, 0.5, 0.5);
+                    float facing = state.get(FoodBlock.FACING).asRotation();
+                    matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(facing));
+                    matrices.translate(-0.5, -0.5, -0.5);
+
+                    return model1;
+                }
             }
         }
 

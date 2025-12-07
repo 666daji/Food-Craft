@@ -1,9 +1,9 @@
 {
-  "type": "foodcraft:pottery",
+  "type": "foodcraft:stove",
   "ingredient": {
-    "item": "minecraft:clay_ball"
+    "item": "foodcraft:flower_pot_embryo"
   },
-  "inputCount": 2,
-  "craftTime": 100,
-  "result": "minecraft:flower_pot"
+  "MaxInputCount": 4,
+  "result": "minecraft:flower_pot",
+  "stoveTime": 1740
 }

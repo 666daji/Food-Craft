@@ -81,6 +81,7 @@ public class ModItemGroups {
                             // 陶制品
                             entries.add(ModItems.CLAY_POTS_EMBRYO);
                             entries.add(ModItems.CLAY_POTS);
+                            entries.add(ModItems.FLOWER_POT_EMBRYO);
                         }))
                         .build()
         );

@@ -316,7 +316,7 @@ public class PotteryTableScreen extends HandledScreen<PotteryTableScreenHandler>
 
         // 缩小文本
         float scale = 0.5f;
-        context.getMatrices().translate(textX, textY + (1 - scale) * 4, 101); // 调整位置以居中
+        context.getMatrices().translate(textX, textY + (1 - scale) * 4, 1000); // 调整位置以居中
         context.getMatrices().scale(scale, scale, 1.0f);
 
         // 绘制文本（白色）

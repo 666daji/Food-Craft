@@ -81,6 +81,7 @@ public class ModItems {
     // 陶制品
     public static final Item CLAY_POTS_EMBRYO = registerItem(ModBlocks.CLAY_POTS_EMBRYO);
     public static final Item CLAY_POTS = registerItem(ModBlocks.CLAY_POTS);
+    public static final Item FLOWER_POT_EMBRYO = registerItem(ModBlocks.FLOWER_POT_EMBRYO);
 
     public static Item registerItem(String name, Item item) {
         if (item instanceof BlockItem) {

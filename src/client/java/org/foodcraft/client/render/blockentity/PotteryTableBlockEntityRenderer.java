@@ -157,23 +157,43 @@ public class PotteryTableBlockEntityRenderer extends WithAnimationBlockEntityRen
     private void manageAnimationState(PotteryTableBlockEntity entity, float tickDelta) {
         resetAllModelParts();
 
-        if (!entity.getStack(1).isEmpty()){
+        // 当输出槽有物品时，重置动画时间
+        if (!entity.getStack(PotteryTableBlockEntity.OUTPUT_SLOT).isEmpty()) {
             entity.workSurfaceAnimationState.resetRunningTime();
+            entity.clayBallAnimationState.resetRunningTime();
         }
 
-        // 应用动画
-        updateAnimation(
-                entity.clayBallAnimationState,
-                BlockAnimations.POTTERY_TABLE_CLAY_SPIN,
-                getAnimationProgress(entity.getAge(), tickDelta),
+        // 管理工作台面和陶球动画状态
+        if (entity.workSurfaceAnimationState.isRunning) {
+            entity.workSurfaceAnimationState.startIfNotRunning(entity.getAge());
+        } else if (entity.workSurfaceAnimationState.isRunning()){
+            entity.workSurfaceAnimationState.stop();
+        }
+
+        if (entity.clayBallAnimationState.isRunning) {
+            entity.clayBallAnimationState.startIfNotRunning(entity.getAge());
+        } else if (entity.clayBallAnimationState.isRunning()){
+            entity.clayBallAnimationState.stop();
+        }
+
+        // 获取实体年龄和动画进度
+        int age = entity.getAge();
+        float animationProgress = getAnimationProgress(age, tickDelta);
+
+        // 更新工作台面动画
+        alwaysUpdateAnimation(
+                entity.workSurfaceAnimationState,
+                BlockAnimations.POTTERY_TABLE_WORK_SURFACE_SPIN,
+                animationProgress,
                 1.0F,
                 1.0F
         );
 
-        alwaysUpdateAnimation(
-                entity.workSurfaceAnimationState,
-                BlockAnimations.POTTERY_TABLE_WORK_SURFACE_SPIN,
-                getAnimationProgress(entity.getAge(), tickDelta),
+        // 更新陶球动画
+        updateAnimation(
+                entity.clayBallAnimationState,
+                BlockAnimations.POTTERY_TABLE_CLAY_SPIN,
+                animationProgress,
                 1.0F,
                 1.0F
         );

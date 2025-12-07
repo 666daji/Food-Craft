@@ -455,7 +455,7 @@ public class PotteryTableScreenHandler extends ScreenHandler {
             potteryTable.unregisterPlayerClosing(player);
         }
 
-//        this.context.run((world, pos) -> dropInventory(player, inventory));
+        this.context.run((world, pos) -> dropInventory(player, inventory));
     }
 
     /**
