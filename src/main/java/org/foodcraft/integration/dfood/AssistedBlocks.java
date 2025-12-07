@@ -14,7 +14,6 @@ import org.dfood.block.FoodBlocks;
 import org.dfood.sound.ModSoundGroups;
 import org.dfood.util.IntPropertyManager;
 import org.foodcraft.FoodCraft;
-import org.foodcraft.item.ModPotions;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -58,7 +57,7 @@ public class AssistedBlocks {
             AbstractBlock.Settings.create()
                     .mapColor(MapColor.BLUE).strength(0.2F, 0.2F).nonOpaque()
                     .sounds(ModSoundGroups.WATER_BUCKET).pistonBehavior(PistonBehavior.DESTROY),
-            (settings, maxUse) -> new CrippledBucketBlock(settings, maxUse, FoodBlocks.MILK_BUCKET, ModPotions.MILK), 3);
+            (settings, maxUse) -> new CrippledBucketBlock(settings, maxUse, FoodBlocks.MILK_BUCKET, null), 3);
 
     public static Block registerAssistedStewBlock(String name, AbstractBlock.Settings settings,
                                                   BiFunction<AbstractBlock.Settings, Integer, Block> blockCreator) {

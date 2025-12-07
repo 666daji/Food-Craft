@@ -23,8 +23,8 @@ import org.dfood.block.FoodBlocks;
 import org.dfood.shape.FoodShapeHandle;
 import org.dfood.util.IntPropertyManager;
 import org.foodcraft.block.CrippledBlock;
-import org.foodcraft.item.ModPotions;
 import org.foodcraft.registry.ModItems;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * 水桶的残损方块，表示被使用过的桶
@@ -33,9 +33,14 @@ public class CrippledBucketBlock extends CrippledBlock {
     public static final DirectionProperty FACING = Properties.HORIZONTAL_FACING;
     private static final FoodShapeHandle foodShapeHandle = FoodShapeHandle.getInstance();
 
+    /**
+     * 药水类型，用于确定给予玩家的瓶子内容物。
+     * 为null时表示奶桶。
+     */
+    @Nullable
     private final Potion potionType;
 
-    public CrippledBucketBlock(Settings settings, int maxUse, Block baseBlock, Potion potionType) {
+    public CrippledBucketBlock(Settings settings, int maxUse, Block baseBlock, @Nullable Potion potionType) {
         super(settings, maxUse, baseBlock, new ItemStack(Items.BUCKET));
         this.potionType = potionType;
     }
@@ -59,7 +64,7 @@ public class CrippledBucketBlock extends CrippledBlock {
                 handStack.decrement(1);
             }
             ItemStack waterBottle = PotionUtil.setPotion(new ItemStack(Items.POTION), this.potionType);
-            if (this.potionType == ModPotions.MILK) {
+            if (this.potionType == null) {
                 waterBottle = new ItemStack(ModItems.MILK_POTION);
             }
             if (!player.giveItemStack(waterBottle)) {

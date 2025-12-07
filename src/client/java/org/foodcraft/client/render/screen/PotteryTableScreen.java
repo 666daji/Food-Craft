@@ -184,19 +184,6 @@ public class PotteryTableScreen extends HandledScreen<PotteryTableScreenHandler>
             context.drawTooltip(this.textRenderer, Text.translatable("tooltip.pottery_table.start_crafting"), x, y);
         }
 
-        // 检查是否悬停在输出槽预览物品上
-        if (this.handler.getSlot(1).getStack().isEmpty()) {
-            PotteryRecipe selectedRecipe = this.handler.getSelectedRecipeInstance();
-            if (selectedRecipe != null &&
-                    this.isPointWithinBounds(143, 33, 16, 16, x, y)) {
-                ItemStack previewStack = selectedRecipe.getOutput(this.client.world.getRegistryManager());
-                if (!previewStack.isEmpty()) {
-                    context.drawTooltip(this.textRenderer,
-                            Text.translatable("tooltip.pottery_table.preview"), x, y);
-                }
-            }
-        }
-
         if (this.canCraft) {
             int i = this.x + RECIPE_LIST_OFFSET_X;
             int j = this.y + RECIPE_LIST_OFFSET_Y;

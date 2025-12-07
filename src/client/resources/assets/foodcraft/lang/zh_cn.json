@@ -11,10 +11,13 @@
   "block.foodcraft.toast_mold": "土司胚模具",
   "block.foodcraft.heat_resistant_slate": "耐热石板",
   "item.foodcraft.firewood": "柴火",
+  "block.foodcraft.pottery_table": "陶艺台",
 
   "block.foodcraft.iron_dishes": "铁饰餐盘",
   "block.foodcraft.wooden_shelf": "木架子",
   "block.foodcraft.cutting_board": "案板",
+  "block.foodcraft.iron_pots": "铁盘",
+  "item.foodcraft.bread_spatula": "面包铲",
 
   "item.foodcraft.milk_potion": "奶瓶",
 
@@ -44,6 +47,10 @@
   "item.foodcraft.salt_shaker": "盐罐",
   "item.foodcraft.salt_cubes": "盐块",
 
+  "item.foodcraft.clay_pots_embryo": "陶盆胚胎",
+  "block.foodcraft.clay_pots": "陶盆",
+  "item.foodcraft.flower_pot_embryo": "花盆胚",
+
   "container.foodcraft.pottery_table": "陶艺台",
 
   "subtitles.foodcraft.stove_baking": "炉子:烘烤",
@@ -55,11 +62,11 @@
   "grinding_stone.energy.full": "现在不需要推动石磨...",
   "grinding_stone.add.not_enough": "这些好像不太够哦",
 
-
   "item.foodcraft.flour_sack.fullness": "容量: %s/%s",
   "item.foodcraft.flour_sack.content": "%s x%s",
   "item.foodcraft.flour_sack.tooltip.empty": "右键点击放入粉尘",
   "item.foodcraft.flour_sack.tooltip.non_empty": "右键点击取出粉尘",
-  "item.foodcraft.flour_sack.tooltip.contents": "右键点击取出粉尘"
+  "item.foodcraft.flour_sack.tooltip.contents": "右键点击取出粉尘",
 
+  "tooltip.pottery_table.start_crafting": "开始制作"
 }

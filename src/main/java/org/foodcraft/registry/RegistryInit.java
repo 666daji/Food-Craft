@@ -14,6 +14,7 @@ public class RegistryInit {
         ModItemGroups.RegistryModItemGroups();
         ModSounds.initialize();
         ModScreenHandlerTypes.registerScreenHandlerTypes();
+        ModOreGeneration.registerOres();
         registerShapes();
     }
 
@@ -62,6 +63,11 @@ public class RegistryInit {
         //其他
         Shapes.shapeMap.put("foodcraft:firewood",new int[][]{
                 {1, 1, 1},{2, 2, 2},{3, 3, 3},{4, 4, 4},{5, 6, 5}
+        });
+
+        // 陶艺品胚
+        Shapes.shapeMap.put("foodcraft:flower_pot_embryo",new int[][]{
+                {1, 1, 7}, {2, 4, 1}
         });
 
         // 简单食物方块

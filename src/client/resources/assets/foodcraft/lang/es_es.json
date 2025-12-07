@@ -1,5 +1,5 @@
 {
-  "itemgroup.foodcraft": "Proceso de Horneado de Tw",
+  "itemgroup.foodcraft": "Arte de Horneado de Tw",
 
   "item.foodcraft.wheat_flour": "Harina de Trigo",
   "item.foodcraft.lapis_lazuli_flour": "Harina de Lapislázuli",
@@ -11,10 +11,13 @@
   "block.foodcraft.toast_mold": "Molde de Tostada",
   "block.foodcraft.heat_resistant_slate": "Pizarra Resistente al Calor",
   "item.foodcraft.firewood": "Leña",
+  "block.foodcraft.pottery_table": "Mesa de Alfarería",
 
   "block.foodcraft.iron_dishes": "Plato de Hierro Decorado",
   "block.foodcraft.wooden_shelf": "Estante de Madera",
   "block.foodcraft.cutting_board": "Tabla de Cortar",
+  "block.foodcraft.iron_pots": "Olla de Hierro",
+  "item.foodcraft.bread_spatula": "Espátula para Pan",
 
   "item.foodcraft.milk_potion": "Botella de Leche",
 
@@ -26,8 +29,8 @@
   "item.foodcraft.baguette": "Baguette",
   "item.foodcraft.baguette_embryo": "Embrión de Baguette",
   "item.foodcraft.fluffy_bread_embryo": "Embrión de Pan Esponjoso",
-  "item.foodcraft.milk_bread_embryo": "Embrión de Pan de Leche",
   "item.foodcraft.toast": "Tostada",
+  "item.foodcraft.milk_bread_embryo": "Embrión de Pan con Leche",
   "item.foodcraft.baked_cake_embryo": "Embrión de Pastel Horneado",
   "item.foodcraft.hard_bread_boat": "Barco de Pan Duro",
   "item.foodcraft.mushroom_stew_hard_bread_boat": "Barco de Pan Duro con Estofado de Champiñones",
@@ -35,7 +38,7 @@
 
   "block.foodcraft.cake_embryo_mold": "Molde de Embrión de Pastel",
   "block.foodcraft.toast_embryo_mold": "Molde de Embrión de Tostada",
-  "item.foodcraft.milk_bread_embryo_cake_embryo_mold": "Molde de Pastel con Embrión de Pan de Leche",
+  "item.foodcraft.milk_bread_embryo_cake_embryo_mold": "Molde de Pastel con Embrión de Pan con Leche",
   "item.foodcraft.fluffy_bread_embryo_toast_embryo_mold": "Molde de Tostada con Embrión de Pan Esponjoso",
 
   "block.foodcraft.salt_ore": "Mena de Sal",
@@ -44,18 +47,26 @@
   "item.foodcraft.salt_shaker": "Salero",
   "item.foodcraft.salt_cubes": "Cubos de Sal",
 
+  "item.foodcraft.clay_pots_embryo": "Embrión de Maceta de Arcilla",
+  "block.foodcraft.clay_pots": "Maceta de Arcilla",
+  "item.foodcraft.flower_pot_embryo": "Embrión de Maceta",
+
+  "container.foodcraft.pottery_table": "Mesa de Alfarería",
+
   "subtitles.foodcraft.stove_baking": "Horno: Horneando",
   "subtitle.foodcraft.stone_grinding": "Piedra de Moler: Girando",
-  "subtitle.foodcraft.combustion_firewood": "Hoguera: Quemando",
+  "subtitle.foodcraft.combustion_firewood": "Fogata: Quemando",
 
   "grinding_stone.add.refused": "¡Esto no se puede moler!",
   "grinding_stone.add.full": "¡Ya está lleno!",
-  "grinding_stone.energy.full": "No hace falta empujar la piedra ahora...",
-  "grinding_stone.add.not_enough": "Parece que no es suficiente...",
+  "grinding_stone.energy.full": "No es necesario empujar la piedra de moler ahora...",
+  "grinding_stone.add.not_enough": "Esto no parece suficiente...",
 
   "item.foodcraft.flour_sack.fullness": "Capacidad: %s/%s",
   "item.foodcraft.flour_sack.content": "%s x%s",
   "item.foodcraft.flour_sack.tooltip.empty": "Clic derecho para añadir harina",
   "item.foodcraft.flour_sack.tooltip.non_empty": "Clic derecho para sacar harina",
-  "item.foodcraft.flour_sack.tooltip.contents": "Clic derecho para sacar harina"
+  "item.foodcraft.flour_sack.tooltip.contents": "Clic derecho para sacar harina",
+
+  "tooltip.pottery_table.start_crafting": "Comenzar a Fabricar"
 }

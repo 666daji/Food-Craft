@@ -1,5 +1,5 @@
 {
-  "itemgroup.foodcraft": "Tw's Baking Process",
+  "itemgroup.foodcraft": "Tw's Baking Craft",
 
   "item.foodcraft.wheat_flour": "Wheat Flour",
   "item.foodcraft.lapis_lazuli_flour": "Lapis Lazuli Flour",
@@ -11,10 +11,13 @@
   "block.foodcraft.toast_mold": "Toast Mold",
   "block.foodcraft.heat_resistant_slate": "Heat-Resistant Slate",
   "item.foodcraft.firewood": "Firewood",
+  "block.foodcraft.pottery_table": "Pottery Table",
 
   "block.foodcraft.iron_dishes": "Iron Decorated Plate",
   "block.foodcraft.wooden_shelf": "Wooden Shelf",
   "block.foodcraft.cutting_board": "Cutting Board",
+  "block.foodcraft.iron_pots": "Iron Pot",
+  "item.foodcraft.bread_spatula": "Bread Spatula",
 
   "item.foodcraft.milk_potion": "Milk Bottle",
 
@@ -44,6 +47,12 @@
   "item.foodcraft.salt_shaker": "Salt Shaker",
   "item.foodcraft.salt_cubes": "Salt Cubes",
 
+  "item.foodcraft.clay_pots_embryo": "Clay Pot Embryo",
+  "block.foodcraft.clay_pots": "Clay Pot",
+  "item.foodcraft.flower_pot_embryo": "Flower Pot Embryo",
+
+  "container.foodcraft.pottery_table": "Pottery Table",
+
   "subtitles.foodcraft.stove_baking": "Stove: Baking",
   "subtitle.foodcraft.stone_grinding": "Grinding Stone: Turning",
   "subtitle.foodcraft.combustion_firewood": "Campfire: Burning",
@@ -51,11 +60,13 @@
   "grinding_stone.add.refused": "This cannot be ground!",
   "grinding_stone.add.full": "It's already full!",
   "grinding_stone.energy.full": "No need to push the grinding stone now...",
-  "grinding_stone.add.not_enough": "This doesn't seem to be enough...",
+  "grinding_stone.add.not_enough": "This doesn't seem enough...",
 
   "item.foodcraft.flour_sack.fullness": "Capacity: %s/%s",
   "item.foodcraft.flour_sack.content": "%s x%s",
   "item.foodcraft.flour_sack.tooltip.empty": "Right-click to add flour",
-  "item.foodcraft.flour_sack.tooltip.non_empty": "Right-click to take flour",
-  "item.foodcraft.flour_sack.tooltip.contents": "Right-click to take flour"
+  "item.foodcraft.flour_sack.tooltip.non_empty": "Right-click to take out flour",
+  "item.foodcraft.flour_sack.tooltip.contents": "Right-click to take out flour",
+
+  "tooltip.pottery_table.start_crafting": "Start Crafting"
 }

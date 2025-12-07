@@ -1,5 +1,5 @@
 {
-  "itemgroup.foodcraft": "Processus de Cuisson de Tw",
+  "itemgroup.foodcraft": "Art de la Boulangerie de Tw",
 
   "item.foodcraft.wheat_flour": "Farine de Blé",
   "item.foodcraft.lapis_lazuli_flour": "Farine de Lapis-Lazuli",
@@ -8,54 +8,65 @@
   "item.foodcraft.flour_sack": "Sac de Farine",
 
   "block.foodcraft.grinding_stone": "Pierre à Moudre",
-  "block.foodcraft.toast_mold": "Moule à Pain Grillé",
+  "block.foodcraft.toast_mold": "Moule à Toast",
   "block.foodcraft.heat_resistant_slate": "Ardoise Résistante à la Chaleur",
   "item.foodcraft.firewood": "Bois de Chauffage",
+  "block.foodcraft.pottery_table": "Table de Poterie",
 
-  "block.foodcraft.iron_dishes": "Assiette en Fer",
+  "block.foodcraft.iron_dishes": "Assiette en Fer Décorée",
   "block.foodcraft.wooden_shelf": "Étagère en Bois",
   "block.foodcraft.cutting_board": "Planche à Découper",
+  "block.foodcraft.iron_pots": "Pot en Fer",
+  "item.foodcraft.bread_spatula": "Spatule à Pain",
 
   "item.foodcraft.milk_potion": "Bouteille de Lait",
 
   "item.foodcraft.dough": "Pâte",
   "item.foodcraft.hard_bread": "Pain Dur",
-  "item.foodcraft.small_bread_embryo": "Ébauche de Petit Pain",
+  "item.foodcraft.small_bread_embryo": "Embryon de Petit Pain",
   "item.foodcraft.small_bread": "Petit Pain",
-  "item.foodcraft.cake_embryo": "Ébauche de Gâteau",
+  "item.foodcraft.cake_embryo": "Embryon de Gâteau",
   "item.foodcraft.baguette": "Baguette",
-  "item.foodcraft.baguette_embryo": "Ébauche de Baguette",
-  "item.foodcraft.fluffy_bread_embryo": "Ébauche de Pain Moelleux",
-  "item.foodcraft.milk_bread_embryo": "Ébauche de Pain au Lait",
-  "item.foodcraft.toast": "Pain Grillé",
-  "item.foodcraft.baked_cake_embryo": "Ébauche de Gâteau Cuite",
+  "item.foodcraft.baguette_embryo": "Embryon de Baguette",
+  "item.foodcraft.fluffy_bread_embryo": "Embryon de Pain Moelleux",
+  "item.foodcraft.toast": "Toast",
+  "item.foodcraft.milk_bread_embryo": "Embryon de Pain au Lait",
+  "item.foodcraft.baked_cake_embryo": "Embryon de Gâteau Cuit",
   "item.foodcraft.hard_bread_boat": "Bateau en Pain Dur",
-  "item.foodcraft.mushroom_stew_hard_bread_boat": "Bateau en Pain Dur au Ragoût de Champignons",
-  "item.foodcraft.beetroot_soup_hard_bread_boat": "Bateau en Pain Dur à la Soupe de Betterave",
+  "item.foodcraft.mushroom_stew_hard_bread_boat": "Bateau en Pain Dur avec Ragout de Champignons",
+  "item.foodcraft.beetroot_soup_hard_bread_boat": "Bateau en Pain Dur avec Soupe de Betterave",
 
-  "block.foodcraft.cake_embryo_mold": "Moule à Ébauche de Gâteau",
-  "block.foodcraft.toast_embryo_mold": "Moule à Ébauche de Pain Grillé",
-  "item.foodcraft.milk_bread_embryo_cake_embryo_mold": "Moule à Gâteau avec Ébauche de Pain au Lait",
-  "item.foodcraft.fluffy_bread_embryo_toast_embryo_mold": "Moule à Pain Grillé avec Ébauche de Pain Moelleux",
+  "block.foodcraft.cake_embryo_mold": "Moule d'Embryon de Gâteau",
+  "block.foodcraft.toast_embryo_mold": "Moule d'Embryon de Toast",
+  "item.foodcraft.milk_bread_embryo_cake_embryo_mold": "Moule de Gâteau avec Embryon de Pain au Lait",
+  "item.foodcraft.fluffy_bread_embryo_toast_embryo_mold": "Moule de Toast avec Embryon de Pain Moelleux",
 
   "block.foodcraft.salt_ore": "Minerai de Sel",
-  "block.foodcraft.deepslate_salt_ore": "Minerai de Sel des Ardoises des Abîmes",
+  "block.foodcraft.deepslate_salt_ore": "Minerai de Sel d'Ardoise des Abîmes",
 
   "item.foodcraft.salt_shaker": "Salière",
   "item.foodcraft.salt_cubes": "Cubes de Sel",
 
-  "subtitles.foodcraft.stove_baking": "Fourneau : Cuisson",
-  "subtitle.foodcraft.stone_grinding": "Pierre à Moudre : Tourne",
-  "subtitle.foodcraft.combustion_firewood": "Feu de Camp : Brûle",
+  "item.foodcraft.clay_pots_embryo": "Embryon de Pot en Argile",
+  "block.foodcraft.clay_pots": "Pot en Argile",
+  "item.foodcraft.flower_pot_embryo": "Embryon de Pot de Fleur",
 
-  "grinding_stone.add.refused": "Ceci ne peut pas être moulu !",
-  "grinding_stone.add.full": "C'est déjà plein !",
-  "grinding_stone.energy.full": "Inutile de pousser la pierre maintenant...",
-  "grinding_stone.add.not_enough": "Ce n'est pas assez...",
+  "container.foodcraft.pottery_table": "Table de Poterie",
 
-  "item.foodcraft.flour_sack.fullness": "Capacité : %s/%s",
+  "subtitles.foodcraft.stove_baking": "Four: Cuisson",
+  "subtitle.foodcraft.stone_grinding": "Pierre à Moudre: Rotation",
+  "subtitle.foodcraft.combustion_firewood": "Feu de Camp: Brûlage",
+
+  "grinding_stone.add.refused": "Ceci ne peut être moulu!",
+  "grinding_stone.add.full": "C'est déjà plein!",
+  "grinding_stone.energy.full": "Pas besoin de pousser la pierre à moudre maintenant...",
+  "grinding_stone.add.not_enough": "Cela ne semble pas suffisant...",
+
+  "item.foodcraft.flour_sack.fullness": "Capacité: %s/%s",
   "item.foodcraft.flour_sack.content": "%s x%s",
-  "item.foodcraft.flour_sack.tooltip.empty": "Clic-droit pour ajouter de la farine",
-  "item.foodcraft.flour_sack.tooltip.non_empty": "Clic-droit pour prendre de la farine",
-  "item.foodcraft.flour_sack.tooltip.contents": "Clic-droit pour prendre de la farine"
+  "item.foodcraft.flour_sack.tooltip.empty": "Clic droit pour ajouter de la farine",
+  "item.foodcraft.flour_sack.tooltip.non_empty": "Clic droit pour sortir de la farine",
+  "item.foodcraft.flour_sack.tooltip.contents": "Clic droit pour sortir de la farine",
+
+  "tooltip.pottery_table.start_crafting": "Commencer la Fabrication"
 }
