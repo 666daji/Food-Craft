@@ -19,6 +19,7 @@ import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import net.minecraft.world.event.GameEvent;
 import org.dfood.block.FoodBlock;
+import org.dfood.block.FoodBlockBuilder;
 import org.dfood.shape.FoodShapeHandle;
 import org.foodcraft.block.entity.CombustionFirewoodBlockEntity;
 
@@ -29,9 +30,46 @@ public class FirewoodBlock extends FoodBlock {
     /** 被点燃后变成的方块 */
     protected final Block targetBlock;
 
-    public FirewoodBlock(Settings settings, int max_food, Block targetBlock) {
-        super(settings, max_food, false);
+    protected FirewoodBlock(Settings settings, int maxFood, Block targetBlock) {
+        super(settings, maxFood, false, null, false, null);
         this.targetBlock = targetBlock;
+    }
+
+    public static class Builder extends FoodBlockBuilder<FirewoodBlock, Builder> {
+        private Block targetBlock;
+
+        private Builder() {}
+
+        public static Builder create() {
+            return new Builder();
+        }
+
+        /**
+         * 设置点燃后变成的方块
+         * @param targetBlock 目标方块
+         */
+        public Builder targetBlock(Block targetBlock) {
+            this.targetBlock = targetBlock;
+            return self();
+        }
+
+        @Override
+        protected void validateSettings() {
+            if (this.targetBlock == null) {
+                throw new IllegalStateException("Target block must be set for FirewoodBlock.");
+            }
+
+            super.validateSettings();
+        }
+
+        @Override
+        protected FirewoodBlock createBlock() {
+            return new FirewoodBlock(
+                    this.settings,
+                    this.maxFood,
+                    this.targetBlock
+            );
+        }
     }
 
     @Override

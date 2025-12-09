@@ -1,8 +1,6 @@
 package org.foodcraft.item;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.client.item.TooltipData;
 import net.minecraft.entity.Entity;
@@ -20,11 +18,8 @@ import net.minecraft.stat.Stats;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.*;
-import net.minecraft.util.collection.DefaultedList;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
-import org.foodcraft.block.entity.FlourSackBlockEntity;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -32,7 +27,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 public class FlourSackItem extends BlockItem {
-    private static final String ITEMS_KEY = "Items";
+    public static final String ITEMS_KEY = "FlourSackItems";
     private static final int MAX_STORAGE = 16;
     private static final int ITEM_BAR_COLOR = MathHelper.packRgb(0.4F, 0.4F, 1.0F);
     private static final int ITEM_OCCUPANCY = 1; // 每个物品占用空间
@@ -51,21 +46,6 @@ public class FlourSackItem extends BlockItem {
         }
 
         return super.useOnBlock(context);
-    }
-
-    @Override
-    protected boolean place(ItemPlacementContext context, BlockState state) {
-        World world = context.getWorld();
-        BlockPos pos = context.getBlockPos();
-        ItemStack itemStack = context.getStack();
-
-        if (!world.setBlockState(pos, state, Block.NOTIFY_ALL | Block.REDRAW_ON_MAIN_THREAD)) {
-            return false;
-        }
-
-        // 将物品数据写入方块实体
-        initializeBlockEntity(world, pos, itemStack);
-        return true;
     }
 
     @Override
@@ -146,32 +126,17 @@ public class FlourSackItem extends BlockItem {
     }
 
     /**
-     * 获取收纳袋的填充比例（0.0 - 1.0）
+     * 获取粉尘袋的填充比例（0.0 - 1.0）
      */
     public static float getAmountFilled(ItemStack stack) {
         return getBundleOccupancy(stack) / (float) MAX_STORAGE;
     }
 
     /**
-     * 获取收纳袋中的第一个物品栈
+     * 获取粉尘袋中的第一个物品栈
      */
     public static Optional<ItemStack> getFirstBundledStack(ItemStack stack) {
         return getBundledStacks(stack).findFirst();
-    }
-
-    /**
-     * 从方块实体创建物品堆栈
-     */
-    public static DefaultedList<ItemStack> fromBlockEntity(FlourSackBlockEntity blockEntity) {
-        DefaultedList<ItemStack> result = DefaultedList.of();
-
-        for (int i = 0; i < blockEntity.getSackCount(); i++) {
-            ItemStack sackContent = blockEntity.getSackContent(i);
-            ItemStack sackItem = createSackItem(blockEntity, sackContent);
-            result.add(sackItem);
-        }
-
-        return result;
     }
 
     /**
@@ -194,14 +159,14 @@ public class FlourSackItem extends BlockItem {
     }
 
     /**
-     * 检查物品是否可以被收纳袋接受
+     * 检查物品是否可以被粉尘袋接受
      */
     private static boolean canAcceptItem(ItemStack stack) {
         return !stack.isEmpty() && stack.getItem() instanceof FlourItem;
     }
 
     /**
-     * 添加物品到收纳袋
+     * 添加物品到粉尘袋
      */
     private static int addToBundle(ItemStack bundle, ItemStack stack) {
         if (!canAcceptItem(stack)) {
@@ -227,7 +192,7 @@ public class FlourSackItem extends BlockItem {
     }
 
     /**
-     * 获取收纳袋当前占用的总空间
+     * 获取粉尘袋当前占用的总空间
      */
     private static int getBundleOccupancy(ItemStack stack) {
         return getBundledStacks(stack)
@@ -236,7 +201,7 @@ public class FlourSackItem extends BlockItem {
     }
 
     /**
-     * 从收纳袋中取出第一个物品栈
+     * 从粉尘袋中取出第一个物品栈
      */
     private static Optional<ItemStack> removeFirstStack(ItemStack stack) {
         NbtCompound nbt = stack.getOrCreateNbt();
@@ -261,7 +226,7 @@ public class FlourSackItem extends BlockItem {
     }
 
     /**
-     * 丢弃收纳袋中的所有物品
+     * 丢弃粉尘袋中的所有物品
      */
     private static boolean dropAllBundledItems(ItemStack stack, PlayerEntity player) {
         NbtCompound nbt = stack.getOrCreateNbt();
@@ -279,7 +244,7 @@ public class FlourSackItem extends BlockItem {
     }
 
     /**
-     * 获取收纳袋中的所有物品栈
+     * 获取粉尘袋中的所有物品栈
      */
     private static Stream<ItemStack> getBundledStacks(ItemStack stack) {
         NbtCompound nbt = stack.getNbt();
@@ -294,19 +259,7 @@ public class FlourSackItem extends BlockItem {
     }
 
     /**
-     * 初始化方块实体
-     */
-    private void initializeBlockEntity(World world, BlockPos pos, ItemStack itemStack) {
-        BlockEntity blockEntity = world.getBlockEntity(pos);
-        if (blockEntity instanceof FlourSackBlockEntity flourSackBlockEntity) {
-            NbtCompound itemNbt = itemStack.getOrCreateNbt();
-            flourSackBlockEntity.readItemNbt(itemNbt);
-            flourSackBlockEntity.setSackCount(itemStack.getCount());
-        }
-    }
-
-    /**
-     * 处理从收纳袋取出物品
+     * 处理从粉尘袋取出物品
      */
     private void handleRemoveFromBundle(ItemStack stack, Slot slot, PlayerEntity player) {
         playRemoveOneSound(player);
@@ -319,7 +272,7 @@ public class FlourSackItem extends BlockItem {
     }
 
     /**
-     * 处理向收纳袋添加物品
+     * 处理向粉尘袋添加物品
      */
     private void handleAddToBundle(ItemStack stack, Slot slot, ItemStack slotStack, PlayerEntity player) {
         int availableSpace = MAX_STORAGE - getBundleOccupancy(stack);
@@ -362,26 +315,6 @@ public class FlourSackItem extends BlockItem {
     }
 
     /**
-     * 创建粉尘袋物品
-     */
-    private static ItemStack createSackItem(FlourSackBlockEntity blockEntity, ItemStack content) {
-        ItemStack sackItem = new ItemStack(blockEntity.getCachedState().getBlock().asItem());
-
-        if (!content.isEmpty()) {
-            NbtCompound nbt = new NbtCompound();
-            NbtList items = new NbtList();
-            NbtCompound itemNbt = new NbtCompound();
-
-            content.writeNbt(itemNbt);
-            items.add(itemNbt);
-            nbt.put(ITEMS_KEY, items);
-            sackItem.setNbt(nbt);
-        }
-
-        return sackItem;
-    }
-
-    /**
      * 获取或创建物品列表
      */
     private static NbtList getOrCreateItemsList(NbtCompound nbt) {
@@ -392,7 +325,7 @@ public class FlourSackItem extends BlockItem {
     }
 
     /**
-     * 添加新物品到收纳袋
+     * 添加新物品到粉尘袋
      */
     private static int addNewItemToBundle(NbtList items, ItemStack stack, int maxToAdd) {
         ItemStack toAdd = stack.copyWithCount(maxToAdd);

@@ -13,7 +13,7 @@ import org.dfood.block.FoodBlocks;
 
 public class FoodBlocksModifier {
     /** 能够让玩家像使用蛋糕那样使用炖菜。*/
-    public static final FoodBlock.onUseHook stewEatHook = (state, world, pos, player, hand, hit) -> {
+    public static final FoodBlock.OnUseHook stewEatHook = (state, world, pos, player, hand, hit) -> {
         if (player.canConsume(false)) {
             BlockEntity currentBlockEntity = world.getBlockEntity(pos);
             NbtCompound blockEntityData = null;
@@ -38,7 +38,7 @@ public class FoodBlocksModifier {
     };
 
     /** 可以使用空瓶子从水桶中盛出水 */
-    protected static final FoodBlock.onUseHook waterBucketHook = (state, world, pos, player, hand, hit) -> {
+    protected static final FoodBlock.OnUseHook waterBucketHook = (state, world, pos, player, hand, hit) -> {
         ItemStack handStack = player.getStackInHand(hand);
 
         // 检查是否手持空瓶子

@@ -12,6 +12,7 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
 import net.minecraft.world.event.GameEvent;
@@ -28,8 +29,8 @@ public class BreadBoatBlock extends SimpleFoodBlock {
     public final int maxUse;
     public final SoupType soupType;
 
-    public BreadBoatBlock(Settings settings, int maxUse, SoupType soupType) {
-        super(settings);
+    public BreadBoatBlock(Settings settings, VoxelShape shape, int maxUse, SoupType soupType) {
+        super(settings, true, shape, false);
         this.maxUse = maxUse;
         this.soupType = soupType;
 

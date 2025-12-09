@@ -69,8 +69,5 @@ public class RegistryInit {
         Shapes.shapeMap.put("foodcraft:flower_pot_embryo",new int[][]{
                 {1, 1, 7}, {2, 4, 1}
         });
-
-        // 简单食物方块
-        ((SimpleFoodBlock) ModBlocks.CLAY_POTS_EMBRYO).setShape(PotsBlock.SHAPE);
     }
 }

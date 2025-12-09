@@ -79,7 +79,7 @@ public class BlockColorsMixin {
 
     @Unique
     private static int getDirectFlourSackColor(FlourSackBlockEntity flourSackBlockEntity, int tintIndex) {
-        int sackCount = flourSackBlockEntity.getSackCount();
+        int sackCount = flourSackBlockEntity.getNbtCount();
 
         // 根据tintIndex获取对应位置的粉尘颜色
         if (tintIndex >= 0 && tintIndex < sackCount) {
