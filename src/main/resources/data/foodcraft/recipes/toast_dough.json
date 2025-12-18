@@ -1,0 +1,30 @@
+{
+  "type": "foodcraft:dough_making",
+  "output": {
+    "item": "foodcraft:toast_dough",
+    "count": 1
+  },
+  "flours": {
+    "wheat": 3
+  },
+  "liquids": {
+    "water": 2,
+    "milk": 1
+  },
+  "extra_items": {
+    "items": [
+      {
+        "item": "minecraft:egg",
+        "count": 1
+      },
+      {
+        "item": "minecraft:sugar",
+        "count": 1
+      },
+      {
+        "item": "foodcraft:salt_flour",
+        "count": 1
+      }
+    ]
+  }
+}

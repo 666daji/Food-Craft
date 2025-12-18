@@ -246,12 +246,7 @@ public class HeatResistantSlateBlockEntity extends UpPlaceBlockEntity implements
             return VoxelShapes.empty();
         }
 
-        VoxelShape shape;
-        if (block instanceof FoodBlock foodBlock) {
-            shape = FoodShapeHandle.getInstance().getShape(blockState, foodBlock.NUMBER_OF_FOOD);
-        } else {
-            shape = block.getDefaultState().getOutlineShape(world, pos);
-        }
+        VoxelShape shape = block.getDefaultState().getOutlineShape(world, pos);
 
         return shape.offset(0.0, INPUT_OFFSET_Y, 0.0);
     }

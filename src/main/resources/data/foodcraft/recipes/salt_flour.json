@@ -1,0 +1,8 @@
+{
+  "type": "foodcraft:grinding",
+  "ingredient": {
+    "item": "foodcraft:salt_cubes"
+  },
+  "result": "foodcraft:salt_flour",
+  "grindingTime": 40
+}

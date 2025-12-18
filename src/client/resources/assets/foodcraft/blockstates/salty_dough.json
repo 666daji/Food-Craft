@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "foodcraft:block/salty_dough",
+      "y": 180
+    },
+    "facing=south": {
+      "model": "foodcraft:block/salty_dough"
+    },
+    "facing=east": {
+      "model": "foodcraft:block/salty_dough",
+      "y": 270
+    },
+    "facing=west": {
+      "model": "foodcraft:block/salty_dough",
+      "y": 90
+    }
+  }
+}

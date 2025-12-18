@@ -28,10 +28,13 @@ public class FoodCraftModelLoader implements ModelLoadingPlugin {
         // 注册所有模型
         registerAllFlourSackModels();
         registerAllCookingModels();
+        registerDoughKneadingModel();
 
         // 将所有模型添加到加载上下文
         pluginContext.addModels(MODELS_TO_LOAD.toArray(new Identifier[0]));
     }
+
+    // =========== 食物烘烤模型 ===========
 
     /**
      * 注册所有需要加载烘烤模型的食物方块
@@ -46,20 +49,6 @@ public class FoodCraftModelLoader implements ModelLoadingPlugin {
         registerCookingModelsForBlock(FoodBlocks.PORKCHOP, 2);
         registerCookingModelsForBlock(FoodBlocks.COOKED_PORKCHOP, 2);
         registerCookingModelsForBlock(ModBlocks.FLOWER_POT_EMBRYO, 4);
-    }
-
-    /**
-     * 注册所有粉尘袋模型
-     */
-    private void registerAllFlourSackModels() {
-        for (FlourItem flourItem : FlourItem.FLOURS) {
-            Identifier itemId = Registries.ITEM.getId(flourItem);
-
-            String flourSackModelName = itemId.getPath() + "_sack";
-            ModelIdentifier modelId = createItemModel(flourSackModelName);
-            MODELS_TO_LOAD.add(modelId);
-            LOGGER.debug("Dynamically registered flour sack model: {}", modelId);
-        }
     }
 
     /**
@@ -92,11 +81,54 @@ public class FoodCraftModelLoader implements ModelLoadingPlugin {
         return new Identifier(FoodCraft.MOD_ID, "other/" + modelPath);
     }
 
+    // =========== 粉尘袋模型 ===========
+
+    /**
+     * 注册所有粉尘袋模型
+     */
+    private void registerAllFlourSackModels() {
+        for (FlourItem flourItem : FlourItem.FLOURS) {
+            Identifier itemId = Registries.ITEM.getId(flourItem);
+
+            String flourSackModelName = itemId.getPath() + "_sack";
+            ModelIdentifier modelId = createItemModel(flourSackModelName);
+            MODELS_TO_LOAD.add(modelId);
+            LOGGER.debug("Dynamically registered flour sack model: {}", modelId);
+        }
+    }
+
+    // =========== 揉面流程 ===========
+
+    public static void registerDoughKneadingModel() {
+        MODELS_TO_LOAD.add(createProcessModel("knead_add_flour_1"));
+        MODELS_TO_LOAD.add(createProcessModel("knead_add_flour_2"));
+        MODELS_TO_LOAD.add(createProcessModel("knead_add_flour_3"));
+
+        MODELS_TO_LOAD.add(createProcessModel("knead_add_liquid_1"));
+        MODELS_TO_LOAD.add(createProcessModel("knead_add_liquid_2"));
+        MODELS_TO_LOAD.add(createProcessModel("knead_add_liquid_3"));
+
+        MODELS_TO_LOAD.add(createProcessModel("knead_add_extra_1"));
+
+        MODELS_TO_LOAD.add(createProcessModel("knead_knead_1"));
+        MODELS_TO_LOAD.add(createProcessModel("knead_knead_2"));
+        MODELS_TO_LOAD.add(createProcessModel("knead_knead_3"));
+    }
+
+    // =========== 辅助方法 ===========
+
     /**
      * 创建物品模型的标识符
      */
     public static ModelIdentifier createItemModel(String itemPath) {
         return new ModelIdentifier(new Identifier(FoodCraft.MOD_ID, itemPath), "inventory");
+    }
+
+    /**
+     * 创建步骤所需的额外模型的标识符
+     */
+    public static Identifier createProcessModel(String blockPath) {
+        return new Identifier(FoodCraft.MOD_ID, "process/" + blockPath);
     }
 
     /**

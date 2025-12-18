@@ -1,9 +1,6 @@
 package org.foodcraft;
 
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents;
-import org.foodcraft.block.multi.MultiBlockManager;
 import org.foodcraft.registry.*;
 import org.foodcraft.integration.dfood.DFoodInit;
 import org.slf4j.Logger;
@@ -17,18 +14,6 @@ public class FoodCraft implements ModInitializer {
     public void onInitialize() {
         DFoodInit.init();
         RegistryInit.init();
-        multiBlockInit();
         LOGGER.info("FoodCraft mod is initializing");
-    }
-
-    private static void multiBlockInit(){
-        // 世界加载时恢复多方块数据
-        ServerWorldEvents.LOAD.register((server, world) -> {
-            if (!world.isClient()) {
-                MultiBlockManager.loadWorldMultiBlocks(world);
-            }
-        });
-        // 服务器停止时清理
-        ServerLifecycleEvents.SERVER_STOPPING.register(MultiBlockManager::onServerStopping);
     }
 }

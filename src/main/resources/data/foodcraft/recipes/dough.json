@@ -1,21 +1,16 @@
 {
-  "type": "minecraft:crafting_shaped",
-  "category": "misc",
-  "pattern": [
-    "B  ",
-    "AAA",
-    "   "
-  ],
-  "key": {
-    "A": {
-      "item": "foodcraft:wheat_flour"
-    },
-    "B": {
-      "item": "minecraft:water_bucket"
-    }
-  },
-  "result": {
+  "type": "foodcraft:dough_making",
+  "output": {
     "item": "foodcraft:dough",
     "count": 1
+  },
+  "flours": {
+    "wheat": 3
+  },
+  "liquids": {
+    "water": 3
+  },
+  "extra_items": {
+    "items": []
   }
 }

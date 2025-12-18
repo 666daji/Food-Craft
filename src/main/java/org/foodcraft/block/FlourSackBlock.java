@@ -58,28 +58,6 @@ public class FlourSackBlock extends ComplexFoodBlock implements BlockEntityProvi
     }
 
     /**
-     * 获取指定位置的粉尘颜色
-     */
-    public int getFlourColor(World world, BlockPos pos, int index) {
-        BlockEntity blockEntity = world.getBlockEntity(pos);
-        if (blockEntity instanceof FlourSackBlockEntity flourSackEntity) {
-            return flourSackEntity.getFlourColor(index);
-        }
-        return FlourSackBlockEntity.DEFAULT_FLOUR_COLOR;
-    }
-
-    /**
-     * 获取所有堆叠的粉尘颜色
-     */
-    public int[] getAllFlourColors(World world, BlockPos pos) {
-        BlockEntity blockEntity = world.getBlockEntity(pos);
-        if (blockEntity instanceof FlourSackBlockEntity flourSackEntity) {
-            return flourSackEntity.getAllFlourColors();
-        }
-        return new int[0];
-    }
-
-    /**
      * 获取指定位置的粉尘袋物品堆栈
      */
     public ItemStack getSackStack(World world, BlockPos pos, int index) {
@@ -88,15 +66,6 @@ public class FlourSackBlock extends ComplexFoodBlock implements BlockEntityProvi
             return flourSackEntity.getSackStack(index);
         }
         return ItemStack.EMPTY;
-    }
-
-    /**
-     * 检查指定索引是否有效
-     */
-    public boolean isValidSackIndex(World world, BlockPos pos, int index) {
-        BlockEntity blockEntity = world.getBlockEntity(pos);
-        return blockEntity instanceof FlourSackBlockEntity flourSackEntity &&
-                flourSackEntity.isValidSackIndex(index);
     }
 
     @Override

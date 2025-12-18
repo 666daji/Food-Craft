@@ -43,6 +43,8 @@ public class ModItemGroups {
                             entries.add(ModItems.LAPIS_LAZULI_FLOUR);
                             entries.add(ModItems.COCOA_FLOUR);
                             entries.add(ModItems.AMETHYST_FLOUR);
+                            entries.add(ModItems.SUGAR_FLOUR);
+                            entries.add(ModItems.SALT_FLOUR);
 
                             // 粉尘袋
                             entries.add(ModItems.FLOUR_SACK);
@@ -57,10 +59,11 @@ public class ModItemGroups {
                             entries.add(ModItems.SMALL_BREAD);
                             entries.add(ModItems.BAGUETTE);
                             entries.add(ModItems.BAGUETTE_EMBRYO);
-                            entries.add(ModItems.FLUFFY_BREAD_EMBRYO);
+                            entries.add(ModItems.TOAST_DOUGH);
                             entries.add(ModItems.TOAST);
-                            entries.add(ModItems.MILK_BREAD_EMBRYO);
+                            entries.add(ModItems.CAKE_DOUGH);
                             entries.add(ModItems.BAKED_CAKE_EMBRYO);
+                            entries.add(ModItems.SALTY_DOUGH);
                             entries.add(ModItems.HARD_BREAD_BOAT);
                             entries.add(ModItems.MUSHROOM_STEW_HARD_BREAD_BOAT);
                             entries.add(ModItems.BEETROOT_SOUP_HARD_BREAD_BOAT);
@@ -68,8 +71,8 @@ public class ModItemGroups {
                             //模具
                             entries.add(ModItems.CAKE_EMBRYO_MOLD);
                             entries.add(ModItems.TOAST_EMBRYO_MOLD);
-                            entries.add(ModItems.MILK_BREAD_EMBRYO_CAKE_EMBRYO_MOLD);
-                            entries.add(ModItems.FLUFFY_BREAD_EMBRYO_TOAST_EMBRYO_MOLD);
+                            entries.add(ModItems.CAKE_DOUGH_CAKE_EMBRYO_MOLD);
+                            entries.add(ModItems.TOAST_DOUGH_TOAST_EMBRYO_MOLD);
 
                             // 调味料
                             entries.add(ModItems.SALT_CUBES);

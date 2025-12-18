@@ -1,0 +1,22 @@
+{
+	"format_version": "1.21.6",
+	"credit": "Made with Blockbench",
+	"textures": {
+		"content": "foodcraft:block/knead_flour"
+	},
+	"elements": [
+		{
+			"from": [4, 1, 4],
+			"to": [12, 4, 12],
+			"rotation": {"angle": 0, "axis": "y", "origin": [8, 2, 4]},
+			"faces": {
+				"north": {"uv": [8, 0, 16, 3], "texture": "#content"},
+				"east": {"uv": [8, 3, 16, 6], "texture": "#content"},
+				"south": {"uv": [8, 5, 16, 8], "texture": "#content"},
+				"west": {"uv": [0, 8, 8, 11], "texture": "#content"},
+				"up": {"uv": [8, 8, 0, 0], "texture": "#content"},
+				"down": {"uv": [8, 8, 0, 16], "texture": "#content"}
+			}
+		}
+	]
+}

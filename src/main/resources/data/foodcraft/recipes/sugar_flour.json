@@ -1,0 +1,8 @@
+{
+  "type": "foodcraft:grinding",
+  "ingredient": {
+    "item": "minecraft:sugar"
+  },
+  "result": "foodcraft:sugar_flour",
+  "grindingTime": 40
+}

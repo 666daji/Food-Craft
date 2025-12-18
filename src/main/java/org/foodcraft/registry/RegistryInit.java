@@ -1,8 +1,9 @@
 package org.foodcraft.registry;
 
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents;
 import org.dfood.shape.Shapes;
-import org.foodcraft.block.PotsBlock;
-import org.foodcraft.block.SimpleFoodBlock;
+import org.foodcraft.block.multi.MultiBlockManager;
 
 public class RegistryInit {
     public static void init() {
@@ -15,7 +16,22 @@ public class RegistryInit {
         ModSounds.initialize();
         ModScreenHandlerTypes.registerScreenHandlerTypes();
         ModOreGeneration.registerOres();
+        multiBlockInit();
         registerShapes();
+    }
+
+    /**
+     * 多方块初始化
+     */
+    private static void multiBlockInit(){
+        // 世界加载时恢复多方块数据
+        ServerWorldEvents.LOAD.register((server, world) -> {
+            if (!world.isClient()) {
+                MultiBlockManager.loadWorldMultiBlocks(world);
+            }
+        });
+        // 服务器停止时清理
+        ServerLifecycleEvents.SERVER_STOPPING.register(MultiBlockManager::onServerStopping);
     }
 
     private static void registerShapes() {

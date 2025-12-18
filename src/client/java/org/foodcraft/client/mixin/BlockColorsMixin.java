@@ -12,6 +12,7 @@ import net.minecraft.world.BlockRenderView;
 import org.foodcraft.block.FlourSackBlock;
 import org.foodcraft.block.entity.FlourSackBlockEntity;
 import org.foodcraft.block.entity.ShelfBlockEntity;
+import org.foodcraft.integration.dfood.AssistedBlocks;
 import org.foodcraft.item.FlourItem;
 import org.foodcraft.registry.ModBlocks;
 import org.jetbrains.annotations.Nullable;
@@ -28,6 +29,7 @@ public class BlockColorsMixin {
     private static void registerFlourSackColor(CallbackInfoReturnable<BlockColors> cir) {
         BlockColors blockColors = cir.getReturnValue();
         blockColors.registerColorProvider(BlockColorsMixin::getFlourSackColor, ModBlocks.FLOUR_SACK);
+        blockColors.registerColorProvider((state, world, pos, tintIndex) -> tintIndex != -1? 4159204: -1, AssistedBlocks.CRIPPLED_WATER_BUCKET);
     }
 
     @Unique
@@ -93,7 +95,7 @@ public class BlockColorsMixin {
     @Unique
     private static int getFlourColorFromShelf(ShelfBlockEntity shelfBlockEntity, int shelfIndex, int tintIndex) {
         try {
-            NbtList contentData = getContentDataFromShelf(shelfBlockEntity);
+            NbtList contentData = shelfBlockEntity.getContentData();
             if (contentData == null || shelfIndex >= contentData.size()) {
                 return FlourSackBlockEntity.DEFAULT_FLOUR_COLOR;
             }
@@ -115,10 +117,5 @@ public class BlockColorsMixin {
         } catch (Exception e) {
             return FlourSackBlockEntity.DEFAULT_FLOUR_COLOR;
         }
-    }
-
-    @Unique
-    private static NbtList getContentDataFromShelf(ShelfBlockEntity shelfBlockEntity) {
-        return shelfBlockEntity.getContentData();
     }
 }

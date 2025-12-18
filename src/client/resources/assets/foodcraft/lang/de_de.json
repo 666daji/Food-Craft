@@ -5,7 +5,7 @@
   "item.foodcraft.lapis_lazuli_flour": "Lapislazuli-Mehl",
   "item.foodcraft.cocoa_flour": "Kakaomehl",
   "item.foodcraft.amethyst_flour": "Amethystmehl",
-  "item.foodcraft.flour_sack": "Mehlsack",
+  "block.foodcraft.flour_sack": "Mehlsack",
 
   "block.foodcraft.grinding_stone": "Mahlstein",
   "block.foodcraft.toast_mold": "Toastform",
@@ -21,20 +21,20 @@
 
   "item.foodcraft.milk_potion": "Milchflasche",
 
-  "item.foodcraft.dough": "Teig",
-  "item.foodcraft.hard_bread": "Hartes Brot",
-  "item.foodcraft.small_bread_embryo": "Kleiner Brotteig",
-  "item.foodcraft.small_bread": "Kleines Brot",
-  "item.foodcraft.cake_embryo": "Kuchenteig",
-  "item.foodcraft.baguette": "Baguette",
-  "item.foodcraft.baguette_embryo": "Baguetteteig",
+  "block.foodcraft.dough": "Teig",
+  "block.foodcraft.hard_bread": "Hartes Brot",
+  "block.foodcraft.small_bread_embryo": "Kleiner Brotteig",
+  "block.foodcraft.small_bread": "Kleines Brot",
+  "block.foodcraft.cake_embryo": "Kuchenteig",
+  "block.foodcraft.baguette": "Baguette",
+  "block.foodcraft.baguette_embryo": "Baguetteteig",
   "item.foodcraft.fluffy_bread_embryo": "Fluffiger Brotteig",
-  "item.foodcraft.toast": "Toast",
+  "block.foodcraft.toast": "Toast",
   "item.foodcraft.milk_bread_embryo": "Milchbrotteig",
-  "item.foodcraft.baked_cake_embryo": "Gebackener Kuchenteig",
-  "item.foodcraft.hard_bread_boat": "Hartes Brotschiff",
-  "item.foodcraft.mushroom_stew_hard_bread_boat": "Hartes Brotschiff mit Pilzsuppe",
-  "item.foodcraft.beetroot_soup_hard_bread_boat": "Hartes Brotschiff mit Rote-Bete-Suppe",
+  "block.foodcraft.baked_cake_embryo": "Gebackener Kuchenteig",
+  "block.foodcraft.hard_bread_boat": "Hartes Brotschiff",
+  "block.foodcraft.mushroom_stew_hard_bread_boat": "Hartes Brotschiff mit Pilzsuppe",
+  "block.foodcraft.beetroot_soup_hard_bread_boat": "Hartes Brotschiff mit Rote-Bete-Suppe",
 
   "block.foodcraft.cake_embryo_mold": "Kuchenform",
   "block.foodcraft.toast_embryo_mold": "Toastform",
@@ -47,9 +47,9 @@
   "item.foodcraft.salt_shaker": "Salzstreuer",
   "item.foodcraft.salt_cubes": "Salzwürfel",
 
-  "item.foodcraft.clay_pots_embryo": "Tontopfrohling",
+  "block.foodcraft.clay_pots_embryo": "Tontopfrohling",
   "block.foodcraft.clay_pots": "Tontopf",
-  "item.foodcraft.flower_pot_embryo": "Blumentopfrohling",
+  "block.foodcraft.flower_pot_embryo": "Blumentopfrohling",
 
   "container.foodcraft.pottery_table": "Töpfertisch",
 

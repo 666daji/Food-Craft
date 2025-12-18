@@ -1,7 +1,7 @@
 {
   "parent": "minecraft:block/potion_3",
   "textures": {
-    "6": "foodcraft:block/potion_overlay",
+    "6": "foodcraft:block/milk_overlay",
     "7": "minecraft:block/potion",
     "particle": "foodcraft:item/potion_overlay"
   }

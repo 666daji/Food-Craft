@@ -5,10 +5,10 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.pattern.BlockPattern;
 import net.minecraft.block.pattern.CachedBlockPosition;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
+import net.minecraft.item.*;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.potion.PotionUtil;
+import net.minecraft.potion.Potions;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.IntProperty;
 import net.minecraft.state.property.Properties;
@@ -98,6 +98,19 @@ public class FoodCraftUtils {
             return foodBlock.NUMBER_OF_FOOD;
         }
         return null;
+    }
+
+    /**
+     * 检查物品堆是否为水瓶。
+     * @param stack 要检查的物品堆
+     * @return 如果物品堆是水瓶则返回true，否则返回false
+     */
+    public static boolean isWaterPotion(ItemStack stack) {
+        if (stack.getItem() instanceof PotionItem) {
+            return stack.isOf(Items.POTION) &&
+                    PotionUtil.getPotion(stack) == Potions.WATER;
+        }
+        return false;
     }
 
     /**

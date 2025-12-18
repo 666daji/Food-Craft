@@ -1,0 +1,21 @@
+{
+  "type": "foodcraft:dough_making",
+  "output": {
+    "item": "foodcraft:salty_dough",
+    "count": 1
+  },
+  "flours": {
+    "wheat": 3
+  },
+  "liquids": {
+    "water": 3
+  },
+  "extra_items": {
+    "items": [
+      {
+        "item": "foodcraft:salt_flour",
+        "count": 2
+      }
+    ]
+  }
+}

@@ -1,0 +1,357 @@
+package org.foodcraft.block.process;
+
+import net.minecraft.block.BlockState;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.Hand;
+import net.minecraft.util.hit.BlockHitResult;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
+
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * 抽象流程基类，定义了多步骤交互流程的基本结构。
+ *
+ * <p>一个流程由多个步骤组成，每个步骤代表一次玩家交互。流程管理当前步骤、
+ * 流程状态和步骤之间的转移逻辑。</p>
+ *
+ * <p>使用流程系统可以将复杂的方块交互逻辑分解为独立的步骤，提高代码的可维护性
+ * 和可重用性。不同的方块实体可以共享相同的流程逻辑。</p>
+ *
+ * <h3>基本使用流程：</h3>
+ * <ol>
+ *   <li>创建继承自{@code AbstractProcess}的具体流程类</li>
+ *   <li>在构造函数中使用{@link #registerStep}注册步骤</li>
+ *   <li>在方块实体中调用{@link #executeStep}执行步骤</li>
+ *   <li>每个步骤决定下一步的动作（继续当前步骤、进入下一步、完成流程等）</li>
+ * </ol>
+ *
+ * @param <T> 流程支持的最大实体类型，通常为BlockEntity的子类或接口
+ */
+public abstract class AbstractProcess<T> {
+
+    /** 步骤注册表：步骤ID -> 步骤实例 */
+    protected final Map<String, Step<T>> steps = new HashMap<>();
+
+    /** 当前执行的步骤ID */
+    protected String currentStepId;
+
+    /** 上一步执行的步骤ID */
+    protected String previousStepId;
+
+    /** 流程是否处于活动状态 */
+    protected boolean isActive = false;
+
+    /** 步骤上下文数据，每次执行步骤时临时存储（仅用于临时数据传递） */
+    private final Map<String, Object> stepContext = new HashMap<>();
+
+    // ============ 受保护的方法（子类使用） ============
+
+    /**
+     * 注册一个步骤到流程中。
+     *
+     * <p>步骤必须在流程初始化时（通常在构造函数中）注册。
+     * 每个步骤有唯一的ID，用于在步骤之间转移。</p>
+     *
+     * @param stepId 步骤的唯一标识符
+     * @param step 步骤实例
+     */
+    protected void registerStep(String stepId, Step<T> step) {
+        steps.put(stepId, step);
+    }
+
+    /**
+     * 设置流程的初始步骤。
+     *
+     * <p>当流程开始时，将从这个步骤开始执行。必须在注册步骤后调用此方法。</p>
+     *
+     * @param stepId 初始步骤的ID
+     * @throws IllegalArgumentException 如果步骤ID未注册
+     */
+    protected void setInitialStep(String stepId) {
+        if (!steps.containsKey(stepId)) {
+            throw new IllegalArgumentException("Step is not registered: " + stepId);
+        }
+        this.currentStepId = stepId;
+    }
+
+    // ============ 公开的方法（外部调用） ============
+
+    /**
+     * 执行当前步骤。
+     *
+     * <p>此方法会调用当前步骤的{@link Step#execute}方法，并根据返回的
+     * {@link StepResult}决定下一步动作。每次调用必定消耗当前步骤，
+     * 但下一步可能是相同的步骤（用于循环结构）。</p>
+     *
+     * @param blockEntity 执行步骤的方块实体
+     * @param blockState 方块的当前状态
+     * @param world 世界实例
+     * @param pos 方块位置
+     * @param player 执行交互的玩家
+     * @param hand 玩家使用的手
+     * @param hit 方块点击信息
+     * @return 交互结果，指示操作是否成功
+     *
+     * @throws IllegalStateException 如果当前步骤未设置或未注册
+     */
+    public ActionResult executeStep(T blockEntity, BlockState blockState, World world, BlockPos pos,
+                                    PlayerEntity player, Hand hand, BlockHitResult hit) {
+        // 检查流程状态
+        if (!isActive || currentStepId == null) {
+            return ActionResult.PASS;
+        }
+
+        // 记录当前步骤为即将执行的上一步
+        String stepBeforeExecution = currentStepId;
+
+        // 准备执行上下文
+        stepContext.clear(); // 清空临时上下文
+        StepExecutionContext<T> context = new StepExecutionContext<>(
+                this, blockEntity, blockState, world, pos, player, hand, hit, stepContext
+        );
+
+        // 子类可以重写beforeGetStep方法来在获取步骤前做一些处理
+        beforeGetStep(context);
+
+        // 获取当前步骤（注意：currentStepId可能在beforeGetStep中被修改）
+        Step<T> currentStep = steps.get(currentStepId);
+        if (currentStep == null) {
+            throw new IllegalStateException("Step is not registered: " + currentStepId);
+        }
+
+        // 验证方块实体类型
+        if (!currentStep.canExecuteOn(blockEntity)) {
+            return ActionResult.FAIL;
+        }
+
+        // 执行步骤
+        StepResult result = currentStep.execute(context);
+
+        // 处理步骤结果
+        handleStepResult(result, stepBeforeExecution);
+
+        return result.getActionResult();
+    }
+
+    /**
+     * 开始执行流程。
+     *
+     * <p>此方法将流程状态重置为初始状态，并调用{@link #onStart()}回调。
+     * 通常在玩家第一次与方块交互时调用。</p>
+     */
+    public void start() {
+        this.isActive = true;
+        this.currentStepId = getInitialStepId();
+        this.previousStepId = null;
+        this.stepContext.clear();
+        onStart();
+    }
+
+    /**
+     * 重置流程到初始状态。
+     *
+     * <p>清除所有状态数据，将当前步骤重置为初始步骤，
+     * 并将流程标记为非活动状态。</p>
+     */
+    public void reset() {
+        this.currentStepId = getInitialStepId();
+        this.previousStepId = null;
+        this.isActive = false;
+        this.stepContext.clear();
+        onReset();
+    }
+
+    /**
+     * 强制跳转到指定步骤。
+     *
+     * <p>跳过正常的步骤转移逻辑，直接跳转到指定步骤。
+     * 用于特殊情况下的流程控制。</p>
+     *
+     * @param stepId 要跳转到的步骤ID
+     * @throws IllegalArgumentException 如果步骤ID未注册
+     */
+    public void jumpToStep(String stepId) {
+        if (!steps.containsKey(stepId)) {
+            throw new IllegalArgumentException("Step is not registered: " + stepId);
+        }
+        this.previousStepId = this.currentStepId;
+        this.currentStepId = stepId;
+    }
+
+    // ============ 状态查询方法 ============
+
+    /**
+     * 获取当前步骤ID。
+     *
+     * @return 当前步骤ID，如果未设置则返回null
+     */
+    public String getCurrentStepId() {
+        return currentStepId;
+    }
+
+    /**
+     * 获取上一步骤ID。
+     *
+     * @return 上一步骤ID，如果未设置则返回null
+     */
+    public String getPreviousStepId() {
+        return previousStepId;
+    }
+
+    /**
+     * 检查流程是否处于活动状态。
+     *
+     * @return 如果流程已开始且未完成/失败，则返回true
+     */
+    public boolean isActive() {
+        return isActive;
+    }
+
+    // ============ 处理步骤结果（内部方法） ============
+
+    /**
+     * 处理步骤执行结果，根据结果类型更新流程状态。
+     *
+     * @param result 步骤执行结果
+     */
+    private void handleStepResult(StepResult result, String executedStepId) {
+        // 在处理步骤结果前，记录当前步骤为上一步
+        this.previousStepId = executedStepId;
+
+        switch (result.getType()) {
+            case CONTINUE_SAME_STEP:
+                // 保持当前步骤不变，用于循环结构
+                // 上一步应该保持不变（因为步骤没变）
+                this.previousStepId = executedStepId;
+                break;
+
+            case NEXT_STEP:
+                // 转移到下一步
+                if (result.getNextStepId() != null) {
+                    if (!steps.containsKey(result.getNextStepId())) {
+                        throw new IllegalStateException("The next step is not registered: " + result.getNextStepId());
+                    }
+                    this.currentStepId = result.getNextStepId();
+                    this.previousStepId = executedStepId;
+                }
+                break;
+
+            case COMPLETE:
+                // 完成整个流程，重置流程
+                onComplete();
+                reset(); // 重置流程
+                this.previousStepId = null;
+                break;
+
+            case FAIL:
+                // 步骤执行失败
+                String fallbackStepId = result.getFallbackStepId();
+                if (fallbackStepId != null) {
+                    // 如果有回退步骤，跳转到回退步骤继续执行
+                    this.currentStepId = fallbackStepId;
+                } else {
+                    // 没有回退步骤，重置流程
+                    reset();
+                    this.previousStepId = null;
+                }
+                break;
+
+            case RESET:
+                // 重置整个流程
+                reset();
+                this.previousStepId = null;
+                break;
+        }
+    }
+
+    // ============ 供子类实现的方法 ============
+
+    /**
+     * 当流程开始时调用。
+     *
+     * <p>子类可以在此方法中初始化流程状态数据。</p>
+     */
+    protected  void onStart() {}
+
+    /**
+     * 当流程完成时调用。
+     *
+     * <p>子类可以在此方法中执行清理操作或触发完成事件。
+     * 注意：在此方法调用后，流程会自动重置。</p>
+     */
+    protected void onComplete() {}
+
+    /**
+     * 当流程重置时调用。
+     *
+     * <p>子类可以在此方法中执行额外的重置逻辑。</p>
+     */
+    protected void onReset() {}
+
+    /**
+     * 获取初始步骤ID。
+     *
+     * <p>子类必须实现此方法，返回流程的初始步骤ID。</p>
+     *
+     * @return 初始步骤ID
+     */
+    protected abstract String getInitialStepId();
+
+    /**
+     * 步骤获取前的钩子方法。
+     *
+     * <p>子类可以重写此方法，在获取步骤实例前做一些预处理，
+     * 比如根据条件跳转步骤。这个方法会在每次执行步骤前被调用，
+     * 可以用来修改currentStepId，从而改变将要执行的步骤。</p>
+     *
+     * @param context 步骤执行上下文
+     */
+    protected void beforeGetStep(StepExecutionContext<T> context) {}
+
+    /**
+     * 将流程状态写入NBT。
+     *
+     * <p>子类必须实现此方法以支持流程状态的持久化。
+     * 建议保存至少包含以下信息：
+     * 1. 当前步骤ID (currentStepId)
+     * 2. 流程活动状态 (isActive)
+     * 3. 子类自定义的状态数据</p>
+     *
+     * @param nbt 要写入的NBT复合标签
+     */
+    public void writeToNbt(NbtCompound nbt) {
+        if (currentStepId != null) {
+            nbt.putString("current_step_id", currentStepId);
+        }
+
+        if (previousStepId != null) {
+            nbt.putString("previous_step_id", previousStepId);
+        }
+
+        nbt.putBoolean("is_active", isActive);
+    }
+
+    /**
+     * 从NBT读取流程状态。
+     *
+     * <p>子类必须实现此方法以支持流程状态的恢复。
+     * 需要读取并恢复所有保存的状态数据。</p>
+     *
+     * @param nbt 要读取的NBT复合标签
+     */
+    public void readFromNbt(NbtCompound nbt) {
+        if (nbt.contains("current_step_id")) {
+            currentStepId = nbt.getString("current_step_id");
+        }
+
+        if (nbt.contains("previous_step_id")) {
+            previousStepId = nbt.getString("previous_step_id");
+        }
+
+        isActive = nbt.getBoolean("is_active");
+    }
+}

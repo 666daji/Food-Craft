@@ -27,5 +27,6 @@ public abstract class BlockEntityRendererFactoriesMixin {
         register(ModBlockEntityTypes.HEAT_RESISTANT_SLATE, HeatResistantSlateBlockEntityRenderer::new);
         register(ModBlockEntityTypes.MOLD, MoldBlockEntityRenderer::new);
         register(ModBlockEntityTypes.CUTTING_BOARD, CuttingBoardBlockEntityRenderer::new);
+        register(ModBlockEntityTypes.POTS, PotsBlockEntityRenderer::new);
     }
 }

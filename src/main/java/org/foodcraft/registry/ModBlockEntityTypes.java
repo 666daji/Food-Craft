@@ -22,6 +22,13 @@ public class ModBlockEntityTypes {
                     ModBlocks.POTTERY_TABLE
             )
     );
+    public static final BlockEntityType<PotsBlockEntity> POTS = create("pots",
+            BlockEntityType.Builder.create(
+                    PotsBlockEntity::new,
+                    ModBlocks.IRON_POTS,
+                    ModBlocks.CLAY_POTS
+            )
+    );
 
     // UpPlaceBlock
     public static final BlockEntityType<HeatResistantSlateBlockEntity> HEAT_RESISTANT_SLATE = create("heat_resistant_slate",
