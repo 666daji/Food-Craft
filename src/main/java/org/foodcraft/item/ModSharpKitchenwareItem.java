@@ -24,11 +24,11 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.function.Supplier;
 
-public class SpatulaItem extends SwordItem implements HaveBlock {
+public class ModSharpKitchenwareItem extends SwordItem implements HaveBlock {
     protected final Block block;
 
-    public SpatulaItem(Block block, Settings settings, SpatulaMaterials materials) {
-        super(materials, materials.attackDamage, -3.5F, settings);
+    public ModSharpKitchenwareItem(Block block, Settings settings, SpatulaMaterials materials) {
+        super(materials, materials.attackDamage, materials.miningSpeed, settings);
         this.block = block;
     }
 
@@ -84,8 +84,8 @@ public class SpatulaItem extends SwordItem implements HaveBlock {
 
     public enum SpatulaMaterials implements ToolMaterial {
         WOOD(MiningLevels.WOOD, 59, 2.0F, 0, 15, () -> Ingredient.fromTag(ItemTags.PLANKS)),
-        STONE(MiningLevels.STONE, 131, 4.0F, 1, 5, () -> Ingredient.fromTag(ItemTags.STONE_TOOL_MATERIALS)),
-        IRON(MiningLevels.IRON, 100, 8.0F, 4, 14, () -> Ingredient.ofItems(Items.IRON_INGOT)),
+        STONE(MiningLevels.STONE, 130, 1.0F, 1, 5, () -> Ingredient.fromTag(ItemTags.STONE_TOOL_MATERIALS)),
+        IRON(MiningLevels.IRON, 100, -3.5F, 4, 14, () -> Ingredient.ofItems(Items.IRON_INGOT)),
         DIAMOND(MiningLevels.DIAMOND, 1561, 8.0F, 3, 10, () -> Ingredient.ofItems(Items.DIAMOND)),
         GOLD(MiningLevels.WOOD, 32, 12.0F, 0, 22, () -> Ingredient.ofItems(Items.GOLD_INGOT));
 
@@ -96,7 +96,7 @@ public class SpatulaItem extends SwordItem implements HaveBlock {
         private final int enchantability;
         private final Lazy<Ingredient> repairIngredient;
 
-        private SpatulaMaterials(int miningLevel, int itemDurability, float miningSpeed, int attackDamage, int enchantability, Supplier<Ingredient> repairIngredient) {
+        SpatulaMaterials(int miningLevel, int itemDurability, float miningSpeed, int attackDamage, int enchantability, Supplier<Ingredient> repairIngredient) {
             this.miningLevel = miningLevel;
             this.itemDurability = itemDurability;
             this.miningSpeed = miningSpeed;

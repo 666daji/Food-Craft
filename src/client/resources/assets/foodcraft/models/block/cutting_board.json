@@ -1,8 +1,9 @@
 {
+	"format_version": "1.21.11",
 	"credit": "Made with Blockbench",
 	"textures": {
-      "2": "foodcraft:block/cutting_board",
-      "particle": "minecraft:block/oak_planks"
+		"2": "foodcraft:block/cutting_board",
+		"particle": "block/oak_planks"
 	},
 	"elements": [
 		{
@@ -56,21 +57,31 @@
 	],
 	"display": {
 		"thirdperson_righthand": {
-			"rotation": [0, 180, 0],
-			"translation": [0, 3.5, -3.75],
+			"rotation": [90, 0, 0],
+			"translation": [0, 1.5, 4.5],
+			"scale": [0.71, 0.71, 0.71]
+		},
+		"thirdperson_lefthand": {
+			"rotation": [90, 0, 0],
+			"translation": [0, 1.5, 4.5],
 			"scale": [0.71, 0.71, 0.71]
 		},
 		"firstperson_righthand": {
-			"translation": [0, 8.25, -5]
+			"translation": [4.75, 5.5, -4],
+			"scale": [0.9, 0.9, 0.9]
+		},
+		"firstperson_lefthand": {
+			"translation": [4.75, 5.5, -4],
+			"scale": [0.9, 0.9, 0.9]
 		},
 		"ground": {
 			"translation": [0, 4, 0],
-			"scale": [0.72, 0.72, 0.73]
+			"scale": [0.62, 0.62, 0.62]
 		},
 		"gui": {
-			"rotation": [37, 45, 0],
+			"rotation": [30, 135, 0],
 			"translation": [0, 3.5, 0],
-			"scale": [0.73, 0.73, 0.73]
+			"scale": [0.62, 0.62, 0.62]
 		},
 		"fixed": {
 			"rotation": [-90, 0, 0],

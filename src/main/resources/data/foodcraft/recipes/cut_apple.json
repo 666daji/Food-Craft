@@ -1,0 +1,26 @@
+{
+  "type": "foodcraft:cut",
+  "input": {
+    "item": "minecraft:apple"
+  },
+  "output": {
+    "item": "foodcraft:apple_slices",
+    "count": 1
+  },
+  "totalCuts": 6,
+  "defaultState": {},
+  "cutStates": {
+    "5": {
+      "0": {
+        "item": "foodcraft:apple_slices",
+        "count": 1
+      }
+    },
+    "6": {
+      "0": {
+        "item": "foodcraft:apple_slices",
+        "count": 1
+      }
+    }
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "foodcraft:block/baked_potato_cubes",
+      "y": 270
+    },
+    "facing=south": {
+      "model": "foodcraft:block/baked_potato_cubes",
+      "y": 90
+    },
+    "facing=east": {
+      "model": "foodcraft:block/baked_potato_cubes"
+    },
+    "facing=west": {
+      "model": "foodcraft:block/baked_potato_cubes",
+      "y": 180
+    }
+  }
+}

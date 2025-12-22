@@ -2,6 +2,7 @@ package org.foodcraft.registry;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.BlockItem;
+import net.minecraft.item.FoodComponents;
 import net.minecraft.item.Item;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
@@ -26,8 +27,12 @@ public class ModItems {
     public static final Item WOODEN_SHELF = registerItem(ModBlocks.WOODEN_SHELF);
     public static final Item CUTTING_BOARD = registerItem(ModBlocks.CUTTING_BOARD);
     public static final Item IRON_POTS = registerItem(ModBlocks.IRON_POTS);
+
+    // 厨具
     public static final Item BREAD_SPATULA = registerItem(ModBlocks.BREAD_SPATULA, new Item.Settings(),
-            ((block, settings) -> new SpatulaItem(block, settings, SpatulaItem.SpatulaMaterials.IRON)));
+            ((block, settings) -> new ModSharpKitchenwareItem(block, settings, ModSharpKitchenwareItem.SpatulaMaterials.IRON)));
+    public static final Item KITCHEN_KNIFE = registerItem(ModBlocks.KITCHEN_KNIFE, new Item.Settings(),
+            ((block, settings) -> new ModSharpKitchenwareItem(block, settings, ModSharpKitchenwareItem.SpatulaMaterials.STONE)));
 
     // 粉尘
     public static final Item WHEAT_FLOUR = registerItem("wheat_flour",
@@ -67,6 +72,20 @@ public class ModItems {
     public static final Item MUSHROOM_STEW_HARD_BREAD_BOAT = registerItem(ModBlocks.MUSHROOM_STEW_HARD_BREAD_BOAT);
     public static final Item BEETROOT_SOUP_HARD_BREAD_BOAT = registerItem(ModBlocks.BEETROOT_SOUP_HARD_BREAD_BOAT);
 
+    // 切片食物
+    public static final Item CARROT_SLICES = registerItem(ModBlocks.CARROT_SLICES, new Item.Settings().food(ModFoodComponents.CARROT_SLICES));
+    public static final Item CARROT_HEAD = registerItem("carrot_head", new Item(new Item.Settings().food(ModFoodComponents.CARROT_HEAD)));
+    public static final Item POTATO_CUBES = registerItem(ModBlocks.POTATO_CUBES, new Item.Settings().food(FoodComponents.POTATO));
+    public static final Item BAKED_POTATO_CUBES = registerItem(ModBlocks.BAKED_POTATO_CUBES, new Item.Settings().food(FoodComponents.BAKED_POTATO));
+    public static final Item APPLE_SLICES = registerItem(ModBlocks.APPLE_SLICES, new Item.Settings().food(FoodComponents.APPLE));
+    public static final Item COD_CUBES = registerItem(ModBlocks.COD_CUBES);
+    public static final Item COD_HEAD = registerItem(ModBlocks.COD_HEAD);
+    public static final Item COOKED_COD_CUBES = registerItem(ModBlocks.COOKED_COD_CUBES);
+    public static final Item COOKED_COD_HEAD = registerItem(ModBlocks.COOKED_COD_HEAD);
+    public static final Item SALMON_CUBES = registerItem(ModBlocks.SALMON_CUBES);
+    public static final Item COOKED_SALMON_CUBES = registerItem(ModBlocks.COOKED_SALMON_CUBES);
+    public static final Item KITCHEN_WASTE = registerItem(ModBlocks.KITCHEN_WASTE);
+
     // 模具
     public static final Item CAKE_DOUGH_CAKE_EMBRYO_MOLD = registerItem("cake_dough_cake_embryo_mold",
             new MoldContentItem(ModBlocks.CAKE_EMBRYO_MOLD, new Item.Settings(), CAKE_DOUGH));
@@ -89,10 +108,10 @@ public class ModItems {
     public static final Item FLOWER_POT_EMBRYO = registerItem(ModBlocks.FLOWER_POT_EMBRYO);
 
     public static Item registerItem(String name, Item item) {
-        if (item instanceof BlockItem) {
-            ((BlockItem)item).appendBlocks(Item.BLOCK_ITEMS, item);
-        } else if (item instanceof HaveBlock){
-            ((HaveBlock)item).appendBlocks(Item.BLOCK_ITEMS, item);
+        if (item instanceof BlockItem blockItem) {
+            blockItem.appendBlocks(Item.BLOCK_ITEMS, item);
+        } else if (item instanceof HaveBlock haveBlock){
+            haveBlock.appendBlocks(Item.BLOCK_ITEMS, item);
         }
         return Registry.register(Registries.ITEM, new Identifier(FoodCraft.MOD_ID, name), item);
     }

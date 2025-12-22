@@ -1,0 +1,7 @@
+{
+  "parent": "foodcraft:block/potato_cubes",
+  "textures": {
+    "potato": "minecraft:block/baked_potato",
+    "particle": "foodcraft:item/baked_potato_cubes"
+  }
+}

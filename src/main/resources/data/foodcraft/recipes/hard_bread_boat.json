@@ -1,8 +1,0 @@
-{
-  "type": "foodcraft:cut",
-  "ingredient": {
-    "item": "foodcraft:hard_bread"
-  },
-  "result": "foodcraft:hard_bread_boat",
-  "outputCount": 1
-}

@@ -1,0 +1,18 @@
+{
+  "type": "foodcraft:cut",
+  "input": {
+    "item": "minecraft:baked_potato"
+  },
+  "output": {
+    "item": "foodcraft:baked_potato_cubes",
+    "count": 1
+  },
+  "totalCuts": 1,
+  "defaultState": {
+    "0": {
+      "item": "foodcraft:baked_potato_cubes",
+      "count": 1
+    }
+  },
+  "cutStates": {}
+}

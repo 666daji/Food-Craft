@@ -1,0 +1,50 @@
+{
+  "type": "foodcraft:cut",
+  "input": {
+    "item": "minecraft:cod"
+  },
+  "output": {
+    "item": "foodcraft:cod_cubes",
+    "count": 1
+  },
+  "totalCuts": 9,
+  "defaultState": {},
+  "cutStates": {
+    "6": {
+      "0": {
+        "item": "foodcraft:cod_head",
+        "count": 1
+      },
+      "1": {
+        "item": "foodcraft:cod_cubes",
+        "count": 2
+      }
+    },
+    "7": {
+      "0": {
+        "item": "foodcraft:cod_head",
+        "count": 1
+      },
+      "1": {
+        "item": "foodcraft:cod_cubes",
+        "count": 2
+      }
+    },
+    "8": {
+      "0": {
+        "item": "foodcraft:cod_head",
+        "count": 1
+      },
+      "1": {
+        "item": "foodcraft:cod_cubes",
+        "count": 1
+      }
+    },
+    "9": {
+      "0": {
+        "item": "foodcraft:cod_head",
+        "count": 1
+      }
+    }
+  }
+}

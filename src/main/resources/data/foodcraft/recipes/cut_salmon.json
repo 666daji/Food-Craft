@@ -1,0 +1,40 @@
+{
+  "type": "foodcraft:cut",
+  "input": {
+    "item": "minecraft:salmon"
+  },
+  "output": {
+    "item": "foodcraft:salmon_cubes",
+    "count": 1
+  },
+  "totalCuts": 7,
+  "defaultState": {},
+  "cutStates": {
+    "5": {
+      "0": {
+        "item": "foodcraft:salmon_cubes",
+        "count": 2
+      },
+      "1": {
+        "item": "foodcraft:kitchen_waste",
+        "count": 1
+      }
+    },
+    "6": {
+      "0": {
+        "item": "foodcraft:salmon_cubes",
+        "count": 1
+      },
+      "1": {
+        "item": "foodcraft:kitchen_waste",
+        "count": 1
+      }
+    },
+    "7": {
+      "0": {
+        "item": "foodcraft:kitchen_waste",
+        "count": 1
+      }
+    }
+  }
+}

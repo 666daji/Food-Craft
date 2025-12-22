@@ -17,7 +17,7 @@ import org.foodcraft.block.entity.UpPlaceBlockEntity;
  * @param <T> 对应的{@link UpPlaceBlock}的子类
  */
 public abstract class SimpleUpPlaceBlockEntityRenderer <T extends UpPlaceBlockEntity> implements BlockEntityRenderer<T> {
-    private final BlockRenderManager blockRenderManager;
+    protected final BlockRenderManager blockRenderManager;
 
     public SimpleUpPlaceBlockEntityRenderer(BlockEntityRendererFactory.Context ctx) {
         this.blockRenderManager = ctx.getRenderManager();
@@ -29,7 +29,7 @@ public abstract class SimpleUpPlaceBlockEntityRenderer <T extends UpPlaceBlockEn
 
         if (state.getBlock() != Blocks.AIR){
             matrices.push();
-            ApplyTransformations(matrices);
+            ApplyTransformations(entity, matrices);
             if (state.getBlock() != Blocks.AIR){
                 blockRenderManager.renderBlock(state, entity.getPos(), entity.getWorld(), matrices,
                         vertexConsumers.getBuffer(RenderLayers.getBlockLayer(state)), true, Random.create());
@@ -49,5 +49,5 @@ public abstract class SimpleUpPlaceBlockEntityRenderer <T extends UpPlaceBlockEn
      * 应用变换
      * @param matrices 渲染使用的矩阵堆栈
      */
-    protected abstract void ApplyTransformations(MatrixStack matrices);
+    protected abstract void ApplyTransformations(T entity,MatrixStack matrices);
 }

@@ -1,5 +1,6 @@
 package org.foodcraft.block.process;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
@@ -14,22 +15,49 @@ import java.util.Map;
 
 /**
  * 抽象流程基类，定义了多步骤交互流程的基本结构。
- *
- * <p>一个流程由多个步骤组成，每个步骤代表一次玩家交互。流程管理当前步骤、
- * 流程状态和步骤之间的转移逻辑。</p>
- *
- * <p>使用流程系统可以将复杂的方块交互逻辑分解为独立的步骤，提高代码的可维护性
- * 和可重用性。不同的方块实体可以共享相同的流程逻辑。</p>
- *
- * <h3>基本使用流程：</h3>
+ * <p>
+ * <strong>设计理念：</strong>
+ * 流程系统将复杂的方块交互逻辑分解为独立的、可重用的步骤单元。
+ * 每个流程实例可以独立管理其状态和执行逻辑，而不同的方块实体类型可以持有相同的流程实例。
+ * </p>
+ * <p>
+ * <strong>核心特点：</strong>
  * <ol>
- *   <li>创建继承自{@code AbstractProcess}的具体流程类</li>
- *   <li>在构造函数中使用{@link #registerStep}注册步骤</li>
- *   <li>在方块实体中调用{@link #executeStep}执行步骤</li>
- *   <li>每个步骤决定下一步的动作（继续当前步骤、进入下一步、完成流程等）</li>
+ * <li><strong>解耦设计</strong>：流程不绑定特定方块实体类型，只通过泛型约束可操作的类型</li>
+ * <li><strong>可重用性</strong>：同一流程可以被不同类型的方块实体持有和使用</li>
+ * <li><strong>状态管理</strong>：流程实例管理自身的所有状态数据</li>
+ * <li><strong>灵活组合</strong>：通过步骤构建器可以灵活组合各种类型的步骤 </li>
  * </ol>
+ * </p>
+ * <p>
+ * <strong>使用模式：</strong>
+ * 方块实体持有流程实例作为字段，通过流程实例管理复杂的交互逻辑。
+ * 当玩家与方块交互时，方块实体将交互委托给流程实例执行。
+ * </p>
  *
- * @param <T> 流程支持的最大实体类型，通常为BlockEntity的子类或接口
+ * <h3>使用示例：</h3>
+ * <pre>{@code
+ * public class MyBlockEntity extends BlockEntity {
+ *     // 方块实体持有流程实例
+ *     private final MyProcess process = new MyProcess();
+ *
+ *     public ActionResult onUse(PlayerEntity player, Hand hand, BlockHitResult hit) {
+ *         // 委托给流程执行
+ *         return process.executeStep(this, getCachedState(), world, pos, player, hand, hit);
+ *     }
+ *
+ *     // 流程实例管理所有复杂逻辑
+ *     private static class MyProcess extends AbstractProcess<MyBlockEntity> {
+ *         // 步骤定义和流程逻辑...
+ *     }
+ * }
+ * }</pre>
+ *
+ * @param <T> 流程支持的操作类型，通常为方块实体类型或接口
+ *           （如Inventory, UpPlaceBlockEntity等）
+ * @see Step
+ * @see StepExecutionContext
+ * @see StepResult
  */
 public abstract class AbstractProcess<T> {
 
@@ -140,15 +168,15 @@ public abstract class AbstractProcess<T> {
     /**
      * 开始执行流程。
      *
-     * <p>此方法将流程状态重置为初始状态，并调用{@link #onStart()}回调。
+     * <p>此方法将流程状态重置为初始状态，并调用{@link #onStart(World, Object)}回调。
      * 通常在玩家第一次与方块交互时调用。</p>
      */
-    public void start() {
+    public void start(World world, T blockEntit) {
         this.isActive = true;
         this.currentStepId = getInitialStepId();
         this.previousStepId = null;
         this.stepContext.clear();
-        onStart();
+        onStart(world, blockEntit);
     }
 
     /**
@@ -275,7 +303,7 @@ public abstract class AbstractProcess<T> {
      *
      * <p>子类可以在此方法中初始化流程状态数据。</p>
      */
-    protected  void onStart() {}
+    protected  void onStart(World world, T blockEntit) {}
 
     /**
      * 当流程完成时调用。
@@ -315,11 +343,7 @@ public abstract class AbstractProcess<T> {
     /**
      * 将流程状态写入NBT。
      *
-     * <p>子类必须实现此方法以支持流程状态的持久化。
-     * 建议保存至少包含以下信息：
-     * 1. 当前步骤ID (currentStepId)
-     * 2. 流程活动状态 (isActive)
-     * 3. 子类自定义的状态数据</p>
+     * <p>子类必须实现此方法以支持流程状态的持久化。</p>
      *
      * @param nbt 要写入的NBT复合标签
      */

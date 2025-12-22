@@ -384,7 +384,7 @@ public class KneadingProcess<T extends BlockEntity & Inventory> extends Abstract
     }
 
     @Override
-    protected void onStart() {
+    protected void onStart(World world, T blockEntit) {
         clear();
         flourCounts.clear();
         liquidCounts.clear();

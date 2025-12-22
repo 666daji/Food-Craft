@@ -53,7 +53,7 @@ public class PotsBlockEntity extends BlockEntity implements Inventory {
         // 如果没有流程，检查是否手持面粉开始新流程
         if (!kneadingProcess.isActive()) {
             if (KneadingProcess.isCanAddFlour(heldStack)) {
-                kneadingProcess.start();
+                kneadingProcess.start(world, this);
             } else {
                 return ActionResult.PASS;
             }

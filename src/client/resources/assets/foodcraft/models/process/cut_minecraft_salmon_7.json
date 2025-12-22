@@ -1,0 +1,106 @@
+{
+	"credit": "Made with Blockbench",
+	"texture_size": [32, 32],
+	"textures": {
+      "1": "foodcraft:block/cut_salmon"
+    },
+	"elements": [
+		{
+			"name": "body_back",
+			"from": [4.8, 0.1, 7.25],
+			"to": [9.8, 3.1, 9.25],
+			"rotation": {"angle": 0, "axis": "z", "origin": [8.3, 1.6, 1.25]},
+			"faces": {
+				"north": {"uv": [6, 7.5, 7.5, 10], "rotation": 270, "texture": "#1"},
+				"east": {"uv": [11.5, 11.5, 10, 10.5], "rotation": 90, "texture": "#1"},
+				"south": {"uv": [7.5, 7.5, 9, 10], "rotation": 90, "texture": "#1"},
+				"west": {"uv": [12.5, 8.5, 11, 9.5], "rotation": 90, "texture": "#1"},
+				"up": {"uv": [0, 10, 1, 12.5], "rotation": 90, "texture": "#1"},
+				"down": {"uv": [9, 9, 10, 11.5], "rotation": 90, "texture": "#1"}
+			}
+		},
+		{
+			"name": "tailfin",
+			"from": [4.8, 1.6, 9.25],
+			"to": [9.8, 1.6, 15.25],
+			"rotation": {"angle": 0, "axis": "x", "origin": [8.3, 1.6, 8.25]},
+			"faces": {
+				"north": {"uv": [0, 0, 0, 2.5], "rotation": 270, "texture": "#1"},
+				"east": {"uv": [0, 3, 0, 0], "rotation": 90, "texture": "#1"},
+				"south": {"uv": [0, 0, 0, 2.5], "rotation": 90, "texture": "#1"},
+				"west": {"uv": [0, 0, 0, 3], "rotation": 90, "texture": "#1"},
+				"up": {"uv": [0, 2.5, 3, 5], "rotation": 90, "texture": "#1"},
+				"down": {"uv": [0, 0, 3, 2.5], "rotation": 90, "texture": "#1"}
+			}
+		},
+		{
+			"name": "body_front",
+			"from": [4.75, 0.1, 5.25],
+			"to": [9.75, 3.1, 7.25],
+			"rotation": {"angle": 0, "axis": "z", "origin": [7.25, 1.6, 5.25]},
+			"faces": {
+				"north": {"uv": [3, 0, 4.5, 2.5], "rotation": 270, "texture": "#1"},
+				"east": {"uv": [12, 3, 10.5, 2], "rotation": 90, "texture": "#1"},
+				"south": {"uv": [3, 2.5, 4.5, 5], "rotation": 90, "texture": "#1"},
+				"west": {"uv": [12, 3, 10.5, 4], "rotation": 90, "texture": "#1"},
+				"up": {"uv": [9, 6.5, 10, 9], "rotation": 90, "texture": "#1"},
+				"down": {"uv": [9, 4, 10, 6.5], "rotation": 90, "texture": "#1"}
+			}
+		},
+		{
+			"name": "head",
+			"from": [5.75, 0.6, 2.25],
+			"to": [9.75, 2.6, 5.25],
+			"rotation": {"angle": 0, "axis": "z", "origin": [7.25, 1.6, 5.25]},
+			"faces": {
+				"north": {"uv": [10, 8.5, 11, 10.5], "rotation": 270, "texture": "#1"},
+				"east": {"uv": [2, 13, 1, 11.5], "rotation": 90, "texture": "#1"},
+				"south": {"uv": [10.5, 0, 11.5, 2], "rotation": 90, "texture": "#1"},
+				"west": {"uv": [3, 11.5, 2, 13], "rotation": 90, "texture": "#1"},
+				"up": {"uv": [9, 2, 10.5, 4], "rotation": 90, "texture": "#1"},
+				"down": {"uv": [9, 0, 10.5, 2], "rotation": 90, "texture": "#1"}
+			}
+		},
+		{
+			"from": [8.25, -0.4, 3.25],
+			"to": [9.25, 3.6, 4.25],
+			"rotation": {"angle": 0, "axis": "x", "origin": [7.25, 1.6, 5.25]},
+			"faces": {
+				"north": {"uv": [11.5, 1, 13.5, 1.5], "rotation": 270, "texture": "#1"},
+				"east": {"uv": [5, 12, 3, 11.5], "rotation": 90, "texture": "#1"},
+				"south": {"uv": [11.5, 1.5, 13.5, 2], "rotation": 90, "texture": "#1"},
+				"west": {"uv": [13.5, 4, 11.5, 4.5], "rotation": 90, "texture": "#1"},
+				"up": {"uv": [8.5, 10.5, 9, 11], "rotation": 90, "texture": "#1"},
+				"down": {"uv": [8.5, 10, 9, 10.5], "rotation": 90, "texture": "#1"}
+			}
+		}
+	],
+	"groups": [
+		{
+			"name": "生鲑鱼",
+			"origin": [2.25, 8, 11.85],
+			"color": 0,
+			"children": [
+				{
+					"name": "group",
+					"origin": [2.25, 8, 11.85],
+					"color": 0,
+					"children": [
+						{
+							"name": "group",
+							"origin": [2.25, 8, 11.85],
+							"color": 0,
+							"children": [0, 1]
+						}
+					]
+				},
+				{
+					"name": "group",
+					"origin": [2.25, 8, 11.85],
+					"color": 0,
+					"children": [2, 3, 4]
+				}
+			]
+		}
+	]
+}

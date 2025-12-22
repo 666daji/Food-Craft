@@ -21,6 +21,9 @@ public class FoodCraftModelLoader implements ModelLoadingPlugin {
      */
     private static final List<Identifier> MODELS_TO_LOAD = new ArrayList<>();
 
+    /** 菜刀插在案板上的效果 */
+    public static final Identifier BOARD_KITCHEN_KNIFE = new Identifier(FoodCraft.MOD_ID, "other/on_board_kitchen_knife");
+
     @Override
     public void onInitializeModelLoader(Context pluginContext) {
         MODELS_TO_LOAD.clear();
@@ -29,6 +32,8 @@ public class FoodCraftModelLoader implements ModelLoadingPlugin {
         registerAllFlourSackModels();
         registerAllCookingModels();
         registerDoughKneadingModel();
+        registerCuttingModels();
+        MODELS_TO_LOAD.add(BOARD_KITCHEN_KNIFE);
 
         // 将所有模型添加到加载上下文
         pluginContext.addModels(MODELS_TO_LOAD.toArray(new Identifier[0]));
@@ -113,6 +118,49 @@ public class FoodCraftModelLoader implements ModelLoadingPlugin {
         MODELS_TO_LOAD.add(createProcessModel("knead_knead_1"));
         MODELS_TO_LOAD.add(createProcessModel("knead_knead_2"));
         MODELS_TO_LOAD.add(createProcessModel("knead_knead_3"));
+    }
+
+    // =========== 切割流程 ===========
+
+    /**
+     * 注册所有切割模型
+     */
+    private void registerCuttingModels() {
+        registerCuttingModelsForItem(new Identifier("carrot"), 12);
+        registerCuttingModelsForItem(new Identifier("apple"), 6);
+        registerCuttingModelsForItem(new Identifier("cod"), 9);
+        registerCuttingModelsForItem(new Identifier("cooked_cod"), 9);
+        registerCuttingModelsForItem(new Identifier("salmon"), 7);
+        registerCuttingModelsForItem(new Identifier("cooked_salmon"), 6);
+    }
+
+    /**
+     * 为指定物品注册所有切割模型
+     */
+    public static void registerCuttingModelsForItem(Identifier itemId, int maxCuts) {
+        if (maxCuts < 1) {
+            LOGGER.warn("Max cuts {} is less than 1 for item {}, skipping cutting models",
+                    maxCuts, itemId);
+            return;
+        }
+
+        // 为每个切割次数注册模型
+        for (int cutCount = 1; cutCount <= maxCuts; cutCount++) {
+            Identifier modelId = createCuttingModel(itemId, cutCount);
+            MODELS_TO_LOAD.add(modelId);
+            LOGGER.debug("Registered cutting model: {} for item {} at cut {}",
+                    modelId, itemId, cutCount);
+        }
+    }
+
+    /**
+     * 创建切割模型标识符。
+     * <p>格式：foodcraft:process/cut_{namespace}_{itemPath}_{cutCount}</p>
+     */
+    public static Identifier createCuttingModel(Identifier itemId, int cutCount) {
+        String modelPath = String.format("cut_%s_%s_%d",
+                itemId.getNamespace(), itemId.getPath(), cutCount);
+        return new Identifier(FoodCraft.MOD_ID, "process/" + modelPath);
     }
 
     // =========== 辅助方法 ===========

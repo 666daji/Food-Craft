@@ -70,8 +70,6 @@ public class BreadBoatBlock extends SimpleFoodBlock {
         }
         // 如果是装满汤的面包船
         else {
-            int currentBites = state.get(BITES);
-
             // 如果玩家不能食用，返还对应的物品并破坏方块
             if (!player.canConsume(false)) {
                 if (!world.isClient) {
@@ -99,7 +97,11 @@ public class BreadBoatBlock extends SimpleFoodBlock {
         int currentBites = state.get(BITES);
 
         // 播放喝汤声音
-        world.playSound(player, pos, SoundEvents.ENTITY_GENERIC_DRINK, player.getSoundCategory(), 1.0F, 1.0F);
+        if (currentBites < 3) {
+            world.playSound(player, pos, SoundEvents.ENTITY_GENERIC_DRINK, player.getSoundCategory(), 1.0F, 1.0F);
+        } else {
+            world.playSound(player, pos, SoundEvents.ENTITY_GENERIC_EAT, player.getSoundCategory(), 1.0F, 1.0F);
+        }
 
         // 恢复饥饿值和饱和度（每次喝汤恢复1/maxUse的比例）
         player.getHungerManager().add(

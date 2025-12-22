@@ -1,0 +1,32 @@
+{
+  "type": "foodcraft:cut",
+  "input": {
+    "item": "minecraft:cooked_salmon"
+  },
+  "output": {
+    "item": "foodcraft:cooked_salmon_cubes",
+    "count": 1
+  },
+  "totalCuts": 6,
+  "defaultState": {},
+  "cutStates": {
+    "4": {
+      "0": {
+        "item": "foodcraft:cooked_salmon_cubes",
+        "count": 2
+      }
+    },
+    "5": {
+      "0": {
+        "item": "foodcraft:cooked_salmon_cubes",
+        "count": 2
+      }
+    },
+    "6": {
+      "0": {
+        "item": "foodcraft:cooked_salmon_cubes",
+        "count": 1
+      }
+    }
+  }
+}

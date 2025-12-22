@@ -20,5 +20,24 @@
       "foodcraft:block/combustion_firewood_4"
     ],
     "subtitle": "subtitle.foodcraft.combustion_firewood"
+  },
+  "cut": {
+    "sounds": [
+      "foodcraft:block/cut_1",
+      "foodcraft:block/cut_2"
+    ],
+    "subtitle": "subtitle.foodcraft.cut"
+  },
+  "kitchen_knife_place": {
+    "sounds": [
+      "foodcraft:block/kitchen_knife_place"
+    ],
+    "subtitle": "subtitle.foodcraft.kitchen_knife_place"
+  },
+  "kitchen_knife_fetch": {
+    "sounds": [
+      "foodcraft:block/kitchen_knife_fetch"
+    ],
+    "subtitle": "subtitle.foodcraft.kitchen_knife_fetch"
   }
 }

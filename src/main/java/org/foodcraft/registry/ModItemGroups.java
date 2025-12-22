@@ -36,7 +36,10 @@ public class ModItemGroups {
                             entries.add(ModItems.WOODEN_SHELF);
                             entries.add(ModItems.CUTTING_BOARD);
                             entries.add(ModItems.IRON_POTS);
+
+                            // 厨具
                             entries.add(ModItems.BREAD_SPATULA);
+                            entries.add(ModItems.KITCHEN_KNIFE);
 
                             // 粉尘
                             entries.add(ModItems.WHEAT_FLOUR);
@@ -67,6 +70,18 @@ public class ModItemGroups {
                             entries.add(ModItems.HARD_BREAD_BOAT);
                             entries.add(ModItems.MUSHROOM_STEW_HARD_BREAD_BOAT);
                             entries.add(ModItems.BEETROOT_SOUP_HARD_BREAD_BOAT);
+                            entries.add(ModItems.CARROT_SLICES);
+                            entries.add(ModItems.CARROT_HEAD);
+                            entries.add(ModItems.POTATO_CUBES);
+                            entries.add(ModItems.BAKED_POTATO_CUBES);
+                            entries.add(ModItems.APPLE_SLICES);
+                            entries.add(ModItems.COD_CUBES);
+                            entries.add(ModItems.COD_HEAD);
+                            entries.add(ModItems.COOKED_COD_CUBES);
+                            entries.add(ModItems.COOKED_COD_HEAD);
+                            entries.add(ModItems.SALMON_CUBES);
+                            entries.add(ModItems.COOKED_SALMON_CUBES);
+                            entries.add(ModItems.KITCHEN_WASTE);
 
                             //模具
                             entries.add(ModItems.CAKE_EMBRYO_MOLD);

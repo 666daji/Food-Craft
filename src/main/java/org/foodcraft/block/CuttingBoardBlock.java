@@ -9,7 +9,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.SwordItem;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.DirectionProperty;
 import net.minecraft.state.property.Properties;
@@ -42,11 +41,18 @@ public class CuttingBoardBlock extends UpPlaceBlock {
 
     @Override
     public VoxelShape getBaseShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
-        return state.get(FACING).getAxis() == Direction.Axis.X? SHAPE_X: SHAPE_Z;
+        return state.get(FACING).getAxis() == Direction.Axis.X ? SHAPE_X : SHAPE_Z;
     }
 
     @Override
     public boolean canFetched(UpPlaceBlockEntity blockEntity, ItemStack handStack) {
+        // 如果切菜流程在进行中，不允许取出物品
+        if (blockEntity instanceof CuttingBoardBlockEntity cuttingBoard) {
+            if (cuttingBoard.getCuttingProcess().isActive()) {
+                return false;
+            }
+        }
+
         Item contentItem = blockEntity.getContentItem();
 
         // 如果玩家手持物品为空或者与容器中物品不同，允许取出
@@ -56,6 +62,13 @@ public class CuttingBoardBlock extends UpPlaceBlock {
 
     @Override
     public boolean canPlace(UpPlaceBlockEntity blockEntity, ItemStack handStack) {
+        // 如果切菜流程在进行中，不允许放置新物品
+        if (blockEntity instanceof CuttingBoardBlockEntity cuttingBoard) {
+            if (cuttingBoard.getCuttingProcess().isActive()) {
+                return false;
+            }
+        }
+
         return blockEntity.isValidItem(handStack);
     }
 
@@ -69,17 +82,10 @@ public class CuttingBoardBlock extends UpPlaceBlock {
         ItemStack handStack = player.getStackInHand(hand);
         BlockEntity blockEntity = world.getBlockEntity(pos);
 
-        if (world.isClient) {
-            return ActionResult.SUCCESS;
-        }
-
         if (blockEntity instanceof CuttingBoardBlockEntity cuttingBoard) {
-            // 先尝试切割操作（手持剑且菜板上有物品）
-            if (handStack.getItem() instanceof SwordItem && !cuttingBoard.isEmpty()) {
-                ActionResult cutResult = cuttingBoard.tryCutItem(player, handStack);
-                if (cutResult.isAccepted()) {
-                    return cutResult;
-                }
+            // 尝试切割操作（手持剑）
+            if (cuttingBoard.tryCutItem(player, handStack, hand, hit).isAccepted()) {
+                return ActionResult.SUCCESS;
             }
 
             // 如果切割失败或条件不满足，执行父类逻辑（取出和放置）

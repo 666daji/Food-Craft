@@ -1,0 +1,18 @@
+{
+  "type": "foodcraft:cut",
+  "input": {
+    "item": "foodcraft:hard_bread"
+  },
+  "output": {
+    "item": "foodcraft:hard_bread_boat",
+    "count": 1
+  },
+  "totalCuts": 1,
+  "defaultState": {
+    "0": {
+      "item": "foodcraft:hard_bread_boat",
+      "count": 1
+    }
+  },
+  "cutStates": {}
+}

@@ -1,5 +1,6 @@
 package org.foodcraft.block;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockEntityProvider;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
@@ -69,7 +70,7 @@ public class FlourSackBlock extends ComplexFoodBlock implements BlockEntityProvi
     }
 
     @Override
-    protected void appendProperties(StateManager.Builder<net.minecraft.block.Block, BlockState> builder) {
+    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
         super.appendProperties(builder);
         builder.add(SHELF_INDEX);
     }

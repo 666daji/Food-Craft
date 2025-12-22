@@ -1,0 +1,50 @@
+{
+  "type": "foodcraft:cut",
+  "input": {
+    "item": "minecraft:carrot"
+  },
+  "output": {
+    "item": "foodcraft:carrot_slices",
+    "count": 1
+  },
+  "totalCuts": 12,
+  "defaultState": {},
+  "cutStates": {
+    "9": {
+      "0": {
+        "item": "foodcraft:carrot_slices",
+        "count": 2
+      },
+      "1": {
+        "item": "foodcraft:carrot_head",
+        "count": 1
+      }
+    },
+    "10": {
+      "0": {
+        "item": "foodcraft:carrot_slices",
+        "count": 2
+      },
+      "1": {
+        "item": "foodcraft:carrot_head",
+        "count": 1
+      }
+    },
+    "11": {
+      "0": {
+        "item": "foodcraft:carrot_slices",
+        "count": 2
+      },
+      "1": {
+        "item": "foodcraft:carrot_head",
+        "count": 1
+      }
+    },
+    "12": {
+      "0": {
+        "item": "foodcraft:carrot_slices",
+        "count": 1
+      }
+    }
+  }
+}

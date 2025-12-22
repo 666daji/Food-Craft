@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "foodcraft:block/kitchen_knife",
+      "y": 180
+    },
+    "facing=south": {
+      "model": "foodcraft:block/kitchen_knife"
+    },
+    "facing=east": {
+      "model": "foodcraft:block/kitchen_knife",
+      "y": 270
+    },
+    "facing=west": {
+      "model": "foodcraft:block/kitchen_knife",
+      "y": 90
+    }
+  }
+}

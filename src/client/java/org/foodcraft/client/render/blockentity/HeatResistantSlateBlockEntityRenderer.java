@@ -15,7 +15,6 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.RotationAxis;
 import net.minecraft.util.math.random.Random;
 import org.dfood.block.FoodBlock;
-import org.foodcraft.FoodCraft;
 import org.foodcraft.block.entity.HeatResistantSlateBlockEntity;
 import org.foodcraft.block.multi.MultiBlockReference;
 import org.foodcraft.registry.ModBlocks;

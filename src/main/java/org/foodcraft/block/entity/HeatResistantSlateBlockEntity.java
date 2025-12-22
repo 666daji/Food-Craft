@@ -35,8 +35,6 @@ import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
-import org.dfood.block.FoodBlock;
-import org.dfood.shape.FoodShapeHandle;
 import org.foodcraft.FoodCraft;
 import org.foodcraft.block.CombustionFirewoodBlock;
 import org.foodcraft.block.FirewoodBlock;
@@ -44,7 +42,7 @@ import org.foodcraft.block.HeatResistantSlateBlock;
 import org.foodcraft.block.MoldBlock;
 import org.foodcraft.block.multi.*;
 import org.foodcraft.item.MoldContentItem;
-import org.foodcraft.item.SpatulaItem;
+import org.foodcraft.item.ModSharpKitchenwareItem;
 import org.foodcraft.recipe.MoldRecipe;
 import org.foodcraft.recipe.StoveRecipe;
 import org.foodcraft.registry.ModBlockEntityTypes;
@@ -375,7 +373,7 @@ public class HeatResistantSlateBlockEntity extends UpPlaceBlockEntity implements
         super.onFetch(state, world, pos, player, hand, hit, fetchStacks);
         ItemStack handStack = player.getStackInHand(hand);
 
-        if (handStack.getItem() instanceof SpatulaItem){
+        if (handStack.getItem() instanceof ModSharpKitchenwareItem){
             handStack.damage(1, player, e -> e.sendEquipmentBreakStatus(EquipmentSlot.MAINHAND));
         }
     }

@@ -3,6 +3,9 @@ package org.foodcraft.block.process;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvent;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
@@ -128,6 +131,21 @@ public class StepExecutionContext<T> {
         if (!player.giveItemStack(stack)) {
             player.dropItem(stack, false);
         }
+    }
+
+    /**
+     * 在方块的位置播放一段声音。
+     * @param event 播放的声音事件
+     */
+    public void playSound(SoundEvent event) {
+        world.playSound(
+                null,
+                pos,
+                event,
+                SoundCategory.BLOCKS,
+                0.5F,
+                1.0F
+        );
     }
 
     /**

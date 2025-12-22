@@ -65,15 +65,25 @@ public class ModBlocks {
     public static final Block IRON_POTS = registerBlock("iron_pots",
             new PotsBlock(AbstractBlock.Settings.create()
                     .sounds(BlockSoundGroup.STONE).strength(0.5F, 0.6F).nonOpaque()));
+
+    // 厨具
     public static final Block BREAD_SPATULA = registerBlock("bread_spatula",
             ComplexFoodBlock.Builder.create()
                     .maxFood(1)
                     .useItemTranslationKey(false)
-                    .isFood(false)
                     .simpleShape(Block.createCuboidShape(0, 0, 0, 16, 1, 16))
                     .settings(AbstractBlock.Settings.create()
                             .sounds(BlockSoundGroup.STONE).strength(0.5F, 0.2F)
-                            .nonOpaque().requiresTool().pistonBehavior(PistonBehavior.BLOCK))
+                            .nonOpaque().pistonBehavior(PistonBehavior.BLOCK))
+                    .build());
+    public static final Block KITCHEN_KNIFE = registerBlock("kitchen_knife",
+            ComplexFoodBlock.Builder.create()
+                    .maxFood(1)
+                    .useItemTranslationKey(false)
+                    .simpleShape(Block.createCuboidShape(0, 0, 0, 16, 1, 16))
+                    .settings(AbstractBlock.Settings.create()
+                            .sounds(ModBlockSoundGroup.KITCHEN_KNIFE).strength(0.5F, 0.2F)
+                            .nonOpaque().pistonBehavior(PistonBehavior.BLOCK))
                     .build());
 
     // 粉尘袋
@@ -162,6 +172,103 @@ public class ModBlocks {
                     .nonOpaque().pistonBehavior(PistonBehavior.DESTROY),
             ((settings, integer) -> new BreadBoatBlock(settings, FoodShapeHandle.shapes.getShape(8),
                     integer, BreadBoatBlock.SoupType.BEETROOT_SOUP)), 4);
+
+    // 切片食物
+    public static final Block CARROT_SLICES = registerBlock("carrot_slices",
+            FoodBlock.Builder.create()
+                    .maxFood(3)
+                    .useItemTranslationKey(false)
+                    .settings(AbstractBlock.Settings.create()
+                            .strength(0.2F).nonOpaque()
+                            .pistonBehavior(PistonBehavior.DESTROY))
+                    .build());
+    public static final Block POTATO_CUBES = registerBlock("potato_cubes",
+            FoodBlock.Builder.create()
+                    .maxFood(1)
+                    .useItemTranslationKey(false)
+                    .settings(AbstractBlock.Settings.create()
+                            .strength(0.2F).nonOpaque()
+                            .pistonBehavior(PistonBehavior.DESTROY))
+                    .build());
+    public static final Block BAKED_POTATO_CUBES = registerBlock("baked_potato_cubes",
+            FoodBlock.Builder.create()
+                    .maxFood(1)
+                    .useItemTranslationKey(false)
+                    .settings(AbstractBlock.Settings.create()
+                            .strength(0.2F).nonOpaque()
+                            .pistonBehavior(PistonBehavior.DESTROY))
+                    .build());
+    public static final Block APPLE_SLICES = registerBlock("apple_slices",
+            FoodBlock.Builder.create()
+                    .maxFood(1)
+                    .useItemTranslationKey(false)
+                    .settings(AbstractBlock.Settings.create()
+                            .strength(0.2F).nonOpaque()
+                            .pistonBehavior(PistonBehavior.DESTROY))
+                    .build());
+    public static final Block COD_CUBES = registerBlock("cod_cubes",
+            FoodBlock.Builder.create()
+                    .maxFood(1)
+                    .useItemTranslationKey(false)
+                    .settings(AbstractBlock.Settings.create()
+                            .strength(0.2F).nonOpaque()
+                            .sounds(ModSoundGroups.FISH)
+                            .pistonBehavior(PistonBehavior.DESTROY))
+                    .build());
+    public static final Block COD_HEAD = registerBlock("cod_head",
+            FoodBlock.Builder.create()
+                    .maxFood(1)
+                    .useItemTranslationKey(false)
+                    .settings(AbstractBlock.Settings.create()
+                            .strength(0.2F).nonOpaque()
+                            .sounds(ModSoundGroups.FISH)
+                            .pistonBehavior(PistonBehavior.DESTROY))
+                    .build());
+    public static final Block COOKED_COD_CUBES = registerBlock("cooked_cod_cubes",
+            FoodBlock.Builder.create()
+                    .maxFood(1)
+                    .useItemTranslationKey(false)
+                    .settings(AbstractBlock.Settings.create()
+                            .strength(0.2F).nonOpaque()
+                            .sounds(ModSoundGroups.FISH)
+                            .pistonBehavior(PistonBehavior.DESTROY))
+                    .build());
+    public static final Block COOKED_COD_HEAD = registerBlock("cooked_cod_head",
+            FoodBlock.Builder.create()
+                    .maxFood(1)
+                    .useItemTranslationKey(false)
+                    .settings(AbstractBlock.Settings.create()
+                            .strength(0.2F).nonOpaque()
+                            .sounds(ModSoundGroups.FISH)
+                            .pistonBehavior(PistonBehavior.DESTROY))
+                    .build());
+    public static final Block SALMON_CUBES = registerBlock("salmon_cubes",
+            FoodBlock.Builder.create()
+                    .maxFood(1)
+                    .useItemTranslationKey(false)
+                    .settings(AbstractBlock.Settings.create()
+                            .strength(0.2F).nonOpaque()
+                            .sounds(ModSoundGroups.FISH)
+                            .pistonBehavior(PistonBehavior.DESTROY))
+                    .build());
+    public static final Block COOKED_SALMON_CUBES = registerBlock("cooked_salmon_cubes",
+            FoodBlock.Builder.create()
+                    .maxFood(1)
+                    .useItemTranslationKey(false)
+                    .settings(AbstractBlock.Settings.create()
+                            .strength(0.2F).nonOpaque()
+                            .sounds(ModSoundGroups.FISH)
+                            .pistonBehavior(PistonBehavior.DESTROY))
+                    .build());
+    public static final Block KITCHEN_WASTE = registerBlock("kitchen_waste",
+            FoodBlock.Builder.create()
+                    .maxFood(1)
+                    .useItemTranslationKey(false)
+                    .settings(AbstractBlock.Settings.create()
+                            .strength(0.2F).nonOpaque()
+                            .sounds(ModSoundGroups.FISH)
+                            .pistonBehavior(PistonBehavior.DESTROY))
+                    .build());
 
     // 模具
     public static final Block CAKE_EMBRYO_MOLD = registerBlock("cake_embryo_mold",

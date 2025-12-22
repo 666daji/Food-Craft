@@ -16,7 +16,7 @@ public class MoldBlockEntityRenderer extends SimpleUpPlaceBlockEntityRenderer<Mo
     }
 
     @Override
-    protected void ApplyTransformations(MatrixStack matrices) {
+    protected void ApplyTransformations(MoldBlockEntity entity, MatrixStack matrices) {
         matrices.translate(0.0, 0.1, 0.0);
     }
 }

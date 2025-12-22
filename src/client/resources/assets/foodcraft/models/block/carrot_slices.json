@@ -1,0 +1,64 @@
+{
+	"format_version": "1.9.0",
+	"credit": "Made with Blockbench",
+	"textures": {
+		"particle": "foodcraft:item/carrot_slices",
+		"carrot": "minecraft:block/carrot"
+	},
+	"elements": [
+		{
+			"from": [5.75, 2.35, 5.30858],
+			"to": [9.75, 3.6, 9.30858],
+			"rotation": {"angle": -22.5, "axis": "y", "origin": [7.75, -1.4, 7.30858]},
+			"faces": {
+				"north": {"uv": [0, 6, 0.625, 8], "rotation": 90, "texture": "#carrot"},
+				"east": {"uv": [4.625, 6, 4, 8], "rotation": 270, "texture": "#carrot"},
+				"south": {"uv": [9.375, 0, 10, 2], "rotation": 270, "texture": "#carrot"},
+				"west": {"uv": [6.625, 4, 6, 2], "rotation": 270, "texture": "#carrot"},
+				"up": {"uv": [6, 4, 8, 6], "rotation": 270, "texture": "#carrot"},
+				"down": {"uv": [0, 8, 2, 10], "rotation": 270, "texture": "#carrot"}
+			}
+		},
+		{
+			"from": [5.75, -0.05, 5.30858],
+			"to": [9.75, 1.2, 9.30858],
+			"rotation": {"angle": 22.5, "axis": "y", "origin": [7.75, -3.8, 7.30858]},
+			"faces": {
+				"north": {"uv": [0, 6, 0.625, 8], "rotation": 90, "texture": "#carrot"},
+				"east": {"uv": [4.625, 6, 4, 8], "rotation": 270, "texture": "#carrot"},
+				"south": {"uv": [9.375, 0, 10, 2], "rotation": 270, "texture": "#carrot"},
+				"west": {"uv": [6.625, 4, 6, 2], "rotation": 270, "texture": "#carrot"},
+				"up": {"uv": [6, 4, 8, 6], "rotation": 270, "texture": "#carrot"},
+				"down": {"uv": [0, 8, 2, 10], "rotation": 270, "texture": "#carrot"}
+			}
+		},
+		{
+			"from": [5.75, 1.15, 5.30858],
+			"to": [9.75, 2.4, 9.30858],
+			"rotation": {"angle": 0, "axis": "z", "origin": [7.75, -2.6, 7.30858]},
+			"faces": {
+				"north": {"uv": [0, 6, 0.625, 8], "rotation": 90, "texture": "#carrot"},
+				"east": {"uv": [4.625, 6, 4, 8], "rotation": 270, "texture": "#carrot"},
+				"south": {"uv": [9.375, 0, 10, 2], "rotation": 270, "texture": "#carrot"},
+				"west": {"uv": [6.625, 4, 6, 2], "rotation": 270, "texture": "#carrot"},
+				"up": {"uv": [6, 4, 8, 6], "rotation": 270, "texture": "#carrot"},
+				"down": {"uv": [0, 8, 2, 10], "rotation": 270, "texture": "#carrot"}
+			}
+		}
+	],
+	"groups": [
+		{
+			"name": "切胡萝卜11",
+			"origin": [8, 8, 8],
+			"color": 0,
+			"children": [
+				{
+					"name": "group",
+					"origin": [8, 8, 8],
+					"color": 0,
+					"children": [0, 1, 2]
+				}
+			]
+		}
+	]
+}
