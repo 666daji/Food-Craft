@@ -8,6 +8,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.StringIdentifiable;
 import net.minecraft.util.collection.DefaultedList;
@@ -114,9 +115,11 @@ public class KneadingProcess<T extends BlockEntity & Inventory> extends Abstract
                 return StepResult.fail(STEP_ADD_FLOUR, ActionResult.PASS);
             }
 
+            // 播放刷子清扫可疑沙砾的声音
+            context.playSound(SoundEvents.ITEM_BRUSH_BRUSHING_SAND_COMPLETE);
+
             // 服务器端执行
             if (context.isServerSide()) {
-
                 // 消耗一个面粉
                 if (!context.isCreateMode()){
                     heldStack.decrement(1);
@@ -154,6 +157,13 @@ public class KneadingProcess<T extends BlockEntity & Inventory> extends Abstract
             // 服务器端执行消耗和记录逻辑
             if (context.isServerSide()) {
                 LiquidType type = liquidType.get();
+
+                // 播放水瓶的声音
+                if (type == LiquidType.WATER) {
+                    context.playSound(SoundEvents.ITEM_BOTTLE_EMPTY);
+                } else if (type == LiquidType.MILK) {
+                    context.playSound(SoundEvents.ENTITY_COW_MILK);
+                }
 
                 // 消耗1个液体物品
                 if (!context.isCreateMode()) {
@@ -204,6 +214,9 @@ public class KneadingProcess<T extends BlockEntity & Inventory> extends Abstract
 
             // 服务器端执行消耗和存储逻辑
             if (context.isServerSide()) {
+                // 播放普通的石头放置音效
+                context.playSound(SoundEvents.BLOCK_STONE_PLACE);
+
                 // 先创建物品的副本，用于存储
                 ItemStack extraCopy = new ItemStack(heldStack.getItem(), 1);
 
