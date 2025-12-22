@@ -21,7 +21,6 @@ import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
-import org.foodcraft.FoodCraft;
 import org.foodcraft.block.CuttingBoardBlock;
 import org.foodcraft.block.process.CuttingProcess;
 import org.foodcraft.recipe.CutRecipe;
@@ -127,19 +126,6 @@ public class CuttingBoardBlockEntity extends UpPlaceBlockEntity {
             return ActionResult.SUCCESS;
         }
         return ActionResult.FAIL;
-    }
-
-    @Override
-    public void onFetch(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit, List<ItemStack> fetchStacks) {
-        if (fetchStacks.get(0).getItem().equals(ModItems.KITCHEN_KNIFE)) {
-            world.playSound(
-                    null, pos,
-                    ModSounds.KITCHEN_KNIFE_BOARD_FETCH, SoundCategory.BLOCKS, 1.0F, 1.0F
-            );
-
-            return;
-        }
-        super.onFetch(state, world, pos, player, hand, hit, fetchStacks);
     }
 
     /**

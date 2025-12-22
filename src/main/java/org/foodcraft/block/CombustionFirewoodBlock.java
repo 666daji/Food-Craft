@@ -152,10 +152,10 @@ public class CombustionFirewoodBlock extends BlockWithEntity {
                         pos.getX() + 0.5,
                         pos.getY() + 0.5,
                         pos.getZ() + 0.5,
-                        ModSounds.COMBUSTION_FIREWOOD,
+                        SoundEvents.BLOCK_CAMPFIRE_CRACKLE,
                         SoundCategory.BLOCKS,
-                        0.3F,
-                        0.3F,
+                        1.0F,
+                        1.0F,
                         true
                 );
             }

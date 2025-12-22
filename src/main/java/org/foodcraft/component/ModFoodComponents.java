@@ -14,6 +14,12 @@ public class ModFoodComponents {
     // 切片食物
     public static final FoodComponent CARROT_SLICES = createSimpleFoodComponent(2, 0.3f);
     public static final FoodComponent CARROT_HEAD = createSimpleFoodComponent(3, 0.3f);
+    public static final FoodComponent COD_CUBES = createSimpleFoodComponent(3, 0.3f);
+    public static final FoodComponent COD_HEAD = createSimpleFoodComponent(3, 0.3f);
+    public static final FoodComponent COOKED_COD_CUBES = createSimpleFoodComponent(3, 0.3f);
+    public static final FoodComponent COOKED_COD_HEAD = createSimpleFoodComponent(3, 0.3f);
+    public static final FoodComponent SALMON_CUBES = createSimpleFoodComponent(3, 0.3f);
+    public static final FoodComponent COOKED_SALMON_CUBES = createSimpleFoodComponent(3, 0.3f);
 
     // 饮品
     public static final FoodComponent MILK = createSimpleFoodComponent(1, 0.4f);

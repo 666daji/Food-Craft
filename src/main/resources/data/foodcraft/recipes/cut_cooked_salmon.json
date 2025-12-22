@@ -7,24 +7,32 @@
     "item": "foodcraft:cooked_salmon_cubes",
     "count": 1
   },
-  "totalCuts": 6,
+  "totalCuts": 7,
   "defaultState": {},
   "cutStates": {
-    "4": {
-      "0": {
-        "item": "foodcraft:cooked_salmon_cubes",
-        "count": 2
-      }
-    },
     "5": {
       "0": {
         "item": "foodcraft:cooked_salmon_cubes",
         "count": 2
+      },
+      "1": {
+        "item": "foodcraft:kitchen_waste",
+        "count": 1
       }
     },
     "6": {
       "0": {
         "item": "foodcraft:cooked_salmon_cubes",
+        "count": 1
+      },
+      "1": {
+        "item": "foodcraft:kitchen_waste",
+        "count": 1
+      }
+    },
+    "7": {
+      "0": {
+        "item": "foodcraft:kitchen_waste",
         "count": 1
       }
     }

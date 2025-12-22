@@ -131,7 +131,7 @@ public class FoodCraftModelLoader implements ModelLoadingPlugin {
         registerCuttingModelsForItem(new Identifier("cod"), 9);
         registerCuttingModelsForItem(new Identifier("cooked_cod"), 9);
         registerCuttingModelsForItem(new Identifier("salmon"), 7);
-        registerCuttingModelsForItem(new Identifier("cooked_salmon"), 6);
+        registerCuttingModelsForItem(new Identifier("cooked_salmon"), 7);
     }
 
     /**

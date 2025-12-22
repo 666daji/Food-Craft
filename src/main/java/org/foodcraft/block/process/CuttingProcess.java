@@ -10,6 +10,7 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.particle.ItemStackParticleEffect;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.recipe.Recipe;
+import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Identifier;
@@ -22,6 +23,7 @@ import org.foodcraft.recipe.CutRecipe;
 import org.foodcraft.registry.ModItems;
 import org.foodcraft.registry.ModRecipeTypes;
 import org.foodcraft.registry.ModSounds;
+import org.foodcraft.tag.ItemTags;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -62,7 +64,8 @@ public class CuttingProcess<T extends UpPlaceBlockEntity> extends AbstractProces
     public static final String STEP_SALMON_6 = "cut_salmon_6";
     public static final String STEP_SALMON_7 = "cut_salmon_7";
 
-    public static final String STEP_COOKED_SALMON_6 = "cut_salmon_6";
+    public static final String STEP_COOKED_SALMON_6 = "cut_cooked_salmon_6";
+    public static final String STEP_COOKED_SALMON_7 = "cut_cooked_salmon_7";
 
     /** 当前活跃的切割配方 */
     private CutRecipe currentRecipe;
@@ -109,8 +112,8 @@ public class CuttingProcess<T extends UpPlaceBlockEntity> extends AbstractProces
         salmonTriggers.put(6, STEP_SALMON_7);
 
         Map<Integer, String> cookedSalmonTriggers = new HashMap<>();
-        cookedSalmonTriggers.put(4, STEP_EMPTY);
-        cookedSalmonTriggers.put(5, STEP_COOKED_SALMON_6);
+        salmonTriggers.put(5, STEP_COOKED_SALMON_6);
+        salmonTriggers.put(6, STEP_COOKED_SALMON_7);
 
         SPECIAL_STEP_TRIGGERS.put(Items.CARROT, carrotTriggers);
         SPECIAL_STEP_TRIGGERS.put(Items.APPLE, appleTriggers);
@@ -199,6 +202,12 @@ public class CuttingProcess<T extends UpPlaceBlockEntity> extends AbstractProces
                 STEP_COOKED_SALMON_6,
                 new ItemStack(ModItems.COOKED_SALMON_CUBES, 1)
         );
+        registerQuickSpecialStep(
+                Items.COOKED_SALMON,
+                6,
+                STEP_COOKED_SALMON_7,
+                new ItemStack(ModItems.COOKED_SALMON_CUBES, 1)
+        );
     }
 
     // ============ 步骤实现类 ============
@@ -224,7 +233,8 @@ public class CuttingProcess<T extends UpPlaceBlockEntity> extends AbstractProces
             }
 
             // 播放音效和粒子效果
-            context.playSound(ModSounds.CUT);
+            SoundEvent cutSound = getCutSoundForItem(inputItem);
+            context.playSound(cutSound);
             spawnCuttingParticles(context.world, context.pos, inputItem);
 
             // 服务器端执行切割逻辑
@@ -346,6 +356,30 @@ public class CuttingProcess<T extends UpPlaceBlockEntity> extends AbstractProces
         if (!context.isCreateMode() && tool.isDamageable()) {
             tool.damage(1, context.player, p -> p.sendToolBreakStatus(context.hand));
         }
+    }
+
+    /**
+     * 根据物品类型返回相应的切割音效。
+     *
+     * @param itemStack 待切割的物品
+     * @return 对应的切割音效
+     */
+    private SoundEvent getCutSoundForItem(ItemStack itemStack) {
+        if (itemStack.isEmpty()) {
+            return ModSounds.CUT; // 默认音效
+        }
+
+        // 检查是否为肉类或鱼类
+        boolean isMeat = itemStack.isIn(ItemTags.MEAT);
+        boolean isFish = itemStack.isIn(ItemTags.FISH);
+
+        // 如果是肉类或鱼类，播放切肉音效
+        if (isMeat || isFish) {
+            return ModSounds.CUT_MEAT;
+        }
+
+        // 其他情况播放普通切割音效
+        return ModSounds.CUT;
     }
 
     /**

@@ -1,0 +1,7 @@
+{
+	"parent": "foodcraft:block/cod_cubes",
+	"textures": {
+		"11": "minecraft:block/cooked_cod",
+		"particle": "foodcraft:item/cooked_cod_cubes"
+	}
+}

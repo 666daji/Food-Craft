@@ -1,0 +1,6 @@
+{
+  "parent" : "foodcraft:process/cut_minecraft_salmon_7",
+  "textures": {
+    "1": "foodcraft:block/cooked_salmon_cubes"
+  }
+}

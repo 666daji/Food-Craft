@@ -1,0 +1,7 @@
+{
+  "parent": "foodcraft:block/salmon_cubes_2",
+  "textures": {
+    "11": "minecraft:block/cooked_salmon_cubes",
+    "particle": "foodcraft:item/cooked_salmon_cubes"
+  }
+}

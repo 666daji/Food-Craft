@@ -3,10 +3,7 @@
   "category": "misc",
   "ingredients": [
     {
-      "item": "foodcraft:dough"
-    },
-    {
-      "item": "foodcraft:salt_cubes"
+      "item": "foodcraft:salty_dough"
     }
   ],
   "result": {

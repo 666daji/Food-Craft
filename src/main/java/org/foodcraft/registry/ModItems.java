@@ -30,9 +30,9 @@ public class ModItems {
 
     // 厨具
     public static final Item BREAD_SPATULA = registerItem(ModBlocks.BREAD_SPATULA, new Item.Settings(),
-            ((block, settings) -> new ModSharpKitchenwareItem(block, settings, ModSharpKitchenwareItem.SpatulaMaterials.IRON)));
+            ((block, settings) -> new ModSharpKitchenwareItem(block, settings, ModSharpKitchenwareItem.SpatulaMaterials.BREAD_SPATULA)));
     public static final Item KITCHEN_KNIFE = registerItem(ModBlocks.KITCHEN_KNIFE, new Item.Settings(),
-            ((block, settings) -> new ModSharpKitchenwareItem(block, settings, ModSharpKitchenwareItem.SpatulaMaterials.STONE)));
+            ((block, settings) -> new ModSharpKitchenwareItem(block, settings, ModSharpKitchenwareItem.SpatulaMaterials.KITCHEN_KNIFE)));
 
     // 粉尘
     public static final Item WHEAT_FLOUR = registerItem("wheat_flour",
@@ -78,13 +78,13 @@ public class ModItems {
     public static final Item POTATO_CUBES = registerItem(ModBlocks.POTATO_CUBES, new Item.Settings().food(FoodComponents.POTATO));
     public static final Item BAKED_POTATO_CUBES = registerItem(ModBlocks.BAKED_POTATO_CUBES, new Item.Settings().food(FoodComponents.BAKED_POTATO));
     public static final Item APPLE_SLICES = registerItem(ModBlocks.APPLE_SLICES, new Item.Settings().food(FoodComponents.APPLE));
-    public static final Item COD_CUBES = registerItem(ModBlocks.COD_CUBES);
-    public static final Item COD_HEAD = registerItem(ModBlocks.COD_HEAD);
-    public static final Item COOKED_COD_CUBES = registerItem(ModBlocks.COOKED_COD_CUBES);
-    public static final Item COOKED_COD_HEAD = registerItem(ModBlocks.COOKED_COD_HEAD);
-    public static final Item SALMON_CUBES = registerItem(ModBlocks.SALMON_CUBES);
-    public static final Item COOKED_SALMON_CUBES = registerItem(ModBlocks.COOKED_SALMON_CUBES);
-    public static final Item KITCHEN_WASTE = registerItem(ModBlocks.KITCHEN_WASTE);
+    public static final Item COD_CUBES = registerItem(ModBlocks.COD_CUBES, new Item.Settings().food(ModFoodComponents.COD_CUBES));
+    public static final Item COD_HEAD = registerItem("cod_head", new Item(new Item.Settings().food(ModFoodComponents.COD_HEAD)));
+    public static final Item COOKED_COD_CUBES = registerItem(ModBlocks.COOKED_COD_CUBES, new Item.Settings().food(ModFoodComponents.COOKED_COD_CUBES));
+    public static final Item COOKED_COD_HEAD = registerItem("cooked_cod_head", new Item(new Item.Settings().food(ModFoodComponents.COOKED_COD_HEAD)));
+    public static final Item SALMON_CUBES = registerItem(ModBlocks.SALMON_CUBES, new Item.Settings().food(ModFoodComponents.SALMON_CUBES));
+    public static final Item COOKED_SALMON_CUBES = registerItem(ModBlocks.COOKED_SALMON_CUBES, new Item.Settings().food(ModFoodComponents.COOKED_SALMON_CUBES));
+    public static final Item KITCHEN_WASTE = registerItem("kitchen_waste", new Item(new Item.Settings()));
 
     // 模具
     public static final Item CAKE_DOUGH_CAKE_EMBRYO_MOLD = registerItem("cake_dough_cake_embryo_mold",

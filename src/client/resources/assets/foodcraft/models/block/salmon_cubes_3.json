@@ -1,0 +1,123 @@
+{
+	"format_version": "1.21.11",
+	"credit": "Made with Blockbench",
+	"texture_size": [32, 32],
+	"textures": {
+		"salmon_cubes": "foodcraft:block/salmon_cubes",
+      "particle": "foodcraft:item/salmon_cubes"
+
+    },
+	"elements": [
+		{
+			"name": "body_front",
+			"from": [12.09567, 0.1, 3.91903],
+			"to": [15.09567, 5.1, 6.91903],
+			"rotation": {"angle": -22.5, "axis": "y", "origin": [13.59567, 1.6, 4.91903]},
+			"faces": {
+				"north": {"uv": [4.5, 0, 6, 2.5], "texture": "#salmon_cubes"},
+				"east": {"uv": [4.5, 2.5, 6, 5], "texture": "#salmon_cubes"},
+				"south": {"uv": [0, 5, 1.5, 7.5], "texture": "#salmon_cubes"},
+				"west": {"uv": [1.5, 5, 3, 7.5], "texture": "#salmon_cubes"},
+				"up": {"uv": [2.5, 11.5, 1, 10], "texture": "#salmon_cubes"},
+				"down": {"uv": [4, 10, 2.5, 11.5], "texture": "#salmon_cubes"}
+			}
+		},
+		{
+			"name": "body_front",
+			"from": [9.09567, 0.1, 7.61903],
+			"to": [12.09567, 5.1, 10.61903],
+			"rotation": {"angle": 0, "axis": "y", "origin": [10.59567, 3.6, 10.61903]},
+			"faces": {
+				"north": {"uv": [6, 5, 7.5, 7.5], "texture": "#salmon_cubes"},
+				"east": {"uv": [0, 7.5, 1.5, 10], "texture": "#salmon_cubes"},
+				"south": {"uv": [7.5, 0, 9, 2.5], "texture": "#salmon_cubes"},
+				"west": {"uv": [1.5, 7.5, 3, 10], "texture": "#salmon_cubes"},
+				"up": {"uv": [7, 11.5, 5.5, 10], "texture": "#salmon_cubes"},
+				"down": {"uv": [11.5, 5.5, 10, 7], "texture": "#salmon_cubes"}
+			}
+		},
+		{
+			"name": "body_front",
+			"from": [8.09567, 0.1, 3.91903],
+			"to": [11.09567, 5.1, 6.91903],
+			"rotation": {"angle": -22.5, "axis": "y", "origin": [9.59567, 1.6, 4.91903]},
+			"faces": {
+				"north": {"uv": [4.5, 0, 6, 2.5], "texture": "#salmon_cubes"},
+				"east": {"uv": [4.5, 2.5, 6, 5], "texture": "#salmon_cubes"},
+				"south": {"uv": [0, 5, 1.5, 7.5], "texture": "#salmon_cubes"},
+				"west": {"uv": [1.5, 5, 3, 7.5], "texture": "#salmon_cubes"},
+				"up": {"uv": [2.5, 11.5, 1, 10], "texture": "#salmon_cubes"},
+				"down": {"uv": [4, 10, 2.5, 11.5], "texture": "#salmon_cubes"}
+			}
+		},
+		{
+			"name": "body_front",
+			"from": [5.09567, 0.1, 7.61903],
+			"to": [8.09567, 5.1, 10.61903],
+			"rotation": {"angle": 0, "axis": "y", "origin": [6.59567, 3.6, 10.61903]},
+			"faces": {
+				"north": {"uv": [6, 5, 7.5, 7.5], "texture": "#salmon_cubes"},
+				"east": {"uv": [0, 7.5, 1.5, 10], "texture": "#salmon_cubes"},
+				"south": {"uv": [7.5, 0, 9, 2.5], "texture": "#salmon_cubes"},
+				"west": {"uv": [1.5, 7.5, 3, 10], "texture": "#salmon_cubes"},
+				"up": {"uv": [7, 11.5, 5.5, 10], "texture": "#salmon_cubes"},
+				"down": {"uv": [11.5, 5.5, 10, 7], "texture": "#salmon_cubes"}
+			}
+		},
+		{
+			"name": "body_front",
+			"from": [4.09567, 0.1, 3.91903],
+			"to": [7.09567, 5.1, 6.91903],
+			"rotation": {"angle": -22.5, "axis": "y", "origin": [5.59567, 1.6, 4.91903]},
+			"faces": {
+				"north": {"uv": [4.5, 0, 6, 2.5], "texture": "#salmon_cubes"},
+				"east": {"uv": [4.5, 2.5, 6, 5], "texture": "#salmon_cubes"},
+				"south": {"uv": [0, 5, 1.5, 7.5], "texture": "#salmon_cubes"},
+				"west": {"uv": [1.5, 5, 3, 7.5], "texture": "#salmon_cubes"},
+				"up": {"uv": [2.5, 11.5, 1, 10], "texture": "#salmon_cubes"},
+				"down": {"uv": [4, 10, 2.5, 11.5], "texture": "#salmon_cubes"}
+			}
+		},
+		{
+			"name": "body_front",
+			"from": [1.09567, 0.1, 7.61903],
+			"to": [4.09567, 5.1, 10.61903],
+			"rotation": {"angle": 0, "axis": "y", "origin": [2.59567, 3.6, 10.61903]},
+			"faces": {
+				"north": {"uv": [6, 5, 7.5, 7.5], "texture": "#salmon_cubes"},
+				"east": {"uv": [0, 7.5, 1.5, 10], "texture": "#salmon_cubes"},
+				"south": {"uv": [7.5, 0, 9, 2.5], "texture": "#salmon_cubes"},
+				"west": {"uv": [1.5, 7.5, 3, 10], "texture": "#salmon_cubes"},
+				"up": {"uv": [7, 11.5, 5.5, 10], "texture": "#salmon_cubes"},
+				"down": {"uv": [11.5, 5.5, 10, 7], "texture": "#salmon_cubes"}
+			}
+		}
+	],
+	"groups": [
+		{
+			"name": "生鲑鱼",
+			"origin": [9.59567, 8, 11.61903],
+			"color": 0,
+			"children": [
+				{
+					"name": "group",
+					"origin": [9.59567, 8, 11.61903],
+					"color": 0,
+					"children": [0, 1]
+				},
+				{
+					"name": "group",
+					"origin": [9.59567, 8, 11.61903],
+					"color": 0,
+					"children": [2, 3]
+				},
+				{
+					"name": "group",
+					"origin": [9.59567, 8, 11.61903],
+					"color": 0,
+					"children": [4, 5]
+				}
+			]
+		}
+	]
+}

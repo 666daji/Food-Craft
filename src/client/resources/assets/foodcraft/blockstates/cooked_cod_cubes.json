@@ -1,0 +1,23 @@
+{
+  "variants": {
+    "facing=north,number_of_food=1": { "model": "foodcraft:block/cooked_cod_cubes", "y": 180 },
+    "facing=north,number_of_food=2": { "model": "foodcraft:block/cooked_cod_cubes_2", "y": 180 },
+    "facing=north,number_of_food=3": { "model": "foodcraft:block/cooked_cod_cubes_3", "y": 180 },
+    "facing=north,number_of_food=4": { "model": "foodcraft:block/cooked_cod_cubes_4", "y": 180 },
+
+    "facing=south,number_of_food=1": { "model": "foodcraft:block/cooked_cod_cubes" },
+    "facing=south,number_of_food=2": { "model": "foodcraft:block/cooked_cod_cubes_2" },
+    "facing=south,number_of_food=3": { "model": "foodcraft:block/cooked_cod_cubes_3" },
+    "facing=south,number_of_food=4": { "model": "foodcraft:block/cooked_cod_cubes_4" },
+
+    "facing=east,number_of_food=1": { "model": "foodcraft:block/cooked_cod_cubes", "y": 270 },
+    "facing=east,number_of_food=2": { "model": "foodcraft:block/cooked_cod_cubes_2", "y": 270 },
+    "facing=east,number_of_food=3": { "model": "foodcraft:block/cooked_cod_cubes_3", "y": 270 },
+    "facing=east,number_of_food=4": { "model": "foodcraft:block/cooked_cod_cubes_4", "y": 270 },
+
+    "facing=west,number_of_food=1": { "model": "foodcraft:block/cooked_cod_cubes", "y": 90 },
+    "facing=west,number_of_food=2": { "model": "foodcraft:block/cooked_cod_cubes_2", "y": 90 },
+    "facing=west,number_of_food=3": { "model": "foodcraft:block/cooked_cod_cubes_3", "y": 90 },
+    "facing=west,number_of_food=4": { "model": "foodcraft:block/cooked_cod_cubes_4", "y": 90 }
+  }
+}

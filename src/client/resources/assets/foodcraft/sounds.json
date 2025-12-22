@@ -12,21 +12,19 @@
     ],
     "subtitle": "subtitle.foodcraft.stone_grinding"
   },
-  "combustion_firewood": {
-    "sounds": [
-      "foodcraft:block/combustion_firewood_1",
-      "foodcraft:block/combustion_firewood_2",
-      "foodcraft:block/combustion_firewood_3",
-      "foodcraft:block/combustion_firewood_4"
-    ],
-    "subtitle": "subtitle.foodcraft.combustion_firewood"
-  },
   "cut": {
     "sounds": [
       "foodcraft:block/cut_1",
       "foodcraft:block/cut_2"
     ],
     "subtitle": "subtitle.foodcraft.cut"
+  },
+  "cut_meat": {
+    "sounds": [
+      "foodcraft:block/cut_meat_1",
+      "foodcraft:block/cut_meat_2"
+    ],
+    "subtitle": "subtitle.foodcraft.cut_meat"
   },
   "kitchen_knife_place": {
     "sounds": [
@@ -39,5 +37,11 @@
       "foodcraft:block/kitchen_knife_fetch"
     ],
     "subtitle": "subtitle.foodcraft.kitchen_knife_fetch"
+  },
+  "kitchen_knife_board_place": {
+    "sounds": [
+      "foodcraft:block/kitchen_knife_board_place"
+    ],
+    "subtitle": "subtitle.foodcraft.kitchen_knife_board_place"
   }
 }

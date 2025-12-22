@@ -1,6 +1,5 @@
 package org.foodcraft.block.process;
 
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
@@ -53,8 +52,7 @@ import java.util.Map;
  * }
  * }</pre>
  *
- * @param <T> 流程支持的操作类型，通常为方块实体类型或接口
- *           （如Inventory, UpPlaceBlockEntity等）
+ * @param <T> 流程支持的操作类型。子类定义泛型时，如果流程足够通用，则尽量不要绑定特定的方块实体。
  * @see Step
  * @see StepExecutionContext
  * @see StepResult
