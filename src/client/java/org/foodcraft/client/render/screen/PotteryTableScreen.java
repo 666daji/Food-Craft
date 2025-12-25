@@ -82,7 +82,8 @@ public class PotteryTableScreen extends HandledScreen<PotteryTableScreenHandler>
     public PotteryTableScreen(PotteryTableScreenHandler handler, PlayerInventory inventory, Text title) {
         super(handler, inventory, title);
         handler.setContentsChangedListener(this::onInventoryChange);
-        this.titleY--;
+        this.titleY = titleY + 6;
+        this.titleX = titleX + 8;
     }
 
     /**
@@ -165,6 +166,10 @@ public class PotteryTableScreen extends HandledScreen<PotteryTableScreenHandler>
             }
         }
     }
+
+    @Override
+    protected void drawForeground(DrawContext context, int mouseX, int mouseY) {
+        context.drawText(this.textRenderer, this.title, this.titleX, this.titleY, 4210752, false);}
 
     /**
      * 绘制鼠标悬停提示。
