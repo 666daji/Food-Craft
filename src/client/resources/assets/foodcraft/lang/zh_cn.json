@@ -37,9 +37,8 @@
   "item.foodcraft.cake_dough": "蛋糕面团",
   "block.foodcraft.baked_cake_embryo": "烤熟的蛋糕胚",
   "block.foodcraft.hard_bread_boat": "硬面包船",
+  "block.foodcraft.hard_bread_boat.soup": "装满了%s的硬面包船",
   "block.foodcraft.salty_dough": "咸面团",
-  "block.foodcraft.mushroom_stew_hard_bread_boat": "装满了蘑菇煲的硬面包船",
-  "block.foodcraft.beetroot_soup_hard_bread_boat": "装满了甜菜汤的硬面包船",
 
   "block.foodcraft.carrot_slices": "胡萝卜片",
   "item.foodcraft.carrot_head": "胡萝卜头",

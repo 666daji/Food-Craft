@@ -31,7 +31,6 @@ import org.foodcraft.block.entity.HeatResistantSlateBlockEntity;
 import org.foodcraft.block.entity.UpPlaceBlockEntity;
 import org.foodcraft.block.multi.MultiBlockHelper;
 import org.foodcraft.item.MoldContentItem;
-import org.foodcraft.item.ModSharpKitchenwareItem;
 import org.foodcraft.registry.ModBlockEntityTypes;
 import org.foodcraft.registry.ModItems;
 import org.foodcraft.registry.ModSounds;

@@ -48,14 +48,14 @@ public class FlourSackBlock extends ComplexFoodBlock implements BlockEntityProvi
     }
 
     @Override
-    public boolean isSame(ItemStack stack, @Nullable BlockEntity blockEntity) {
+    public boolean isSame(ItemStack stack, BlockState state, @Nullable BlockEntity blockEntity) {
         NbtCompound nbt = stack.getNbt();
 
         if (nbt == null || !nbt.contains(FlourSackItem.ITEMS_KEY)) {
             return false;
         }
 
-        return super.isSame(stack, blockEntity);
+        return super.isSame(stack, state, blockEntity);
     }
 
     /**

@@ -3,6 +3,7 @@ package org.foodcraft.registry;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.ExperienceDroppingBlock;
+import net.minecraft.block.MapColor;
 import net.minecraft.block.piston.PistonBehavior;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
@@ -10,8 +11,10 @@ import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.util.Identifier;
 import org.dfood.block.ComplexFoodBlock;
 import org.dfood.block.FoodBlock;
+import org.dfood.block.SimpleFoodBlock;
 import org.dfood.shape.FoodShapeHandle;
 import org.dfood.sound.ModSoundGroups;
+import org.dfood.util.DFoodUtils;
 import org.dfood.util.IntPropertyManager;
 import org.foodcraft.FoodCraft;
 import org.foodcraft.block.*;
@@ -97,148 +100,125 @@ public class ModBlocks {
     public static final Block MILK_POTION = registerBlock("milk_potion",
             FoodBlock.Builder.create()
                     .maxFood(3)
-                    .settings(AbstractBlock.Settings.create()
-                            .sounds(BlockSoundGroup.WOOL).strength(0.2F)
-                            .nonOpaque().pistonBehavior(PistonBehavior.DESTROY))
+                    .settings(DFoodUtils.getFoodBlockSettings()
+                            .sounds(ModSoundGroups.POTION)
+                            .mapColor(MapColor.WHITE))
                     .build());
 
     // 面食
     public static final Block DOUGH = registerBlock("dough",
-            new SimpleFoodBlock(AbstractBlock.Settings.create()
-                    .sounds(BlockSoundGroup.WOOL).strength(0.2F)
-                    .nonOpaque().pistonBehavior(PistonBehavior.DESTROY)));
+            new SimpleFoodBlock(DFoodUtils.getFoodBlockSettings()
+                    .sounds(BlockSoundGroup.WOOL)
+                    .mapColor(MapColor.WHITE)));
     public static final Block HARD_BREAD = registerBlock("hard_bread",
-            new SimpleFoodBlock(AbstractBlock.Settings.create()
-                    .sounds(BlockSoundGroup.WOOL).strength(0.2F)
-                    .nonOpaque().pistonBehavior(PistonBehavior.DESTROY)));
+            new SimpleFoodBlock(DFoodUtils.getFoodBlockSettings()
+                    .sounds(BlockSoundGroup.WOOL)
+                    .mapColor(MapColor.ORANGE)));
     public static final Block SMALL_BREAD_EMBRYO = registerBlock("small_bread_embryo",
             FoodBlock.Builder.create()
                     .maxFood(3)
                     .useItemTranslationKey(false)
-                    .settings(AbstractBlock.Settings.create()
-                            .sounds(BlockSoundGroup.WOOL).strength(0.2F)
-                            .nonOpaque().pistonBehavior(PistonBehavior.DESTROY))
+                    .settings(DFoodUtils.getFoodBlockSettings()
+                            .sounds(BlockSoundGroup.WOOL)
+                            .mapColor(MapColor.WHITE))
                     .build());
     public static final Block SMALL_BREAD = registerBlock("small_bread",
             FoodBlock.Builder.create()
                     .maxFood(2)
                     .useItemTranslationKey(false)
-                    .settings(AbstractBlock.Settings.create()
-                            .sounds(BlockSoundGroup.WOOL).strength(0.2F)
-                            .nonOpaque().pistonBehavior(PistonBehavior.DESTROY))
+                    .settings(DFoodUtils.getFoodBlockSettings()
+                            .sounds(BlockSoundGroup.WOOL)
+                            .mapColor(MapColor.ORANGE))
                     .build());
     public static final Block BAGUETTE = registerBlock("baguette",
-            new SimpleFoodBlock(AbstractBlock.Settings.create()
-                    .sounds(BlockSoundGroup.WOOL).strength(0.2F)
-                    .nonOpaque().pistonBehavior(PistonBehavior.DESTROY)));
+            new SimpleFoodBlock(DFoodUtils.getFoodBlockSettings()
+                    .sounds(BlockSoundGroup.WOOL)
+                    .mapColor(MapColor.ORANGE)));
     public static final Block BAGUETTE_EMBRYO = registerBlock("baguette_embryo",
-            new SimpleFoodBlock(AbstractBlock.Settings.create()
-                    .sounds(BlockSoundGroup.WOOL).strength(0.2F)
-                    .nonOpaque().pistonBehavior(PistonBehavior.DESTROY)));
+            new SimpleFoodBlock(DFoodUtils.getFoodBlockSettings()
+                    .sounds(BlockSoundGroup.WOOL)
+                    .mapColor(MapColor.WHITE)));
     public static final Block TOAST_EMBRYO = registerBlock("toast_embryo",
-            new SimpleFoodBlock(AbstractBlock.Settings.create()
-                    .sounds(BlockSoundGroup.WOOL).strength(0.2F)
-                    .nonOpaque().pistonBehavior(PistonBehavior.DESTROY)));
+            new SimpleFoodBlock(DFoodUtils.getFoodBlockSettings()
+                    .sounds(BlockSoundGroup.WOOL)
+                    .mapColor(MapColor.WHITE)));
     public static final Block TOAST = registerBlock("toast",
-            new SimpleFoodBlock(AbstractBlock.Settings.create()
-                    .sounds(BlockSoundGroup.WOOL).strength(0.2F)
-                    .nonOpaque().pistonBehavior(PistonBehavior.DESTROY)));
+            new SimpleFoodBlock(DFoodUtils.getFoodBlockSettings()
+                    .sounds(BlockSoundGroup.WOOL)
+                    .mapColor(MapColor.ORANGE)));
     public static final Block CAKE_EMBRYO = registerBlock("cake_embryo",
-            new SimpleFoodBlock(AbstractBlock.Settings.create()
-                    .sounds(BlockSoundGroup.WOOL).strength(0.2F)
-                    .nonOpaque().pistonBehavior(PistonBehavior.DESTROY)));
+            new SimpleFoodBlock(DFoodUtils.getFoodBlockSettings()
+                    .sounds(BlockSoundGroup.WOOL)
+                    .mapColor(MapColor.WHITE)));
     public static final Block BAKED_CAKE_EMBRYO = registerBlock("baked_cake_embryo",
-            new SimpleFoodBlock(AbstractBlock.Settings.create()
-                    .sounds(BlockSoundGroup.WOOL).strength(0.2F)
-                    .nonOpaque().pistonBehavior(PistonBehavior.DESTROY)));
+            new SimpleFoodBlock(DFoodUtils.getFoodBlockSettings()
+                    .sounds(BlockSoundGroup.WOOL)
+                    .mapColor(MapColor.WHITE)));
     public static final Block SALTY_DOUGH = registerBlock("salty_dough",
-            new SimpleFoodBlock(AbstractBlock.Settings.create()
-                    .sounds(BlockSoundGroup.WOOL).strength(0.2F)
-                    .nonOpaque().pistonBehavior(PistonBehavior.DESTROY)));
-    public static final Block HARD_BREAD_BOAT = registerBreadBoatBlock("hard_bread_boat",
-            AbstractBlock.Settings.create().sounds(BlockSoundGroup.WOOL).strength(0.2F)
-                    .nonOpaque().pistonBehavior(PistonBehavior.DESTROY),
-            ((settings, integer) -> new BreadBoatBlock(settings, FoodShapeHandle.shapes.getShape(8), integer,
-                    BreadBoatBlock.SoupType.EMPTY)), 4);
-    public static final Block MUSHROOM_STEW_HARD_BREAD_BOAT = registerBreadBoatBlock("mushroom_stew_hard_bread_boat",
-            AbstractBlock.Settings.create().sounds(BlockSoundGroup.WOOL).strength(0.2F)
-                    .nonOpaque().pistonBehavior(PistonBehavior.DESTROY),
-            ((settings, integer) -> new BreadBoatBlock(settings, FoodShapeHandle.shapes.getShape(8),
-                    integer, BreadBoatBlock.SoupType.MUSHROOM_STEW)), 4);
-    public static final Block BEETROOT_SOUP_HARD_BREAD_BOAT = registerBreadBoatBlock("beetroot_soup_hard_bread_boat",
-            AbstractBlock.Settings.create().sounds(BlockSoundGroup.WOOL).strength(0.2F)
-                    .nonOpaque().pistonBehavior(PistonBehavior.DESTROY),
-            ((settings, integer) -> new BreadBoatBlock(settings, FoodShapeHandle.shapes.getShape(8),
-                    integer, BreadBoatBlock.SoupType.BEETROOT_SOUP)), 4);
+            new SimpleFoodBlock(DFoodUtils.getFoodBlockSettings()
+                    .sounds(BlockSoundGroup.WOOL)
+                    .mapColor(MapColor.WHITE)));
+    public static final Block SOUP_HARD_BREAD_BOAT = registerEdibleContainerBlock("soup_hard_bread_boat",
+            DFoodUtils.getFoodBlockSettings().sounds(BlockSoundGroup.WOOL).mapColor(MapColor.ORANGE),
+            ((settings, maxUse) -> new EdibleContainerBlock(settings, FoodShapeHandle.shapes.getShape(8),
+                    maxUse, ModEnforceAsItems.HARD_BREAD_BOAT)), 4);
+    public static final Block HARD_BREAD_BOAT = registerBlock("hard_bread_boat",
+            new EmptyEdibleContainerBlock(DFoodUtils.getFoodBlockSettings()
+                    .sounds(BlockSoundGroup.WOOL).mapColor(MapColor.ORANGE),
+                    (EdibleContainerBlock) SOUP_HARD_BREAD_BOAT));
 
     // 切片食物
     public static final Block CARROT_SLICES = registerBlock("carrot_slices",
             FoodBlock.Builder.create()
                     .maxFood(3)
                     .useItemTranslationKey(false)
-                    .settings(AbstractBlock.Settings.create()
-                            .strength(0.2F).nonOpaque()
-                            .pistonBehavior(PistonBehavior.DESTROY))
+                    .settings(DFoodUtils.getFoodBlockSettings())
                     .build());
     public static final Block POTATO_CUBES = registerBlock("potato_cubes",
             FoodBlock.Builder.create()
                     .maxFood(1)
                     .useItemTranslationKey(false)
-                    .settings(AbstractBlock.Settings.create()
-                            .strength(0.2F).nonOpaque()
-                            .pistonBehavior(PistonBehavior.DESTROY))
+                    .settings(DFoodUtils.getFoodBlockSettings())
                     .build());
     public static final Block BAKED_POTATO_CUBES = registerBlock("baked_potato_cubes",
             FoodBlock.Builder.create()
                     .maxFood(1)
                     .useItemTranslationKey(false)
-                    .settings(AbstractBlock.Settings.create()
-                            .strength(0.2F).nonOpaque()
-                            .pistonBehavior(PistonBehavior.DESTROY))
+                    .settings(DFoodUtils.getFoodBlockSettings())
                     .build());
     public static final Block APPLE_SLICES = registerBlock("apple_slices",
             FoodBlock.Builder.create()
                     .maxFood(2)
                     .useItemTranslationKey(false)
-                    .settings(AbstractBlock.Settings.create()
-                            .strength(0.2F).nonOpaque()
-                            .pistonBehavior(PistonBehavior.DESTROY))
+                    .settings(DFoodUtils.getFoodBlockSettings())
                     .build());
     public static final Block COD_CUBES = registerBlock("cod_cubes",
             FoodBlock.Builder.create()
                     .maxFood(4)
                     .useItemTranslationKey(false)
-                    .settings(AbstractBlock.Settings.create()
-                            .strength(0.2F).nonOpaque()
-                            .sounds(ModSoundGroups.FISH)
-                            .pistonBehavior(PistonBehavior.DESTROY))
+                    .settings(DFoodUtils.getFoodBlockSettings()
+                            .sounds(ModSoundGroups.FISH))
                     .build());
     public static final Block COOKED_COD_CUBES = registerBlock("cooked_cod_cubes",
             FoodBlock.Builder.create()
                     .maxFood(4)
                     .useItemTranslationKey(false)
-                    .settings(AbstractBlock.Settings.create()
-                            .strength(0.2F).nonOpaque()
-                            .sounds(ModSoundGroups.FISH)
-                            .pistonBehavior(PistonBehavior.DESTROY))
+                    .settings(DFoodUtils.getFoodBlockSettings()
+                            .sounds(ModSoundGroups.FISH))
                     .build());
     public static final Block SALMON_CUBES = registerBlock("salmon_cubes",
             FoodBlock.Builder.create()
                     .maxFood(3)
                     .useItemTranslationKey(false)
-                    .settings(AbstractBlock.Settings.create()
-                            .strength(0.2F).nonOpaque()
-                            .sounds(ModSoundGroups.FISH)
-                            .pistonBehavior(PistonBehavior.DESTROY))
+                    .settings(DFoodUtils.getFoodBlockSettings()
+                            .sounds(ModSoundGroups.FISH))
                     .build());
     public static final Block COOKED_SALMON_CUBES = registerBlock("cooked_salmon_cubes",
             FoodBlock.Builder.create()
                     .maxFood(3)
                     .useItemTranslationKey(false)
-                    .settings(AbstractBlock.Settings.create()
-                            .strength(0.2F).nonOpaque()
-                            .sounds(ModSoundGroups.FISH)
-                            .pistonBehavior(PistonBehavior.DESTROY))
+                    .settings(DFoodUtils.getFoodBlockSettings()
+                            .sounds(ModSoundGroups.FISH))
                     .build());
 
     // 模具
@@ -268,9 +248,7 @@ public class ModBlocks {
 
     // 陶制品
     public static final Block CLAY_POTS_EMBRYO = registerBlock("clay_pots_embryo",
-            new SimpleFoodBlock(AbstractBlock.Settings.create()
-                    .sounds(BlockSoundGroup.STONE).strength(0.5F, 0.6F).nonOpaque(),
-                    false, PotsBlock.SHAPE));
+            new SimpleFoodBlock(DFoodUtils.getFoodBlockSettings(), false, PotsBlock.SHAPE));
     public static final Block CLAY_POTS = registerBlock("clay_pots",
             new PotsBlock(AbstractBlock.Settings.create()
                     .sounds(BlockSoundGroup.STONE).strength(0.5F, 0.6F).nonOpaque()));
@@ -278,32 +256,27 @@ public class ModBlocks {
             FoodBlock.Builder.create()
                     .maxFood(4)
                     .useItemTranslationKey(false)
-                    .settings(AbstractBlock.Settings.create()
-                            .sounds(BlockSoundGroup.STONE).strength(0.5F, 0.6F).nonOpaque())
+                    .settings(DFoodUtils.getFoodBlockSettings().mapColor(MapColor.BROWN))
                     .build());
     public static final Block FLOWER_POT_COOKING = registerBlock("flower_pot_cooking",
             FoodBlock.Builder.create()
                 .maxFood(4)
                 .useItemTranslationKey(false)
-                .settings(AbstractBlock.Settings.create()
-                        .sounds(BlockSoundGroup.STONE).strength(0.5F, 0.6F).nonOpaque())
+                .settings(DFoodUtils.getFoodBlockSettings())
                 .build());
 
-    /**
-     * 注册一般方块
-     * @param name 方块id
-     * @param block 方块
-     * @return 成功注册的方块
-     */
+    // ===================== 注册方法 =====================
+
     public static Block registerBlock(String name, Block block) {
         return Registry.register(Registries.BLOCK, new Identifier(FoodCraft.MOD_ID, name), block);
     }
 
-    public static Block registerBreadBoatBlock(String name, AbstractBlock.Settings settings,
-                                               BiFunction<AbstractBlock.Settings, Integer, Block> blockCreator, int maxUse) {
+    public static Block registerEdibleContainerBlock(String name, AbstractBlock.Settings settings,
+                                                     BiFunction<AbstractBlock.Settings, Integer, EdibleContainerBlock> blockCreator,
+                                                     int maxUse) {
         IntPropertyManager.preCache("bites", 0, maxUse);
         Block block = blockCreator.apply(settings, maxUse);
-        return Registry.register(Registries.BLOCK, new Identifier(FoodCraft.MOD_ID, name), block);
+        return registerBlock(name, block);
     }
 
     public static void registerModBlocks() {}
