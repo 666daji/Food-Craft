@@ -1,8 +1,8 @@
-package org.foodcraft.client.mixin;
+package org.foodcraft.client.render.block;
 
+import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.client.color.block.BlockColors;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
@@ -16,23 +16,13 @@ import org.foodcraft.integration.dfood.AssistedBlocks;
 import org.foodcraft.item.FlourItem;
 import org.foodcraft.registry.ModBlocks;
 import org.jetbrains.annotations.Nullable;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Unique;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(BlockColors.class)
-public class BlockColorsMixin {
-
-    @Inject(method = "create", at = @At("RETURN"))
-    private static void registerFlourSackColor(CallbackInfoReturnable<BlockColors> cir) {
-        BlockColors blockColors = cir.getReturnValue();
-        blockColors.registerColorProvider(BlockColorsMixin::getFlourSackColor, ModBlocks.FLOUR_SACK);
-        blockColors.registerColorProvider((state, world, pos, tintIndex) -> tintIndex != -1? 4159204: -1, AssistedBlocks.CRIPPLED_WATER_BUCKET);
+public class ModBlockColors {
+    public static void registryColors() {
+        ColorProviderRegistry.BLOCK.register(ModBlockColors::getFlourSackColor, ModBlocks.FLOUR_SACK);
+        ColorProviderRegistry.BLOCK.register((state, world, pos, tintIndex) -> tintIndex != -1? 4159204: -1, AssistedBlocks.CRIPPLED_WATER_BUCKET);
     }
 
-    @Unique
     private static int getFlourSackColor(BlockState state, @Nullable BlockRenderView world, @Nullable BlockPos pos, int tintIndex) {
 
         // 检查必要的参数
@@ -56,7 +46,6 @@ public class BlockColorsMixin {
         }
     }
 
-    @Unique
     private static int getShelfFlourSackColor(ShelfBlockEntity shelfBlockEntity, BlockState state, int tintIndex) {
         // 获取架子索引
         int shelfIndex = 0;
@@ -79,7 +68,6 @@ public class BlockColorsMixin {
         return getFlourColorFromShelf(shelfBlockEntity, shelfIndex, tintIndex);
     }
 
-    @Unique
     private static int getDirectFlourSackColor(FlourSackBlockEntity flourSackBlockEntity, int tintIndex) {
         int sackCount = flourSackBlockEntity.getNbtCount();
 
@@ -92,7 +80,6 @@ public class BlockColorsMixin {
         return -1;
     }
 
-    @Unique
     private static int getFlourColorFromShelf(ShelfBlockEntity shelfBlockEntity, int shelfIndex, int tintIndex) {
         try {
             NbtList contentData = shelfBlockEntity.getContentData();

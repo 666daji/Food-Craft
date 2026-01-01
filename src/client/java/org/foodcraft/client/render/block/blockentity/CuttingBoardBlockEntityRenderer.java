@@ -1,4 +1,4 @@
-package org.foodcraft.client.render.blockentity;
+package org.foodcraft.client.render.block.blockentity;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.client.render.OverlayTexture;

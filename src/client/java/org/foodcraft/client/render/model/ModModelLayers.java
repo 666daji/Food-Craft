@@ -4,8 +4,8 @@ import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.minecraft.client.render.entity.model.EntityModelLayer;
 import net.minecraft.util.Identifier;
 import org.foodcraft.FoodCraft;
-import org.foodcraft.client.render.blockentity.GrindingStoneBlockEntityRenderer;
-import org.foodcraft.client.render.blockentity.PotteryTableBlockEntityRenderer;
+import org.foodcraft.client.render.block.blockentity.GrindingStoneBlockEntityRenderer;
+import org.foodcraft.client.render.block.blockentity.PotteryTableBlockEntityRenderer;
 
 public class ModModelLayers {
     public static final EntityModelLayer GRINDING_STONE = registerMain("grinding_stone", GrindingStoneBlockEntityRenderer::getTexturedModelData);
