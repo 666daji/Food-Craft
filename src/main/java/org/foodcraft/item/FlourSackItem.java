@@ -24,6 +24,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+/**
+ * 是专门用于存放{@linkplain FlourItem}的袋子。
+ */
 public class FlourSackItem extends BlockItem {
     public static final String STORED_ITEM_KEY = "StoredFlour";  // 存储完整物品堆栈
     private static final int MAX_STORAGE = 16;

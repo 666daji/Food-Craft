@@ -25,6 +25,8 @@ import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldAccess;
+import net.minecraft.world.WorldView;
 import org.foodcraft.block.entity.GrindingStoneBlockEntity;
 import org.foodcraft.registry.ModBlockEntityTypes;
 import org.foodcraft.registry.ModSounds;
@@ -135,6 +137,26 @@ public class GrindingStoneBlock extends BlockWithEntity {
                 world.spawnEntity(itemEntity);
             }
         }
+    }
+
+    @Override
+    public boolean canPlaceAt(BlockState state, WorldView world, BlockPos pos) {
+        for (Direction direction : Direction.Type.HORIZONTAL) {
+            if (!world.getBlockState(pos.offset(direction)).isAir()) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    @Override
+    public BlockState getStateForNeighborUpdate(
+            BlockState state, Direction direction, BlockState neighborState, WorldAccess world, BlockPos pos, BlockPos neighborPos
+    ) {
+        return !state.canPlaceAt(world, pos)
+                ? Blocks.AIR.getDefaultState()
+                : super.getStateForNeighborUpdate(state, direction, neighborState, world, pos, neighborPos);
     }
 
     @Override

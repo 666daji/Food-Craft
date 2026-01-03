@@ -1,4 +1,4 @@
-package org.foodcraft.client.render.item;
+package org.foodcraft.client.render.item.replacer;
 
 import org.foodcraft.registry.ModItems;
 
