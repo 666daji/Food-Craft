@@ -178,7 +178,7 @@ public class ShelfBlockEntity extends UpPlaceBlockEntity {
                 // 如果是粉尘袋，检查是否有内容物
                 if (stack.getItem() instanceof BlockItem blockItem &&
                         blockItem.getBlock() instanceof FlourSackBlock) {
-                    return FlourSackItem.getFirstBundledStack(stack).isPresent();
+                    return FlourSackItem.getBundledStack(stack).isPresent();
                 }
                 return true;
             }
@@ -475,16 +475,20 @@ public class ShelfBlockEntity extends UpPlaceBlockEntity {
             return;
         }
 
-        Optional<ItemStack> flourContent = FlourSackItem.getFirstBundledStack(flourSack);
+        Optional<ItemStack> flourContent = FlourSackItem.getBundledStack(flourSack);
         if (flourContent.isPresent()) {
             NbtCompound content = new NbtCompound();
             content.putByte("Type", CONTENT_TYPE_FLOUR);
 
+            // 保存完整的物品堆栈NBT到"flour"标签中
             NbtCompound flourNbt = new NbtCompound();
             flourContent.get().writeNbt(flourNbt);
             content.put("flour", flourNbt);
 
             this.contentData.set(slot, content);
+
+            // 重要：清空粉尘袋物品的NBT，因为内容物已保存到contentData
+            flourSack.removeSubNbt(FlourSackItem.STORED_ITEM_KEY);
         }
     }
 
@@ -498,21 +502,18 @@ public class ShelfBlockEntity extends UpPlaceBlockEntity {
 
         NbtCompound content = this.contentData.getCompound(slot);
         if (content.getByte("Type") == CONTENT_TYPE_FLOUR && content.contains("flour")) {
+            // 从contentData获取保存的物品堆栈NBT
             NbtCompound flourNbt = content.getCompound("flour");
-            ItemStack flourStack = ItemStack.fromNbt(flourNbt);
 
-            // 创建带有内容物的粉尘袋
-            ItemStack resultSack = new ItemStack(flourSack.getItem());
-            NbtCompound nbt = new NbtCompound();
-            NbtList items = new NbtList();
-            NbtCompound itemNbt = new NbtCompound();
+            // 恢复粉尘袋内容物
+            ItemStack resultSack = flourSack.copy();
+            NbtCompound nbt = resultSack.getOrCreateNbt();
 
-            flourStack.writeNbt(itemNbt);
-            items.add(itemNbt);
-            nbt.put("Items", items);
+            // 使用新的STORED_ITEM_KEY存储完整的物品堆栈
+            nbt.put(FlourSackItem.STORED_ITEM_KEY, flourNbt);
             resultSack.setNbt(nbt);
 
-            // 清除内容数据
+            // 清除contentData
             clearContentData(slot);
 
             return resultSack;

@@ -28,7 +28,7 @@ public class FlourSackBlockEntity extends ComplexFoodBlockEntity {
     public int getFlourColor(int index) {
         NbtCompound nbt = getNbtAt(index);
         if (nbt != null && !nbt.isEmpty()) {
-            Optional<ItemStack> sack = FlourSackItem.getFirstBundledStack(getSackStack(index));
+            Optional<ItemStack> sack = FlourSackItem.getBundledStack(getSackStack(index));
             if (sack.isPresent() && sack.get().getItem() instanceof FlourItem flourItem) {
                 return flourItem.getColor();
             }

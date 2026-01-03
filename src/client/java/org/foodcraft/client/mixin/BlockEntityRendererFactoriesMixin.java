@@ -15,8 +15,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(BlockEntityRendererFactories.class)
 public abstract class BlockEntityRendererFactoriesMixin {
     @Shadow
-    public static <T extends BlockEntity> void register(BlockEntityType<? extends T> type, BlockEntityRendererFactory<T> factory) {
-    }
+    public static <T extends BlockEntity> void register(BlockEntityType<? extends T> type, BlockEntityRendererFactory<T> factory) {}
 
     @Inject(method = "<clinit>", at = @At("RETURN"))
     private static void registerBlockEntityRenderers(CallbackInfo ci) {

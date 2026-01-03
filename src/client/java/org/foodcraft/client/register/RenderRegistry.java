@@ -1,4 +1,4 @@
-package org.foodcraft.client.render;
+package org.foodcraft.client.register;
 
 import net.minecraft.client.gui.screen.ingame.HandledScreens;
 import org.foodcraft.client.render.block.ModBlockColors;

@@ -23,7 +23,7 @@ public class FlourSackModelReplacer {
         // 检查是否为粉尘袋物品
         if (stack.getItem() instanceof FlourSackItem) {
             // 获取粉尘袋中的内容物
-            Optional<ItemStack> content = FlourSackItem.getFirstBundledStack(stack);
+            Optional<ItemStack> content = FlourSackItem.getBundledStack(stack);
 
             if (content.isPresent()) {
                 ItemStack flourStack = content.get();

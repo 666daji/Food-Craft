@@ -1,8 +1,7 @@
 package org.foodcraft.client;
 
 import net.fabricmc.api.ClientModInitializer;
-import org.foodcraft.client.register.ModFabricEvent;
-import org.foodcraft.client.render.RenderRegistry;
+import org.foodcraft.client.register.*;
 
 public class FoodCraftClient implements ClientModInitializer {
 

@@ -9,8 +9,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.StackReference;
 import net.minecraft.item.*;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
-import net.minecraft.nbt.NbtList;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundEvents;
@@ -27,10 +25,9 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 public class FlourSackItem extends BlockItem {
-    public static final String ITEMS_KEY = "FlourSackItems";
+    public static final String STORED_ITEM_KEY = "StoredFlour";  // 存储完整物品堆栈
     private static final int MAX_STORAGE = 16;
     private static final int ITEM_BAR_COLOR = MathHelper.packRgb(0.4F, 0.4F, 1.0F);
-    private static final int ITEM_OCCUPANCY = 1; // 每个物品占用空间
 
     public FlourSackItem(Block block, Settings settings) {
         super(block, settings);
@@ -108,7 +105,7 @@ public class FlourSackItem extends BlockItem {
 
     @Override
     public Optional<TooltipData> getTooltipData(ItemStack stack) {
-        Optional<ItemStack> content = getFirstBundledStack(stack);
+        Optional<ItemStack> content = getBundledStack(stack);
         return Optional.of(new FlourSackTooltipData(content, getBundleOccupancy(stack), MAX_STORAGE));
     }
 
@@ -117,12 +114,18 @@ public class FlourSackItem extends BlockItem {
         appendCapacityTooltip(stack, tooltip);
         appendContentTooltip(stack, tooltip);
         appendUsageTooltip(stack, tooltip);
-        appendStackInfoTooltip(stack, tooltip);
     }
 
     @Override
     public void onItemEntityDestroyed(ItemEntity entity) {
-        ItemUsage.spawnItemContents(entity, getBundledStacks(entity.getStack()));
+        ItemStack stack = entity.getStack();
+        Optional<ItemStack> bundledStack = getBundledStack(stack);
+
+        if (bundledStack.isPresent() && !bundledStack.get().isEmpty()) {
+            // 将单个物品堆栈转换为Stream
+            Stream<ItemStack> contents = Stream.of(bundledStack.get());
+            ItemUsage.spawnItemContents(entity, contents);
+        }
     }
 
     /**
@@ -133,10 +136,16 @@ public class FlourSackItem extends BlockItem {
     }
 
     /**
-     * 获取粉尘袋中的第一个物品栈
+     * 获取粉尘袋中存储的物品栈
      */
-    public static Optional<ItemStack> getFirstBundledStack(ItemStack stack) {
-        return getBundledStacks(stack).findFirst();
+    public static Optional<ItemStack> getBundledStack(ItemStack stack) {
+        NbtCompound nbt = stack.getNbt();
+        if (nbt == null || !nbt.contains(STORED_ITEM_KEY)) {
+            return Optional.empty();
+        }
+
+        NbtCompound storedNbt = nbt.getCompound(STORED_ITEM_KEY);
+        return Optional.of(ItemStack.fromNbt(storedNbt));
     }
 
     /**
@@ -145,8 +154,8 @@ public class FlourSackItem extends BlockItem {
     public static boolean canStackWith(ItemStack stack1, ItemStack stack2) {
         if (stack1.isEmpty() || stack2.isEmpty()) return false;
 
-        Optional<ItemStack> content1 = getFirstBundledStack(stack1);
-        Optional<ItemStack> content2 = getFirstBundledStack(stack2);
+        Optional<ItemStack> content1 = getBundledStack(stack1);
+        Optional<ItemStack> content2 = getBundledStack(stack2);
 
         // 两个空袋可以堆叠
         if (content1.isEmpty() && content2.isEmpty()) return true;
@@ -154,8 +163,8 @@ public class FlourSackItem extends BlockItem {
         // 一个有内容一个空，不能堆叠
         if (content1.isEmpty() != content2.isEmpty()) return false;
 
-        // 检查内容物是否相同
-        return ItemStack.areItemsEqual(content1.get(), content2.get());
+        // 检查内容物是否相同（包括NBT）
+        return ItemStack.areEqual(content1.get(), content2.get());
     }
 
     /**
@@ -174,88 +183,110 @@ public class FlourSackItem extends BlockItem {
         }
 
         NbtCompound nbt = bundle.getOrCreateNbt();
-        NbtList items = getOrCreateItemsList(nbt);
-
-        int currentOccupancy = getBundleOccupancy(bundle);
-        int availableSpace = MAX_STORAGE - currentOccupancy;
+        int currentCount = getBundleOccupancy(bundle);
+        int availableSpace = MAX_STORAGE - currentCount;
         int maxToAdd = Math.min(stack.getCount(), availableSpace);
 
         if (maxToAdd <= 0) {
             return 0;
         }
 
-        if (items.isEmpty()) {
-            return addNewItemToBundle(items, stack, maxToAdd);
-        } else {
-            return mergeWithExistingItem(items, stack, maxToAdd);
+        // 如果粉尘袋是空的，设置物品
+        if (!nbt.contains(STORED_ITEM_KEY)) {
+            ItemStack copy = stack.copyWithCount(maxToAdd);
+            NbtCompound storedNbt = new NbtCompound();
+            copy.writeNbt(storedNbt);
+            nbt.put(STORED_ITEM_KEY, storedNbt);
+            return maxToAdd;
+        }
+        // 如果已经有物品，检查是否可以合并
+        else {
+            ItemStack existingStack = ItemStack.fromNbt(nbt.getCompound(STORED_ITEM_KEY));
+
+            // 检查是否为同一物品（包括NBT）
+            if (ItemStack.canCombine(existingStack, stack)) {
+                int newTotal = existingStack.getCount() + maxToAdd;
+                if (newTotal > MAX_STORAGE) {
+                    maxToAdd = MAX_STORAGE - existingStack.getCount();
+                    if (maxToAdd <= 0) return 0;
+                    newTotal = MAX_STORAGE;
+                }
+
+                existingStack.setCount(newTotal);
+                NbtCompound storedNbt = new NbtCompound();
+                existingStack.writeNbt(storedNbt);
+                nbt.put(STORED_ITEM_KEY, storedNbt);
+                return maxToAdd;
+            } else {
+                // 不同种类的粉，不能添加
+                return 0;
+            }
         }
     }
 
     /**
-     * 获取粉尘袋当前占用的总空间
+     * 获取粉尘袋当前占用的总空间（也就是存储的数量）
      */
     private static int getBundleOccupancy(ItemStack stack) {
-        return getBundledStacks(stack)
-                .mapToInt(itemStack -> ITEM_OCCUPANCY * itemStack.getCount())
-                .sum();
+        return getBundledStack(stack)
+                .map(ItemStack::getCount)
+                .orElse(0);
     }
 
     /**
-     * 从粉尘袋中取出第一个物品栈
+     * 从粉尘袋中取出所有物品栈
      */
-    private static Optional<ItemStack> removeFirstStack(ItemStack stack) {
-        NbtCompound nbt = stack.getOrCreateNbt();
-        if (!nbt.contains(ITEMS_KEY)) {
-            return Optional.empty();
+    private static Optional<ItemStack> removeAllStack(ItemStack stack) {
+        Optional<ItemStack> bundledStack = getBundledStack(stack);
+        if (bundledStack.isPresent() && !bundledStack.get().isEmpty()) {
+            stack.removeSubNbt(STORED_ITEM_KEY);
+            return bundledStack;
         }
+        return Optional.empty();
+    }
 
-        NbtList items = nbt.getList(ITEMS_KEY, NbtElement.COMPOUND_TYPE);
-        if (items.isEmpty()) {
-            return Optional.empty();
+    /**
+     * 从粉尘袋中取出指定数量的物品
+     */
+    private static Optional<ItemStack> removeSomeStack(ItemStack stack, int amount) {
+        Optional<ItemStack> bundledStack = getBundledStack(stack);
+        if (bundledStack.isPresent() && !bundledStack.get().isEmpty()) {
+            ItemStack storedStack = bundledStack.get();
+            int storedCount = storedStack.getCount();
+
+            if (amount >= storedCount) {
+                // 取出全部
+                stack.removeSubNbt(STORED_ITEM_KEY);
+                return Optional.of(storedStack);
+            } else {
+                // 取出部分
+                ItemStack removedStack = storedStack.copyWithCount(amount);
+                storedStack.setCount(storedCount - amount);
+
+                // 更新存储的NBT
+                NbtCompound nbt = stack.getOrCreateNbt();
+                NbtCompound storedNbt = new NbtCompound();
+                storedStack.writeNbt(storedNbt);
+                nbt.put(STORED_ITEM_KEY, storedNbt);
+
+                return Optional.of(removedStack);
+            }
         }
-
-        NbtCompound itemNbt = items.getCompound(0);
-        ItemStack itemStack = ItemStack.fromNbt(itemNbt);
-        items.remove(0);
-
-        if (items.isEmpty()) {
-            stack.removeSubNbt(ITEMS_KEY);
-        }
-
-        return Optional.of(itemStack);
+        return Optional.empty();
     }
 
     /**
      * 丢弃粉尘袋中的所有物品
      */
     private static boolean dropAllBundledItems(ItemStack stack, PlayerEntity player) {
-        NbtCompound nbt = stack.getOrCreateNbt();
-        if (!nbt.contains(ITEMS_KEY)) {
-            return false;
+        Optional<ItemStack> bundledStack = removeAllStack(stack);
+        if (bundledStack.isPresent() && !bundledStack.get().isEmpty()) {
+            if (player instanceof ServerPlayerEntity) {
+                player.dropItem(bundledStack.get(), true);
+            }
+            return true;
         }
-
-        if (player instanceof ServerPlayerEntity) {
-            NbtList items = nbt.getList(ITEMS_KEY, NbtElement.COMPOUND_TYPE);
-            dropItemsToPlayer(items, player);
-        }
-
-        stack.removeSubNbt(ITEMS_KEY);
-        return true;
-    }
-
-    /**
-     * 获取粉尘袋中的所有物品栈
-     */
-    private static Stream<ItemStack> getBundledStacks(ItemStack stack) {
-        NbtCompound nbt = stack.getNbt();
-        if (nbt == null || !nbt.contains(ITEMS_KEY)) {
-            return Stream.empty();
-        }
-
-        NbtList items = nbt.getList(ITEMS_KEY, NbtElement.COMPOUND_TYPE);
-        return items.stream()
-                .map(NbtCompound.class::cast)
-                .map(ItemStack::fromNbt);
+        return false;
     }
 
     /**
@@ -263,9 +294,10 @@ public class FlourSackItem extends BlockItem {
      */
     private void handleRemoveFromBundle(ItemStack stack, Slot slot, PlayerEntity player) {
         playRemoveOneSound(player);
-        removeFirstStack(stack).ifPresent(removedStack -> {
+        removeSomeStack(stack, 1).ifPresent(removedStack -> {
             ItemStack remaining = slot.insertStack(removedStack);
             if (!remaining.isEmpty()) {
+                // 如果有剩余，尝试放回粉尘袋
                 addToBundle(stack, remaining);
             }
         });
@@ -283,6 +315,9 @@ public class FlourSackItem extends BlockItem {
             int actuallyAdded = addToBundle(stack, toAdd);
             if (actuallyAdded > 0) {
                 playInsertSound(player);
+            } else {
+                // 如果添加失败（例如类型不同），把物品放回原处
+                slot.insertStack(toAdd);
             }
         }
     }
@@ -291,7 +326,7 @@ public class FlourSackItem extends BlockItem {
      * 处理取出物品到光标
      */
     private void handleRemoveToCursor(ItemStack stack, StackReference cursorStackReference, PlayerEntity player) {
-        removeFirstStack(stack).ifPresent(itemStack -> {
+        removeSomeStack(stack, 1).ifPresent(itemStack -> {
             playRemoveOneSound(player);
             cursorStackReference.set(itemStack);
         });
@@ -314,56 +349,6 @@ public class FlourSackItem extends BlockItem {
         }
     }
 
-    /**
-     * 获取或创建物品列表
-     */
-    private static NbtList getOrCreateItemsList(NbtCompound nbt) {
-        if (!nbt.contains(ITEMS_KEY)) {
-            nbt.put(ITEMS_KEY, new NbtList());
-        }
-        return nbt.getList(ITEMS_KEY, NbtElement.COMPOUND_TYPE);
-    }
-
-    /**
-     * 添加新物品到粉尘袋
-     */
-    private static int addNewItemToBundle(NbtList items, ItemStack stack, int maxToAdd) {
-        ItemStack toAdd = stack.copyWithCount(maxToAdd);
-        NbtCompound itemNbt = new NbtCompound();
-        toAdd.writeNbt(itemNbt);
-        items.add(itemNbt);
-        return maxToAdd;
-    }
-
-    /**
-     * 合并到现有物品
-     */
-    private static int mergeWithExistingItem(NbtList items, ItemStack stack, int maxToAdd) {
-        NbtCompound existingItemNbt = items.getCompound(0);
-        ItemStack existingItem = ItemStack.fromNbt(existingItemNbt);
-
-        if (ItemStack.canCombine(existingItem, stack)) {
-            int canMerge = Math.min(maxToAdd, existingItem.getMaxCount() - existingItem.getCount());
-            if (canMerge > 0) {
-                existingItem.increment(canMerge);
-                existingItem.writeNbt(existingItemNbt);
-                return canMerge;
-            }
-        }
-        return 0;
-    }
-
-    /**
-     * 向玩家掉落物品
-     */
-    private static void dropItemsToPlayer(NbtList items, PlayerEntity player) {
-        for (int i = 0; i < items.size(); i++) {
-            NbtCompound itemNbt = items.getCompound(i);
-            ItemStack itemStack = ItemStack.fromNbt(itemNbt);
-            player.dropItem(itemStack, true);
-        }
-    }
-
     private void appendCapacityTooltip(ItemStack stack, List<Text> tooltip) {
         int occupancy = getBundleOccupancy(stack);
         tooltip.add(Text.translatable("item.foodcraft.flour_sack.fullness", occupancy, MAX_STORAGE)
@@ -371,7 +356,7 @@ public class FlourSackItem extends BlockItem {
     }
 
     private void appendContentTooltip(ItemStack stack, List<Text> tooltip) {
-        getFirstBundledStack(stack).ifPresent(content -> {
+        getBundledStack(stack).ifPresent(content -> {
             MutableText contentText = Text.translatable("item.foodcraft.flour_sack.content",
                     content.getName(), content.getCount());
             tooltip.add(contentText.formatted(Formatting.GRAY));
@@ -386,13 +371,6 @@ public class FlourSackItem extends BlockItem {
 
         tooltip.add(Text.translatable(translationKey)
                 .formatted(Formatting.ITALIC, Formatting.DARK_GRAY));
-    }
-
-    private void appendStackInfoTooltip(ItemStack stack, List<Text> tooltip) {
-        if (stack.getCount() > 1) {
-            tooltip.add(Text.translatable("item.foodcraft.flour_sack.stack_count", stack.getCount())
-                    .formatted(Formatting.DARK_BLUE));
-        }
     }
 
     private void playRemoveOneSound(Entity entity) {
