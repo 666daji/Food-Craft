@@ -8,6 +8,9 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import org.foodcraft.block.process.step.Step;
+import org.foodcraft.block.process.step.StepExecutionContext;
+import org.foodcraft.block.process.step.StepResult;
 
 import java.util.HashMap;
 import java.util.Map;

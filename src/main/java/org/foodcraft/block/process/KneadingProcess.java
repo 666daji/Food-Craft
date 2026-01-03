@@ -13,6 +13,9 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.StringIdentifiable;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.world.World;
+import org.foodcraft.block.process.step.Step;
+import org.foodcraft.block.process.step.StepExecutionContext;
+import org.foodcraft.block.process.step.StepResult;
 import org.foodcraft.item.FlourItem;
 import org.foodcraft.recipe.DoughRecipe;
 import org.foodcraft.registry.ModItems;
@@ -274,6 +277,8 @@ public class KneadingProcess<T extends BlockEntity & Inventory> extends Abstract
             if (!heldStack.isEmpty()) {
                 return StepResult.fail(STEP_KNEAD, ActionResult.PASS);
             }
+
+            context.playSound(SoundEvents.ENTITY_SLIME_DEATH_SMALL);
 
             // 服务器端执行揉面逻辑
             if (context.isServerSide()) {

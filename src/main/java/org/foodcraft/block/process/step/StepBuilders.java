@@ -1,4 +1,4 @@
-package org.foodcraft.block.process;
+package org.foodcraft.block.process.step;
 
 import net.minecraft.util.ActionResult;
 

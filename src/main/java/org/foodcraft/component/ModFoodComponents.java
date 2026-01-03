@@ -4,9 +4,9 @@ import net.minecraft.item.FoodComponent;
 
 public class ModFoodComponents {
     // 面食
-    public static final FoodComponent HARD_BREAD = createSimpleFoodComponent(2, 0.6f);
-    public static final FoodComponent SMALL_BREAD = createSimpleFoodComponent(1, 0.8f);
-    public static final FoodComponent BAGUETTE = createSimpleFoodComponent(2, 0.9f);
+    public static final FoodComponent HARD_BREAD = createSimpleFoodComponent(10, 0.6f);
+    public static final FoodComponent SMALL_BREAD = createSimpleFoodComponent(3, 0.5f);
+    public static final FoodComponent BAGUETTE = createSimpleFoodComponent(10, 0.6f);
     public static final FoodComponent TOAST = createSimpleFoodComponent(5, 0.6f);
 
     // 可食用容器

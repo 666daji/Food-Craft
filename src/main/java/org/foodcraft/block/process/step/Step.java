@@ -1,4 +1,4 @@
-package org.foodcraft.block.process;
+package org.foodcraft.block.process.step;
 
 /**
  * 步骤接口，定义流程中的单个交互步骤。
