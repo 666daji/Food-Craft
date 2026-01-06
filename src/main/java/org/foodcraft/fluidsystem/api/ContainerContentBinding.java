@@ -14,16 +14,39 @@ import java.util.Objects;
  * 这是一个临时的、不可变的对象，仅用于查询结果。
  * </p>
  */
-public record ContainerContentBinding(@NotNull ContainerType container, @Nullable AbstractContent content) {
+public final class ContainerContentBinding {
+    @NotNull
+    private final ContainerType container;
+    @Nullable
+    private final AbstractContent content;
+
     /**
      * 创建一个绑定对象。
      *
      * @param container 容器类型，不能为null
-     * @param content   内容物类型，可以为null（表示空容器）
+     * @param content 内容物类型，可以为null（表示空容器）
      */
     public ContainerContentBinding(@NotNull ContainerType container, @Nullable AbstractContent content) {
         this.container = Objects.requireNonNull(container, "Container cannot be null");
         this.content = content;
+    }
+
+    /**
+     * 获取容器类型。
+     */
+    @NotNull
+    public ContainerType getContainer() {
+        return container;
+    }
+
+    /**
+     * 获取内容物类型。
+     *
+     * @return 内容物类型，如果容器为空则返回null
+     */
+    @Nullable
+    public AbstractContent getContent() {
+        return content;
     }
 
     /**
@@ -52,7 +75,12 @@ public record ContainerContentBinding(@NotNull ContainerType container, @Nullabl
     }
 
     @Override
-    public @NotNull String toString() {
+    public int hashCode() {
+        return Objects.hash(container, content);
+    }
+
+    @Override
+    public String toString() {
         return "ContainerContentBinding{" +
                 "container=" + container.getId() +
                 ", content=" + (content != null ? content.getId() : "null") +
