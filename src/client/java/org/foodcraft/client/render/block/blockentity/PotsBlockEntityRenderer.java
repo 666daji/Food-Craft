@@ -61,7 +61,7 @@ public class PotsBlockEntityRenderer implements BlockEntityRenderer<PotsBlockEnt
         }
 
         // 获取渲染状态
-        KneadingProcess.KneadingState kneadingState = process.getRenderState();
+        KneadingProcess.KneadingState kneadingState = process.getState();
 
         // 根据渲染状态选择对应的模型
         Identifier modelId = getModelForRenderState(kneadingState);

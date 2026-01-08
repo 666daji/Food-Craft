@@ -160,12 +160,12 @@ public class ModBlocks {
                     .mapColor(MapColor.WHITE)));
     public static final Block SOUP_HARD_BREAD_BOAT = registerEdibleContainerBlock("soup_hard_bread_boat",
             DFoodUtils.getFoodBlockSettings().sounds(BlockSoundGroup.WOOL).mapColor(MapColor.ORANGE),
-            ((settings, maxUse) -> new EdibleContainerBlock(settings, FoodShapeHandle.shapes.getShape(8),
+            ((settings, maxUse) -> new BreadBoatBlock(settings, FoodShapeHandle.shapes.getShape(8),
                     maxUse, ModEnforceAsItems.HARD_BREAD_BOAT)), 4);
     public static final Block HARD_BREAD_BOAT = registerBlock("hard_bread_boat",
-            new EmptyEdibleContainerBlock(DFoodUtils.getFoodBlockSettings()
+            new EmptyBreadBoatBlock(DFoodUtils.getFoodBlockSettings()
                     .sounds(BlockSoundGroup.WOOL).mapColor(MapColor.ORANGE),
-                    (EdibleContainerBlock) SOUP_HARD_BREAD_BOAT));
+                    (BreadBoatBlock) SOUP_HARD_BREAD_BOAT));
 
     // 切片食物
     public static final Block CARROT_SLICES = registerBlock("carrot_slices",
@@ -272,7 +272,7 @@ public class ModBlocks {
     }
 
     public static Block registerEdibleContainerBlock(String name, AbstractBlock.Settings settings,
-                                                     BiFunction<AbstractBlock.Settings, Integer, EdibleContainerBlock> blockCreator,
+                                                     BiFunction<AbstractBlock.Settings, Integer, BreadBoatBlock> blockCreator,
                                                      int maxUse) {
         IntPropertyManager.preCache("bites", 0, maxUse);
         Block block = blockCreator.apply(settings, maxUse);

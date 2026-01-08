@@ -1,6 +1,6 @@
-package org.foodcraft.fluidsystem.registry;
+package org.foodcraft.contentsystem.registry;
 
-import org.foodcraft.fluidsystem.content.AbstractContent;
+import org.foodcraft.contentsystem.content.AbstractContent;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

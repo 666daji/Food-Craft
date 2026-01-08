@@ -1,9 +1,9 @@
-package org.foodcraft.fluidsystem.api;
+package org.foodcraft.contentsystem.api;
 
-import org.foodcraft.fluidsystem.container.ContainerType;
-import org.foodcraft.fluidsystem.content.AbstractContent;
-import org.foodcraft.fluidsystem.registry.ContainerRegistry;
-import org.foodcraft.fluidsystem.registry.ContentRegistry;
+import org.foodcraft.contentsystem.container.ContainerType;
+import org.foodcraft.contentsystem.content.AbstractContent;
+import org.foodcraft.contentsystem.registry.ContainerRegistry;
+import org.foodcraft.contentsystem.registry.ContentRegistry;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;

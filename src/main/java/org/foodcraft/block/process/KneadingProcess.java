@@ -598,7 +598,7 @@ public class KneadingProcess<T extends BlockEntity & Inventory> extends Abstract
      * 获取当前流程状态的总和
      * @return 状态对象，包含当前步骤、上一个步骤和各步骤计数信息
      */
-    public KneadingState getRenderState() {
+    public KneadingState getState() {
         return new KneadingState(
                 currentStepId,
                 previousStepId,

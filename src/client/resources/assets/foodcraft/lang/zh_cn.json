@@ -78,6 +78,11 @@
   "subtitle.foodcraft.kitchen_knife_board_place": "菜刀:插入案板",
   "subtitle.foodcraft.kitchen_knife_fetch": "菜刀:取出",
   "kitchen_knife_board_place": "菜刀:放置",
+  "subtitle.foodcraft.soup_fill": "汤:倾倒",
+
+  "content.foodcraft.mushroom_stew": "蘑菇煲",
+  "content.foodcraft.beetroot_soup": "甜菜汤",
+  "content.foodcraft.rabbit_stew": "兔肉煲",
 
   "grinding_stone.add.refused": "这东西可不能磨哦",
   "grinding_stone.add.full": "已经满了!",

@@ -1,4 +1,4 @@
-package org.foodcraft.fluidsystem.container;
+package org.foodcraft.contentsystem.container;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -6,8 +6,8 @@ import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Identifier;
 import org.foodcraft.FoodCraft;
-import org.foodcraft.fluidsystem.content.AbstractContent;
-import org.foodcraft.fluidsystem.registry.ContainerRegistry;
+import org.foodcraft.contentsystem.content.AbstractContent;
+import org.foodcraft.contentsystem.registry.ContainerRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -123,6 +123,14 @@ public abstract class ContainerType {
     @NotNull
     public SoundEvent getUseSound() {
         return useSound;
+    }
+
+    /**
+     * 获取容器的使用剩余
+     * @return 使用剩余，默认为对应的空容器
+     */
+    public ItemStack remainder() {
+        return createEmptyItemStack(1);
     }
 
     /**

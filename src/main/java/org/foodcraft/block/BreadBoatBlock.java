@@ -22,22 +22,21 @@ import net.minecraft.world.event.GameEvent;
 import org.dfood.block.SimpleFoodBlock;
 import org.dfood.util.IntPropertyManager;
 import org.foodcraft.FoodCraft;
-import org.foodcraft.item.EdibleContainerItem;
-import org.foodcraft.registry.ModProperties;
-import org.foodcraft.util.enums.SoupType;
+import org.foodcraft.contentsystem.container.BreadBoatContainer;
+import org.foodcraft.item.BreadBoatItem;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
 
-public class EdibleContainerBlock extends SimpleFoodBlock {
-    public static final EnumProperty<SoupType> SOUP_TYPE = ModProperties.SOUP_TYPE;
+public class BreadBoatBlock extends SimpleFoodBlock {
+    public static final EnumProperty<BreadBoatContainer.BreadBoatSoupType> SOUP_TYPE = EnumProperty.of("soup_type", BreadBoatContainer.BreadBoatSoupType.class);
     /** 表示当前已食用次数 */
     public final IntProperty BITES;
 
     public final int maxUse;
 
-    public EdibleContainerBlock(Settings settings, VoxelShape shape, int maxUse, @Nullable EnforceAsItem cItem) {
+    public BreadBoatBlock(Settings settings, VoxelShape shape, int maxUse, @Nullable EnforceAsItem cItem) {
         super(settings, true, shape, false, cItem);
         this.maxUse = maxUse;
         this.BITES = IntPropertyManager.create("bites", 0, maxUse);
@@ -62,7 +61,7 @@ public class EdibleContainerBlock extends SimpleFoodBlock {
 
     @Override
     public ItemStack createStack(int count, BlockState state, @Nullable BlockEntity blockEntity) {
-        return EdibleContainerItem.serveSoup(super.createStack(count, state, blockEntity), state.get(SOUP_TYPE));
+        return BreadBoatItem.serveSoup(super.createStack(count, state, blockEntity), state.get(SOUP_TYPE));
     }
 
     /**
@@ -83,9 +82,9 @@ public class EdibleContainerBlock extends SimpleFoodBlock {
      * @return 当前的食物属性，如果对应的物品不是食物则返回空。
      */
     @Nullable
-    protected SimpleFoodComponent getFoodComponent(BlockState state) {
-        SoupType soupType = state.get(SOUP_TYPE);
-        FoodComponent containerFood = asItem().getFoodComponent();
+    protected static SimpleFoodComponent getFoodComponent(BlockState state) {
+        BreadBoatContainer.BreadBoatSoupType soupType = state.get(SOUP_TYPE);
+        FoodComponent containerFood = state.getBlock().asItem().getFoodComponent();
         FoodComponent soupFood = soupType.getFoodComponent();
 
         if (containerFood == null) {
@@ -158,7 +157,7 @@ public class EdibleContainerBlock extends SimpleFoodBlock {
         int bites = state.get(BITES);
         if (bites == 0){
             List<ItemStack> droppedStacks = super.getDroppedStacks(state, builder);
-            droppedStacks.forEach(stack -> EdibleContainerItem.serveSoup(stack, state.get(EdibleContainerBlock.SOUP_TYPE)));
+            droppedStacks.forEach(stack -> BreadBoatItem.serveSoup(stack, state.get(BreadBoatBlock.SOUP_TYPE)));
 
             return droppedStacks;
         }

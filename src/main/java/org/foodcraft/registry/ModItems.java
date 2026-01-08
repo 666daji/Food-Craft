@@ -68,7 +68,7 @@ public class ModItems {
     public static final Item CAKE_EMBRYO = registerItem(ModBlocks.CAKE_EMBRYO);
     public static final Item BAKED_CAKE_EMBRYO = registerItem(ModBlocks.BAKED_CAKE_EMBRYO);
     public static final Item HARD_BREAD_BOAT = registerItem(ModBlocks.HARD_BREAD_BOAT,
-            new Item.Settings().food(ModFoodComponents.HARD_BREAD_BOAT), EdibleContainerItem::new);
+            new Item.Settings().food(ModFoodComponents.HARD_BREAD_BOAT), BreadBoatItem::new);
     public static final Item SALTY_DOUGH = registerItem(ModBlocks.SALTY_DOUGH);
 
     // 切片食物

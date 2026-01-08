@@ -4,6 +4,8 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents;
 import org.dfood.shape.Shapes;
 import org.foodcraft.block.multi.MultiBlockManager;
+import org.foodcraft.contentsystem.foodcraft.ModContainers;
+import org.foodcraft.contentsystem.foodcraft.ModContents;
 
 public class RegistryInit {
     public static void init() {
@@ -16,6 +18,8 @@ public class RegistryInit {
         ModSounds.initialize();
         ModScreenHandlerTypes.registerScreenHandlerTypes();
         ModOreGeneration.registerOres();
+        ModContents.registryContents();
+        ModContainers.registryContainers();
         multiBlockInit();
         registerShapes();
     }

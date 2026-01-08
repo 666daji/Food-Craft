@@ -9,7 +9,7 @@ import net.minecraft.registry.RegistryKeys;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.foodcraft.FoodCraft;
-import org.foodcraft.item.EdibleContainerItem;
+import org.foodcraft.item.BreadBoatItem;
 
 public class ModItemGroups {
     public static final RegistryKey<ItemGroup> DEMO_GROUP = register("foodcraft");
@@ -69,7 +69,7 @@ public class ModItemGroups {
                             entries.add(ModItems.BAKED_CAKE_EMBRYO);
                             entries.add(ModItems.SALTY_DOUGH);
                             entries.add(ModItems.HARD_BREAD_BOAT);
-                            entries.addAll(EdibleContainerItem.getAll((EdibleContainerItem) ModItems.HARD_BREAD_BOAT));
+                            entries.addAll(BreadBoatItem.getAll((BreadBoatItem) ModItems.HARD_BREAD_BOAT));
                             entries.add(ModItems.CARROT_SLICES);
                             entries.add(ModItems.CARROT_HEAD);
                             entries.add(ModItems.POTATO_CUBES);

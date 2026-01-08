@@ -1,8 +1,9 @@
-package org.foodcraft.fluidsystem.content;
+package org.foodcraft.contentsystem.content;
 
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.foodcraft.FoodCraft;
-import org.foodcraft.fluidsystem.registry.ContentRegistry;
+import org.foodcraft.contentsystem.registry.ContentRegistry;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
@@ -50,8 +51,16 @@ public abstract class AbstractContent {
      * </p>
      */
     @NotNull
-    public String getDisplayName() {
+    public String getDisplayTranslationKey() {
         return "content." + id.getNamespace() + "." + id.getPath();
+    }
+
+    /**
+     * 获取内容物的显示文本。
+     * @return 内容物的显示文本
+     */
+    public Text getDisplayName() {
+        return Text.translatable(getDisplayTranslationKey());
     }
 
     /**

@@ -43,5 +43,13 @@
       "foodcraft:block/kitchen_knife_board_place"
     ],
     "subtitle": "subtitle.foodcraft.kitchen_knife_board_place"
+  },
+  "soup_fill": {
+    "sounds": [
+      "item/bucket/empty1",
+      "item/bucket/empty2",
+      "item/bucket/empty3"
+    ],
+    "subtitle": "subtitle.foodcraft.soup_fill"
   }
 }
