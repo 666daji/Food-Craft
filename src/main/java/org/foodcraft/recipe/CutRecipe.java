@@ -3,6 +3,7 @@ package org.foodcraft.recipe;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.Ingredient;
+import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeSerializer;
 import net.minecraft.recipe.RecipeType;
 import net.minecraft.registry.DynamicRegistryManager;
@@ -17,7 +18,7 @@ import java.util.Map;
 /**
  * 支持多步骤切割的切菜配方
  */
-public class CutRecipe implements net.minecraft.recipe.Recipe<Inventory> {
+public class CutRecipe implements Recipe<Inventory> {
     private final Identifier id;
     private final Ingredient input;
     private final ItemStack output;

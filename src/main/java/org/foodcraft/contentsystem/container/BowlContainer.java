@@ -8,7 +8,6 @@ import org.foodcraft.FoodCraft;
 import org.foodcraft.contentsystem.content.AbstractContent;
 import org.foodcraft.contentsystem.content.SoupContent;
 import org.foodcraft.contentsystem.registry.ContentRegistry;
-import org.foodcraft.registry.ModSounds;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

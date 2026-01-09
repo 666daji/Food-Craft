@@ -33,70 +33,20 @@ import java.util.Map;
  *   <li>在步骤执行期间存储临时数据</li>
  * </ul>
  *
- * @param <T> 方块实体类型
+ * @param <T>         方块实体类型
+ * @param process     当前执行的流程实例
+ * @param blockEntity 执行步骤的方块实体
+ * @param blockState  方块的当前状态
+ * @param world       方块所在的世界
+ * @param pos         方块的位置
+ * @param player      执行交互的玩家
+ * @param hand        玩家使用的手（主手或副手）
+ * @param hit         方块点击信息
+ * @param contextData 临时上下文数据存储（仅当前步骤执行期间有效）
  */
-public class StepExecutionContext<T> {
-
-    // ============ 公共字段 ============
-
-    /** 当前执行的流程实例 */
-    public final AbstractProcess<T> process;
-
-    /** 执行步骤的方块实体 */
-    public final T blockEntity;
-
-    /** 方块的当前状态 */
-    public final BlockState blockState;
-
-    /** 方块所在的世界 */
-    public final World world;
-
-    /** 方块的位置 */
-    public final BlockPos pos;
-
-    /** 执行交互的玩家 */
-    public final PlayerEntity player;
-
-    /** 玩家使用的手（主手或副手） */
-    public final Hand hand;
-
-    /** 方块点击信息 */
-    public final BlockHitResult hit;
-
-    /** 临时上下文数据存储（仅当前步骤执行期间有效） */
-    public final Map<String, Object> contextData;
-
-    // ============ 构造函数 ============
-
-    /**
-     * 创建步骤执行上下文。
-     *
-     * @param process 流程实例
-     * @param blockEntity 方块实体
-     * @param blockState 方块状态
-     * @param world 世界
-     * @param pos 位置
-     * @param player 玩家
-     * @param hand 使用的手
-     * @param hit 点击信息
-     * @param contextData 临时上下文数据存储
-     */
-    public StepExecutionContext(AbstractProcess<T> process, T blockEntity,
-                                BlockState blockState, World world, BlockPos pos,
-                                PlayerEntity player, Hand hand, BlockHitResult hit,
-                                Map<String, Object> contextData) {
-        this.process = process;
-        this.blockEntity = blockEntity;
-        this.blockState = blockState;
-        this.world = world;
-        this.pos = pos;
-        this.player = player;
-        this.hand = hand;
-        this.hit = hit;
-        this.contextData = contextData;
-    }
-
-    // ============ 辅助方法 ============
+public record StepExecutionContext<T>(AbstractProcess<T> process, T blockEntity, BlockState blockState, World world,
+                                      BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit,
+                                      Map<String, Object> contextData) {
 
     /**
      * 获取玩家当前手持的物品堆栈。
@@ -135,6 +85,7 @@ public class StepExecutionContext<T> {
 
     /**
      * 在方块的位置播放一段声音。
+     *
      * @param event 播放的声音事件
      */
     public void playSound(SoundEvent event) {
@@ -152,8 +103,8 @@ public class StepExecutionContext<T> {
      * 从临时上下文数据中获取值。
      *
      * @param key 数据的键
-     * @return 数据的值，如果不存在则返回null
      * @param <V> 数据的类型
+     * @return 数据的值，如果不存在则返回null
      */
     @SuppressWarnings("unchecked")
     public <V> V getContextData(String key) {

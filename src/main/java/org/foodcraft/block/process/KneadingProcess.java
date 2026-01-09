@@ -133,7 +133,7 @@ public class KneadingProcess<T extends BlockEntity & Inventory> extends Abstract
                         flourCounts.getOrDefault(flourItem.getFlourType(), 0) + 1);
 
                 // 更新方块实体
-                context.blockEntity.markDirty();
+                context.blockEntity().markDirty();
             }
 
             // 检查是否加满3个面粉
@@ -183,7 +183,7 @@ public class KneadingProcess<T extends BlockEntity & Inventory> extends Abstract
                 liquidCounts.put(type, liquidCounts.getOrDefault(type, 0) + 1);
 
                 // 更新方块实体
-                context.blockEntity.markDirty();
+                context.blockEntity().markDirty();
             }
 
             // 检查是否已加满3次液体
@@ -244,7 +244,7 @@ public class KneadingProcess<T extends BlockEntity & Inventory> extends Abstract
                 }
 
                 // 更新方块实体
-                context.blockEntity.markDirty();
+                context.blockEntity().markDirty();
 
                 // 如果加满了，跳转到揉面步骤
                 if (isExtraFull()) {
@@ -286,27 +286,27 @@ public class KneadingProcess<T extends BlockEntity & Inventory> extends Abstract
 
                 // 如果是第二次揉面，制作面团
                 if (kneadingCount >= 2) {
-                    ItemStack result = craftDough(context.world);
+                    ItemStack result = craftDough(context.world());
                     if (!result.isEmpty()) {
 
                         // 将面团放入盆方块实体
-                        context.blockEntity.setStack(0, result);
+                        context.blockEntity().setStack(0, result);
 
                         // 重置流程
                         reset();
 
                         // 更新方块实体
-                        context.blockEntity.markDirty();
+                        context.blockEntity().markDirty();
                         return StepResult.complete(ActionResult.SUCCESS);
                     } else {
                         // 没有匹配的配方，失败
                         reset();
-                        context.blockEntity.markDirty();
+                        context.blockEntity().markDirty();
                         return StepResult.fail(null, ActionResult.FAIL);
                     }
                 } else {
                     // 第一次揉面，继续执行当前步骤
-                    context.blockEntity.markDirty();
+                    context.blockEntity().markDirty();
                     return StepResult.continueSameStep(ActionResult.SUCCESS);
                 }
             }

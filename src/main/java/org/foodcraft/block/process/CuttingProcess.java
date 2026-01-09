@@ -239,14 +239,14 @@ public class CuttingProcess<T extends UpPlaceBlockEntity> extends AbstractProces
             // 播放音效和粒子效果
             SoundEvent cutSound = getCutSoundForItem(inputItem);
             context.playSound(cutSound);
-            spawnCuttingParticles(context.world, context.pos, inputItem);
+            spawnCuttingParticles(context.world(), context.pos(), inputItem);
 
             // 服务器端执行切割逻辑
             if (context.isServerSide()) {
                 currentCut++;
-                updateInventory(context.blockEntity, currentCut);
+                updateInventory(context.blockEntity(), currentCut);
                 consumeToolDurability(context);
-                context.blockEntity.markDirtyAndSync();
+                context.blockEntity().markDirtyAndSync();
             }
 
             // 检查是否完成所有切割
@@ -273,8 +273,8 @@ public class CuttingProcess<T extends UpPlaceBlockEntity> extends AbstractProces
 
             if (context.isServerSide()) {
                 currentCut++;
-                updateInventory(context.blockEntity, currentCut);
-                context.blockEntity.markDirtyAndSync();
+                updateInventory(context.blockEntity(), currentCut);
+                context.blockEntity().markDirtyAndSync();
             }
 
             if (currentCut >= totalCuts) {
@@ -295,12 +295,12 @@ public class CuttingProcess<T extends UpPlaceBlockEntity> extends AbstractProces
      */
     private ActionResult executeComplete(StepExecutionContext<T> context) {
         if (context.isServerSide()) {
-            giveAllItemsToPlayer(context.blockEntity, context.player);
+            giveAllItemsToPlayer(context.blockEntity(), context.player());
             context.playSound(SoundEvents.ENTITY_CHICKEN_EGG);
             reset();
-            context.blockEntity.markDirtyAndSync();
+            context.blockEntity().markDirtyAndSync();
         } else {
-            context.blockEntity.clear();
+            context.blockEntity().clear();
         }
 
         return ActionResult.SUCCESS;
@@ -320,12 +320,12 @@ public class CuttingProcess<T extends UpPlaceBlockEntity> extends AbstractProces
                 ctx -> {
                     if (ctx.isServerSide()) {
                         currentCut++;
-                        updateInventory(ctx.blockEntity, currentCut);
+                        updateInventory(ctx.blockEntity(), currentCut);
                         for (ItemStack stack : itemsToGive) {
                             ctx.giveStack(stack.copy());
                         }
                         ctx.playSound(SoundEvents.ENTITY_ITEM_PICKUP);
-                        ctx.blockEntity.markDirtyAndSync();
+                        ctx.blockEntity().markDirtyAndSync();
                     }
                     return ActionResult.SUCCESS;
                 },
@@ -358,7 +358,7 @@ public class CuttingProcess<T extends UpPlaceBlockEntity> extends AbstractProces
     private void consumeToolDurability(StepExecutionContext<T> context) {
         ItemStack tool = context.getHeldItemStack();
         if (!context.isCreateMode() && tool.isDamageable()) {
-            tool.damage(1, context.player, p -> p.sendToolBreakStatus(context.hand));
+            tool.damage(1, context.player(), p -> p.sendToolBreakStatus(context.hand()));
         }
     }
 
@@ -512,7 +512,7 @@ public class CuttingProcess<T extends UpPlaceBlockEntity> extends AbstractProces
     protected void beforeGetStep(StepExecutionContext<T> context) {
         // 尝试恢复配方
         if (currentRecipe == null) {
-            restoreRecipeFromId(context.world, savedRecipeId);
+            restoreRecipeFromId(context.world(), savedRecipeId);
         }
 
         // 检查特殊步骤

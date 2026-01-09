@@ -14,6 +14,7 @@ public class ModRecipeSerializers {
     public static final RecipeSerializer<?> CUT = register("cut", new CutRecipeSerializer());
     public static final RecipeSerializer<?> POTTERY = register("pottery", new PotteryRecipeSerializer());
     public static final RecipeSerializer<?> DOUGH_MAKING = register("dough_making", new DoughRecipeSerializer());
+    public static final RecipeSerializer<?> PLATING = register("plating", new PlatingRecipeSerializer());
 
     private static <S extends RecipeSerializer<?>> S register(String id, S serializer) {
         return Registry.register(Registries.RECIPE_SERIALIZER, new Identifier(FoodCraft.MOD_ID, id), serializer);

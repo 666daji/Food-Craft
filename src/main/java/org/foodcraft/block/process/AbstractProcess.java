@@ -344,8 +344,6 @@ public abstract class AbstractProcess<T> {
     /**
      * 将流程状态写入NBT。
      *
-     * <p>子类必须实现此方法以支持流程状态的持久化。</p>
-     *
      * @param nbt 要写入的NBT复合标签
      */
     public void writeToNbt(NbtCompound nbt) {
@@ -362,9 +360,6 @@ public abstract class AbstractProcess<T> {
 
     /**
      * 从NBT读取流程状态。
-     *
-     * <p>子类必须实现此方法以支持流程状态的恢复。
-     * 需要读取并恢复所有保存的状态数据。</p>
      *
      * @param nbt 要读取的NBT复合标签
      */

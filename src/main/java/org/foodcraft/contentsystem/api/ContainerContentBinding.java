@@ -52,7 +52,7 @@ public record ContainerContentBinding(@NotNull ContainerType container, @Nullabl
     }
 
     @Override
-    public String toString() {
+    public @NotNull String toString() {
         return "ContainerContentBinding{" +
                 "container=" + container.getId() +
                 ", content=" + (content != null ? content.getId() : "null") +
