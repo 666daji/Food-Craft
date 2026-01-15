@@ -11,11 +11,11 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "foodcraft:iron_dishes"
+          "name": "foodcraft:iron_garnish_dishes"
         }
       ],
       "rolls": 1.0
     }
   ],
-  "random_sequence": "foodcraft:blocks/iron_dishes"
+  "random_sequence": "foodcraft:blocks/iron_garnish_dishes"
 }

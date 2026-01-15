@@ -9,7 +9,7 @@ import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
 import org.dfood.item.HaveBlock;
 import org.foodcraft.FoodCraft;
-import org.foodcraft.component.ModFoodComponents;
+import org.foodcraft.food.ModFoodComponents;
 import org.foodcraft.item.*;
 
 import java.util.function.BiFunction;
@@ -21,12 +21,14 @@ public class ModItems {
     public static final Item HEAT_RESISTANT_SLATE = registerItem(ModBlocks.HEAT_RESISTANT_SLATE);
     public static final Item FIREWOOD = registerItem(ModBlocks.FIREWOOD);
     public static final Item POTTERY_TABLE = registerItem(ModBlocks.POTTERY_TABLE);
+    public static final Item IRON_PLATE = registerItem(ModBlocks.IRON_PLATE, new Item.Settings(), DishesItem::new);
 
     // 工具
-    public static final Item IRON_DISHES = registerItem(ModBlocks.IRON_DISHES);
+    public static final Item IRON_GARNISH_DISHES = registerItem(ModBlocks.IRON_GARNISH_DISHES);
     public static final Item WOODEN_SHELF = registerItem(ModBlocks.WOODEN_SHELF);
     public static final Item CUTTING_BOARD = registerItem(ModBlocks.CUTTING_BOARD);
     public static final Item IRON_POTS = registerItem(ModBlocks.IRON_POTS);
+    public static final Item PLATE_LID = registerItem("plate_lid", new Item(new Item.Settings()));
 
     // 厨具
     public static final Item BREAD_SPATULA = registerItem(ModBlocks.BREAD_SPATULA, new Item.Settings(),

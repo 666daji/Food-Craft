@@ -1,5 +1,6 @@
 package org.foodcraft.contentsystem.api;
 
+import org.foodcraft.FoodCraft;
 import org.foodcraft.contentsystem.container.ContainerType;
 import org.foodcraft.contentsystem.content.AbstractContent;
 import org.foodcraft.contentsystem.registry.ContainerRegistry;
@@ -9,6 +10,7 @@ import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -131,6 +133,51 @@ public final class ContainerUtil {
     }
 
     /**
+     * 替换容器中的内容物。
+     *
+     * @param stack 要替换内容物的容器物品堆栈
+     * @param newContent 新的内容物
+     * @return 替换后的物品堆栈，如果容器不存在或新内容物与容器不兼容则返回原堆栈的副本
+     */
+    @NotNull
+    public static ItemStack replaceContent(@NotNull ItemStack stack, @Nullable AbstractContent newContent) {
+        Objects.requireNonNull(stack, "Item stack cannot be null");
+
+        ContainerType container = ContainerRegistry.findContainer(stack);
+        if (container == null) {
+            // 不是容器，返回原堆栈副本
+            return stack.copy();
+        }
+
+        try {
+            return container.replaceContent(stack, newContent);
+        } catch (IllegalArgumentException e) {
+            // 无法替换（内容物不兼容等），返回原堆栈副本
+            FoodCraft.LOGGER.error("{}", e.getMessage(), e);
+            return stack.copy();
+        }
+    }
+
+    /**
+     * 替换容器中的内容物。
+     *
+     * @param stack 要替换内容物的容器物品堆栈
+     * @param newContentId 新内容物的标识符
+     * @return 替换后的物品堆栈，如果容器不存在、内容物不存在或新内容物与容器不兼容则返回原堆栈的副本
+     */
+    @NotNull
+    public static ItemStack replaceContent(@NotNull ItemStack stack, @Nullable Identifier newContentId) {
+        Objects.requireNonNull(stack, "Item stack cannot be null");
+
+        AbstractContent newContent = ContentRegistry.get(newContentId);
+        if (newContent == null) {
+            return stack.copy();
+        }
+
+        return replaceContent(stack, newContent);
+    }
+
+    /**
      * 创建装有指定内容物的物品堆栈。
      *
      * @param container 容器类型
@@ -243,27 +290,13 @@ public final class ContainerUtil {
     }
 
     /**
-     * 检查内容物是否属于指定分类。
-     *
-     * @param content 要检查的内容物
-     * @param category 分类名称
-     * @return 如果内容物属于该分类则返回true
-     */
-    public static boolean isContentOfCategory(@NotNull AbstractContent content, @NotNull String category) {
-        Objects.requireNonNull(content, "Content cannot be null");
-        Objects.requireNonNull(category, "Category cannot be null");
-
-        return category.equals(content.getCategory());
-    }
-
-    /**
      * 获取指定分类的所有内容物类型。
      *
      * @param category 分类名称
      * @return 该分类的所有内容物类型
      */
     @NotNull
-    public static java.util.List<AbstractContent> getContentsByCategory(@NotNull String category) {
+    public static List<AbstractContent> getContentsByCategory(@NotNull String category) {
         Objects.requireNonNull(category, "Category cannot be null");
         return ContentRegistry.getByCategory(category);
     }

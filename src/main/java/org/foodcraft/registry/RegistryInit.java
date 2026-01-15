@@ -9,6 +9,8 @@ import org.foodcraft.contentsystem.foodcraft.ModContents;
 
 public class RegistryInit {
     public static void init() {
+        ModContents.registryContents();
+        ModContainers.registryContainers();
         ModBlocks.registerModBlocks();
         ModItems.registerModItems();
         ModBlockEntityTypes.registerBlockEntityTypes();
@@ -18,8 +20,6 @@ public class RegistryInit {
         ModSounds.initialize();
         ModScreenHandlerTypes.registerScreenHandlerTypes();
         ModOreGeneration.registerOres();
-        ModContents.registryContents();
-        ModContainers.registryContainers();
         multiBlockInit();
         registerShapes();
     }

@@ -10,7 +10,7 @@ import org.foodcraft.contentsystem.container.BreadBoatContainer;
 import org.foodcraft.contentsystem.content.AbstractContent;
 import org.foodcraft.item.BreadBoatItem;
 
-public class EdibleContainerModelReplacer{
+public class BreadBoatModelReplacer {
 
     public static BakedModel ReplaceModel(ReplaceItemModel.ReplaceContext context) {
         ItemStack stack = context.stack();

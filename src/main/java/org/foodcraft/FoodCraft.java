@@ -14,6 +14,6 @@ public class FoodCraft implements ModInitializer {
     public void onInitialize() {
         DFoodInit.init();
         RegistryInit.init();
-        LOGGER.info("FoodCraft mod is initializing");
+        LOGGER.info("Baking Process is initializing!");
     }
 }

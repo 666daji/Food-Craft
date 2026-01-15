@@ -25,7 +25,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
-public class DishesBlock extends UpPlaceBlock {
+public class GarnishDishesBlock extends UpPlaceBlock {
     public static final DirectionProperty FACING = Properties.HORIZONTAL_FACING;
     public static final EnumProperty<DishesType> TYPE = EnumProperty.of("type", DishesType.class);
     private static final VoxelShape BASE_SHAPE = Block.createCuboidShape(0.0, 0.0, 0.0, 16.0, 1.5, 16.0);
@@ -48,7 +48,7 @@ public class DishesBlock extends UpPlaceBlock {
                 }
             };
 
-    public DishesBlock(Settings settings) {
+    public GarnishDishesBlock(Settings settings) {
         super(settings);
         this.setDefaultState(this.getDefaultState()
                 .with(FACING, Direction.NORTH)

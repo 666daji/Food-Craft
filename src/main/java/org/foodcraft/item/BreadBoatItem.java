@@ -8,7 +8,6 @@ import net.minecraft.item.BlockItem;
 import net.minecraft.item.FoodComponent;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
 import net.minecraft.text.Text;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.world.World;
@@ -16,36 +15,17 @@ import org.foodcraft.block.EmptyBreadBoatBlock;
 import org.foodcraft.contentsystem.api.ContainerUtil;
 import org.foodcraft.contentsystem.container.BreadBoatContainer;
 import org.foodcraft.contentsystem.content.AbstractContent;
-import org.foodcraft.contentsystem.content.SoupContent;
+import org.foodcraft.contentsystem.content.FoodContent;
 import org.jetbrains.annotations.Nullable;
 
 /**
  * 表示面包船容器的物品。
  * <p>构造函数中的物品设置中必须拥有食物组件。</p>
- * <h2>对应物品堆栈的Nbt数据</h2>
- * 当对应的堆栈nbt存在字符串类型的键{@linkplain #SOUP_KEY}时，
- * 其值则为盛入的汤的类型。
  */
 public class BreadBoatItem extends BlockItem {
-    public static final String SOUP_KEY = "soup_type";
 
     public BreadBoatItem(Block block, Settings settings) {
         super(block, settings);
-    }
-
-    /**
-     * 尝试将空可食用容器盛入汤，或者替换盛入的汤。
-     * @param stack 原物品堆栈
-     * @param soupType 要盛入的汤
-     * @return 盛汤后的可食用容器，如果原物品堆栈不是合法可食用容器，则不进行任何操作
-     */
-    public static ItemStack serveSoup(ItemStack stack, BreadBoatContainer.BreadBoatSoupType soupType) {
-        if (stack.getItem() instanceof BreadBoatItem && soupType != null) {
-            NbtCompound Nbt = stack.getOrCreateNbt();
-            Nbt.putString(BreadBoatItem.SOUP_KEY, soupType.asString());
-        }
-
-        return stack;
     }
 
     /**
@@ -58,7 +38,7 @@ public class BreadBoatItem extends BlockItem {
 
         for (BreadBoatContainer.BreadBoatSoupType soupType : BreadBoatContainer.BreadBoatSoupType.values()) {
             ItemStack stack = new ItemStack(item);
-            serveSoup(stack, soupType);
+            ContainerUtil.replaceContent(stack, soupType.getContent());
             result.add(stack);
         }
 
@@ -67,14 +47,15 @@ public class BreadBoatItem extends BlockItem {
 
     @Override
     protected @Nullable BlockState getPlacementState(ItemPlacementContext context) {
-        NbtCompound stackNbt = context.getStack().getNbt();
+        AbstractContent content = ContainerUtil.extractContent(context.getStack());
         BlockState originalState = super.getPlacementState(context);
 
-        if (stackNbt != null && stackNbt.contains(SOUP_KEY)) {
-            BreadBoatContainer.BreadBoatSoupType soupType = BreadBoatContainer.BreadBoatSoupType.fromSting(stackNbt.getString(SOUP_KEY));
+        if (content != null) {
+            BreadBoatContainer.BreadBoatSoupType soupType =
+                    BreadBoatContainer.BreadBoatSoupType.fromContent(content);
 
             // 尝试返回盛有对应汤的方块状态
-            if (originalState != null && originalState.getBlock()
+            if (originalState != null && soupType != null && originalState.getBlock()
                     instanceof EmptyBreadBoatBlock) {
                 return EmptyBreadBoatBlock.asTargetState(originalState, soupType);
             }
@@ -96,7 +77,7 @@ public class BreadBoatItem extends BlockItem {
     public Text getName(ItemStack stack) {
         AbstractContent content = ContainerUtil.extractContent(stack);
 
-        if (content instanceof SoupContent soup) {
+        if (content instanceof FoodContent soup) {
             Text soupName = soup.getDisplayName();
             return Text.translatable(this.getTranslationKey(stack), soupName);
         }
@@ -109,7 +90,7 @@ public class BreadBoatItem extends BlockItem {
         AbstractContent soupType = ContainerUtil.extractContent(stack);
 
         // 如果容器中有汤并且使用物品的为玩家则喝汤
-        if (soupType instanceof SoupContent soupContent && user instanceof PlayerEntity player) {
+        if (soupType instanceof FoodContent soupContent && user instanceof PlayerEntity player) {
             FoodComponent soup = soupContent.getFoodComponent();
             player.getHungerManager().add(soup.getHunger(), soup.getSaturationModifier());
         }

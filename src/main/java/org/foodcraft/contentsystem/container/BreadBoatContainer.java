@@ -6,8 +6,10 @@ import net.minecraft.nbt.NbtElement;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.StringIdentifiable;
 import org.foodcraft.contentsystem.content.AbstractContent;
-import org.foodcraft.contentsystem.content.SoupContent;
+import org.foodcraft.contentsystem.content.FoodContent;
+import org.foodcraft.contentsystem.foodcraft.ContentCategories;
 import org.foodcraft.contentsystem.foodcraft.ModContents;
+import org.foodcraft.contentsystem.registry.ContentRegistry;
 import org.foodcraft.item.BreadBoatItem;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -19,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
  * </p>
  */
 public class BreadBoatContainer extends ContainerType {
+    public static final String SOUP_KEY = "soup_type";
 
     public BreadBoatContainer(Identifier id, ContainerSettings settings) {
         super(id, settings);
@@ -37,19 +40,41 @@ public class BreadBoatContainer extends ContainerType {
     @Override
     public @Nullable AbstractContent extractContent(ItemStack stack) {
         if (stack.getNbt() != null && stack.hasNbt()
-                && stack.getNbt().contains(BreadBoatItem.SOUP_KEY, NbtElement.STRING_TYPE)) {
-            String soupKey = stack.getNbt().getString(BreadBoatItem.SOUP_KEY);
-            return BreadBoatSoupType.StringToSoup(soupKey);
+                && stack.getNbt().contains(SOUP_KEY, NbtElement.STRING_TYPE)) {
+            String soupKey = stack.getNbt().getString(SOUP_KEY);
+            return ContentRegistry.get(Identifier.tryParse(soupKey));
         }
 
         return null;
     }
 
     @Override
-    public @NotNull ItemStack createItemStack(AbstractContent content, int amount) {
-        ItemStack result = new ItemStack(getEmptyItem(), amount);
+    public @NotNull ItemStack replaceContent(@NotNull ItemStack stack, @Nullable AbstractContent content) {
+        // 检查堆栈是否是有效的容器
+        if (!matches(stack)) {
+            invalidContainer(stack);
+        }
 
-        return BreadBoatItem.serveSoup(result, BreadBoatSoupType.fromContent(content));
+        // 清空容器
+        if (content == null) {
+            if (stack.hasNbt()) {
+                stack.getOrCreateNbt().remove(SOUP_KEY);
+            }
+
+            return stack;
+        }
+
+        // 检查是否是有效的内容物
+        if (!canContain(content)) {
+            invalidContent(content);
+        }
+
+        // 替换内容物
+        if (canContain(content)) {
+            stack.getOrCreateNbt().putString(SOUP_KEY, content.getId().toString());
+        }
+
+        return stack;
     }
 
     /**
@@ -59,10 +84,22 @@ public class BreadBoatContainer extends ContainerType {
         BEETROOT_SOUP(ModContents.BEETROOT_SOUP),
         MUSHROOM_STEW(ModContents.MUSHROOM_STEW);
 
-        private final SoupContent content;
+        private final FoodContent content;
 
-        BreadBoatSoupType(SoupContent content) {
-            this.content = content;
+        BreadBoatSoupType(FoodContent content) {
+            if (content.isIn(ContentCategories.SOUP)) {
+                this.content = content;
+            } else {
+                throw new IllegalArgumentException();
+            }
+        }
+
+        /**
+         * 获取对应的内容物。
+         * @return 对应的内容物
+         */
+        public FoodContent getContent() {
+            return content;
         }
 
         @Override
@@ -81,34 +118,13 @@ public class BreadBoatContainer extends ContainerType {
          * @return 对应的汤类型，如果没有则返回null
          */
         @Nullable
-        public static BreadBoatContainer.BreadBoatSoupType fromContent(AbstractContent content) {
+        public static BreadBoatContainer.BreadBoatSoupType fromContent(@Nullable AbstractContent content) {
+            if (content == null) {
+                return null;
+            }
+
             for (BreadBoatSoupType type : values()) {
                 if (type.content.equals(content)) {
-                    return type;
-                }
-            }
-            return null;
-        }
-
-        /**
-         * 从字符串获取对应的汤类型。
-         *
-         * @return 对应的汤
-         */
-        @Nullable
-        public static SoupContent StringToSoup(String name) {
-            BreadBoatSoupType type = fromSting(name);
-            return type == null ? null : type.content;
-        }
-
-        /**
-         * 从字符串获取对应的可盛入面包船的汤类型。
-         *
-         * @return 对应的可盛入面包船的汤类型
-         */
-        public static BreadBoatSoupType fromSting(String name) {
-            for (BreadBoatSoupType type : values()) {
-                if (type.asString().equals(name)) {
                     return type;
                 }
             }

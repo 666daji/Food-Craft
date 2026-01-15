@@ -22,8 +22,9 @@ import net.minecraft.world.event.GameEvent;
 import org.dfood.block.SimpleFoodBlock;
 import org.dfood.util.IntPropertyManager;
 import org.foodcraft.FoodCraft;
+import org.foodcraft.contentsystem.api.ContainerUtil;
 import org.foodcraft.contentsystem.container.BreadBoatContainer;
-import org.foodcraft.item.BreadBoatItem;
+import org.foodcraft.food.SimpleFoodComponent;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
@@ -61,19 +62,7 @@ public class BreadBoatBlock extends SimpleFoodBlock {
 
     @Override
     public ItemStack createStack(int count, BlockState state, @Nullable BlockEntity blockEntity) {
-        return BreadBoatItem.serveSoup(super.createStack(count, state, blockEntity), state.get(SOUP_TYPE));
-    }
-
-    /**
-     * 计算总体的食物属性。
-     * @param containerFood 容器的食物属性
-     * @param soupFood 汤的食物属性
-     */
-    public static SimpleFoodComponent computeFoodComponent(FoodComponent containerFood, FoodComponent soupFood) {
-        int hunger = soupFood.getHunger() + containerFood.getHunger();
-        float saturationModifier = (soupFood.getSaturationModifier() + containerFood.getSaturationModifier()) / 2;
-
-        return new SimpleFoodComponent(hunger, saturationModifier);
+        return ContainerUtil.replaceContent(super.createStack(count, state, blockEntity), state.get(SOUP_TYPE).getContent());
     }
 
     /**
@@ -92,7 +81,25 @@ public class BreadBoatBlock extends SimpleFoodBlock {
             return null;
         }
 
-        return computeFoodComponent(containerFood, soupFood);
+        SimpleFoodComponent containerComponent = SimpleFoodComponent.fromFoodComponent(containerFood);
+        SimpleFoodComponent soupComponent = SimpleFoodComponent.fromFoodComponent(soupFood);
+
+        return containerComponent.merge(soupComponent);
+    }
+
+    /**
+     * 计算每次食用的食物属性（占总属性的1/maxUse）
+     */
+    private SimpleFoodComponent getFoodPerBite(SimpleFoodComponent totalFood) {
+        return totalFood.percent(100 / maxUse);
+    }
+
+    /**
+     * 计算剩余次数的食物属性
+     */
+    private SimpleFoodComponent getRemainingFood(SimpleFoodComponent totalFood, int remainingBites) {
+        int percentage = (remainingBites * 100) / maxUse;
+        return totalFood.percent(percentage);
     }
 
     /**
@@ -109,21 +116,20 @@ public class BreadBoatBlock extends SimpleFoodBlock {
             world.playSound(player, pos, SoundEvents.ENTITY_GENERIC_EAT, player.getSoundCategory(), 1.0F, 1.0F);
         }
 
-        SimpleFoodComponent food = getFoodComponent(state);
-        if (food == null) {
+        SimpleFoodComponent totalFood = getFoodComponent(state);
+        if (totalFood == null) {
             return ActionResult.FAIL;
         }
 
-        // 恢复饥饿值和饱和度（每次喝汤恢复1/maxUse的比例）
-        player.getHungerManager().add(
-                food.Hunger / maxUse,
-                food.SaturationModifier / (float) maxUse
-        );
+        // 计算本次食用的食物属性
+        SimpleFoodComponent foodPerBite = getFoodPerBite(totalFood);
 
+        // 恢复饥饿值和饱和度
+        foodPerBite.eat(player);
         world.emitGameEvent(player, GameEvent.EAT, pos);
 
         // 更新喝汤次数
-        if (currentBites < maxUse) {
+        if (currentBites < maxUse - 1) {
             // 还有剩余次数，增加喝汤次数
             world.setBlockState(pos, state.with(BITES, currentBites + 1), Block.NOTIFY_ALL);
         } else {
@@ -137,15 +143,17 @@ public class BreadBoatBlock extends SimpleFoodBlock {
     @Override
     public void onBreak(World world, BlockPos pos, BlockState state, PlayerEntity player) {
         int currentBites = state.get(BITES);
-        SimpleFoodComponent food = getFoodComponent(state);
+        SimpleFoodComponent totalFood = getFoodComponent(state);
 
         // 如果已经被吃过，强制返还剩余饱食度
-        if (!world.isClient && currentBites > 0 && food != null) {
+        if (!world.isClient && currentBites > 0 && totalFood != null) {
             int remainingBites = maxUse - currentBites;
-            int hunger = (food.Hunger / maxUse) * remainingBites;
-            float saturation = (food.SaturationModifier / (float) maxUse) * remainingBites;
 
-            player.getHungerManager().add(hunger, saturation);
+            // 计算剩余的食物属性
+            SimpleFoodComponent remainingFood = getRemainingFood(totalFood, remainingBites);
+
+            // 恢复剩余的饥饿值和饱和度
+            remainingFood.eat(player);
             world.emitGameEvent(player, GameEvent.EAT, pos);
         }
 
@@ -157,7 +165,7 @@ public class BreadBoatBlock extends SimpleFoodBlock {
         int bites = state.get(BITES);
         if (bites == 0){
             List<ItemStack> droppedStacks = super.getDroppedStacks(state, builder);
-            droppedStacks.forEach(stack -> BreadBoatItem.serveSoup(stack, state.get(BreadBoatBlock.SOUP_TYPE)));
+            droppedStacks.forEach(stack -> ContainerUtil.replaceContent(stack, state.get(SOUP_TYPE).getContent()));
 
             return droppedStacks;
         }
@@ -171,11 +179,4 @@ public class BreadBoatBlock extends SimpleFoodBlock {
         super.appendProperties(builder);
         builder.add(IntPropertyManager.take(), SOUP_TYPE);
     }
-
-    /**
-     * 将食物属性简单的封装起来供临时使用。
-     * @param Hunger 饱和度
-     * @param SaturationModifier 食物属性修饰
-     */
-    public record SimpleFoodComponent(int Hunger, float SaturationModifier) {}
 }

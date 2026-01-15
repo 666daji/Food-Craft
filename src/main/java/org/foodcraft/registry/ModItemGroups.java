@@ -31,9 +31,10 @@ public class ModItemGroups {
                             entries.add(ModItems.HEAT_RESISTANT_SLATE);
                             entries.add(ModItems.FIREWOOD);
                             entries.add(ModItems.POTTERY_TABLE);
+                            entries.add(ModItems.IRON_PLATE);
 
                             // 工具
-                            entries.add(ModItems.IRON_DISHES);
+                            entries.add(ModItems.IRON_GARNISH_DISHES);
                             entries.add(ModItems.WOODEN_SHELF);
                             entries.add(ModItems.CUTTING_BOARD);
                             entries.add(ModItems.IRON_POTS);

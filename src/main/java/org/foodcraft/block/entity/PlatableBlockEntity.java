@@ -1,5 +1,6 @@
 package org.foodcraft.block.entity;
 
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -25,10 +26,15 @@ import java.util.stream.Collectors;
  * <p><strong>实现要求：</strong></p>
  * <ol>
  *   <li>必须正确处理物品的放置和移除，确保步骤连续性</li>
- *   <li>必须支持 {@link Inventory} 接口的所有方法</li>
  *   <li>必须在状态改变时调用 {@code markDirty()} 来保存数据</li>
  *   <li>应该实现 NBT 序列化来保存已放置的物品</li>
  * </ol>
+ *
+ * <h2>{@linkplain Inventory}接口实现说明</h2>
+ * <p>{@linkplain PlatableBlockEntity}与常规的物品栏不同，其中保存的物品堆栈严格受限于步骤。</p>
+ * <p>所以对于物品堆栈的相关操作方法都被重定向至该接口的特定方法，一般情况下无需重写它们。
+ * 除非库存接口不完全服务于{@linkplain PlatingProcess}。</p>
+ *
  *
  * <p><strong>使用示例：</strong></p>
  * <pre>{@code
@@ -172,6 +178,48 @@ public interface PlatableBlockEntity extends Inventory {
      */
     void onPlatingComplete(World world, BlockPos pos, PlatingRecipe recipe);
 
+    // ==================== Inventory ====================
+
+    /**
+     * 重定向至{@link #placeItem(int, ItemStack)}
+     */
+    @Override
+    default void setStack(int slot, ItemStack stack) {
+        placeItem(slot, stack);
+    }
+
+    /**
+     * 重定向至{@link #removeItem(int)}
+     */
+    @Override
+    default ItemStack removeStack(int slot) {
+        return removeItem(slot);
+    }
+
+    /**
+     * 等价于{@link #removeStack(int)}
+     */
+    @Override
+    default ItemStack removeStack(int slot, int amount) {
+        return removeItem(slot);
+    }
+
+    /**
+     * 默认玩家始终可以操作
+     */
+    @Override
+    default boolean canPlayerUse(PlayerEntity player) {
+        return true;
+    }
+
+    /**
+     * @apiNote  如果是为了清空步骤放置的物品，请使用{@link #clearPlacedItems()}
+     */
+    @Override
+    default void clear() {
+        clearPlacedItems();
+    }
+
     // ==================== 便捷默认方法 ====================
 
     /**
@@ -259,12 +307,12 @@ public interface PlatableBlockEntity extends Inventory {
      * 获取最大可放置步骤数量。
      *
      * <p>这是一个可选方法，用于限制单个摆盘的容量。
-     * 默认返回 {@link Integer#MAX_VALUE} 表示没有限制。</p>
+     * 默认返回 {@link #size()} 表示和对应的方块实体容量相关。</p>
      *
      * @return 最大可放置步骤数量
      */
     default int getMaxSteps() {
-        return Integer.MAX_VALUE;
+        return size();
     }
 
     /**

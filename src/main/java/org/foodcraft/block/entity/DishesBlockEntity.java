@@ -19,7 +19,7 @@ import net.minecraft.world.BlockView;
 import org.dfood.block.FoodBlock;
 import org.dfood.item.DoubleBlockItem;
 import org.dfood.shape.FoodShapeHandle;
-import org.foodcraft.block.DishesBlock;
+import org.foodcraft.block.GarnishDishesBlock;
 import org.foodcraft.registry.ModBlockEntityTypes;
 import org.foodcraft.util.FoodCraftUtils;
 
@@ -35,7 +35,7 @@ public class DishesBlockEntity extends UpPlaceBlockEntity {
     private static final double FOOD_OFFSET_Y = 0.1;
 
     public DishesBlockEntity(BlockPos pos, BlockState state) {
-        super(ModBlockEntityTypes.DISHES, pos, state, INVENTORY_SIZE);
+        super(ModBlockEntityTypes.GARNISH_DISHES, pos, state, INVENTORY_SIZE);
     }
 
     @Override
@@ -74,7 +74,7 @@ public class DishesBlockEntity extends UpPlaceBlockEntity {
      */
     public BlockState getInventoryBlockState() {
         ItemStack stack = this.inventory.get(0);
-        Direction facing = this.getCachedState().get(DishesBlock.FACING);
+        Direction facing = this.getCachedState().get(GarnishDishesBlock.FACING);
 
         return FoodCraftUtils.createCountBlockstate(stack, facing);
     }

@@ -51,10 +51,14 @@ public class ModBlocks {
             new PotteryTableBlock(AbstractBlock.Settings.create().requiresTool()
                     .sounds(BlockSoundGroup.STONE).strength(1.2F, 6.0F)
                     .nonOpaque().pistonBehavior(PistonBehavior.BLOCK)));
+    public static final Block IRON_PLATE = registerBlock("iron_plate",
+            new PlateBlock(AbstractBlock.Settings.create().sounds(BlockSoundGroup.METAL)
+                    .strength(1.2F, 6.0F)
+                    .nonOpaque().pistonBehavior(PistonBehavior.BLOCK)));
 
     // 工具
-    public static final Block IRON_DISHES = registerBlock("iron_dishes",
-            new DishesBlock(AbstractBlock.Settings.create()
+    public static final Block IRON_GARNISH_DISHES = registerBlock("iron_garnish_dishes",
+            new GarnishDishesBlock(AbstractBlock.Settings.create()
                     .sounds(BlockSoundGroup.WOOD).strength(0.5F)
                     .nonOpaque().pistonBehavior(PistonBehavior.DESTROY)));
     public static final Block WOODEN_SHELF = registerBlock("wooden_shelf",

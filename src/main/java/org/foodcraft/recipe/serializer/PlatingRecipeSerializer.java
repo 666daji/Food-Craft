@@ -4,13 +4,13 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.recipe.RecipeSerializer;
-import net.minecraft.recipe.ShapedRecipe;
 import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonHelper;
+import org.foodcraft.contentsystem.content.AbstractContent;
+import org.foodcraft.contentsystem.registry.ContentRegistry;
 import org.foodcraft.recipe.PlatingRecipe;
 
 import java.util.ArrayList;
@@ -27,10 +27,7 @@ import java.util.List;
  *     "minecraft:potato",
  *     "minecraft:beef"
  *   ],
- *   "result": {
- *     "item": "foodcraft:plated_meal",
- *     "count": 1
- *   }
+ *   "result": "foodcraft:beef_berries"
  * }
  * }</pre>
  *
@@ -39,7 +36,7 @@ import java.util.List;
  *   <tr><th>字段</th><th>类型</th><th>描述</th></tr>
  *   <tr><td>container</td><td>string</td><td>容器物品ID</td></tr>
  *   <tr><td>steps</td><td>string[]</td><td>摆盘步骤的物品ID列表</td></tr>
- *   <tr><td>result</td><td>object</td><td>输出物品，包含item和count字段</td></tr>
+ *   <tr><td>result</td><td>string</td><td>配方的产物</td></tr>
  * </table>
  *
  * @see PlatingRecipe
@@ -64,8 +61,8 @@ public class PlatingRecipeSerializer implements RecipeSerializer<PlatingRecipe> 
         }
 
         // 3. 读取输出结果
-        JsonObject resultObj = JsonHelper.getObject(json, "result");
-        ItemStack output = ShapedRecipe.outputFromJson(resultObj);
+        Identifier result = Identifier.tryParse(JsonHelper.getString(json, "result"));
+        AbstractContent output = ContentRegistry.get(result);
 
         // 4. 创建并返回配方对象
         return new PlatingRecipe(id, container, steps, output);
@@ -89,7 +86,7 @@ public class PlatingRecipeSerializer implements RecipeSerializer<PlatingRecipe> 
         }
 
         // 3. 读取输出结果
-        ItemStack output = buf.readItemStack();
+        AbstractContent output = ContentRegistry.get(buf.readIdentifier());
 
         // 4. 创建并返回配方对象
         return new PlatingRecipe(id, container, steps, output);
@@ -108,6 +105,6 @@ public class PlatingRecipeSerializer implements RecipeSerializer<PlatingRecipe> 
         }
 
         // 3. 写入输出物品堆
-        buf.writeItemStack(recipe.getOutput());
+        buf.writeIdentifier(recipe.getDishes().getId());
     }
 }

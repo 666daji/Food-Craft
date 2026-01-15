@@ -73,6 +73,15 @@ public abstract class AbstractContent {
     @NotNull
     public abstract String getCategory();
 
+    /**
+     * 检查该内容物是否属于某个分组。
+     * @param category 目标分组
+     * @return 属于返回true，否则返回false
+     */
+    public boolean isIn(String category) {
+        return category.equals(getCategory());
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
@@ -88,6 +97,21 @@ public abstract class AbstractContent {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "{id=" + id + "}";
+        return getCategory() + ":{id=" + id + "}";
+    }
+
+    /**
+     * 用于创建一个简单的内容。
+     * @param id 内容标识符
+     * @param category 内容分组
+     * @return 创建的内容
+     */
+    public static AbstractContent createSimpleContent(Identifier id, String category) {
+        return new AbstractContent(id) {
+            @Override
+            public @NotNull String getCategory() {
+                return category;
+            }
+        };
     }
 }

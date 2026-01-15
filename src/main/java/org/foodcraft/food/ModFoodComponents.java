@@ -1,5 +1,7 @@
-package org.foodcraft.component;
+package org.foodcraft.food;
 
+import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.item.FoodComponent;
 
 public class ModFoodComponents {
@@ -24,6 +26,14 @@ public class ModFoodComponents {
 
     // 饮品
     public static final FoodComponent MILK = createSimpleFoodComponent(1, 0.4f);
+
+    // 菜肴
+    public static final FoodComponent BEEF_BERRIES = new FoodComponent.Builder()
+            .hunger(2).saturationModifier(0.4f).meat()
+            .statusEffect(new StatusEffectInstance(StatusEffects.HUNGER, 600, 0), 0.3F)
+            .build();
+    public static final FoodComponent COOKED_BEEF_BERRIES = new FoodComponent.Builder()
+            .hunger(7).saturationModifier(0.7f).build();
 
     private static FoodComponent createSimpleFoodComponent(int hunger, float saturationModifier){
         return new FoodComponent.Builder()

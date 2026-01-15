@@ -2,7 +2,7 @@
 	"format_version": "1.21.6",
 	"credit": "Made with Blockbench",
 	"textures": {
-		"1": "foodcraft:block/iron_dishes",
+		"1": "foodcraft:block/iron_garnish_dishes",
 		"particle": "block/spruce_planks"
 	},
 	"elements": [

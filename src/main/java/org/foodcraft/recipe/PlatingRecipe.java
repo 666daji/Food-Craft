@@ -8,6 +8,9 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.world.World;
 import org.foodcraft.block.entity.PlatableBlockEntity;
+import org.foodcraft.contentsystem.content.AbstractContent;
+import org.foodcraft.contentsystem.content.DishesContent;
+import org.foodcraft.contentsystem.occupy.OccupyUtil;
 import org.foodcraft.registry.ModRecipeSerializers;
 import org.foodcraft.registry.ModRecipeTypes;
 
@@ -47,8 +50,8 @@ public class PlatingRecipe implements Recipe<PlatableBlockEntity> {
     /** 步骤序列，按顺序放置的物品列表 */
     private final List<Item> steps;
 
-    /** 配方输出物品，完成所有步骤后获得 */
-    private final ItemStack output;
+    /** 配方输出菜肴，完成所有步骤后获得 */
+    private final DishesContent output;
 
     /**
      * 创建摆盘配方。
@@ -58,11 +61,15 @@ public class PlatingRecipe implements Recipe<PlatableBlockEntity> {
      * @param steps 步骤物品列表，列表顺序即为放置顺序
      * @param output 配方输出物品
      */
-    public PlatingRecipe(Identifier id, Item container, List<Item> steps, ItemStack output) {
-        this.id = id;
-        this.container = container;
-        this.steps = List.copyOf(steps);
-        this.output = output.copy();
+    public PlatingRecipe(Identifier id, Item container, List<Item> steps, AbstractContent output) {
+        if (output instanceof DishesContent dishes) {
+            this.id = id;
+            this.container = container;
+            this.steps = List.copyOf(steps);
+            this.output = dishes;
+        } else {
+            throw new IllegalArgumentException("The product of the recipe for the dish must be plating dishes");
+        }
     }
 
     /**
@@ -100,46 +107,20 @@ public class PlatingRecipe implements Recipe<PlatableBlockEntity> {
         return true;
     }
 
-    /**
-     * 根据当前摆盘状态制作输出物品。
-     *
-     * <p>此方法会消耗摆盘上的所有物品，并返回配方输出。
-     * 注意：摆盘系统通常不直接调用此方法，而是通过流程完成步骤处理。</p>
-     *
-     * @param inventory 摆盘方块实体
-     * @param registryManager 动态注册管理器，用于获取物品注册信息
-     * @return 配方输出物品的副本
-     */
     @Override
     public ItemStack craft(PlatableBlockEntity inventory, DynamicRegistryManager registryManager) {
-        return this.output.copy();
+        return OccupyUtil.createAbstractOccupy(output);
     }
 
-    /**
-     * 检查配方的容器是否适合给定的物品栏大小。
-     *
-     * <p><strong>注意：</strong>摆盘配方不使用传统的物品栏格子，因此此方法意义有限。
-     * 通常返回true表示配方可以"适配"任意大小的物品栏。</p>
-     *
-     * @param width 物品栏宽度（未使用）
-     * @param height 物品栏高度（未使用）
-     * @return 总是返回true，表示配方总是适配
-     */
     @Override
     public boolean fits(int width, int height) {
         // 摆盘配方不使用传统的物品栏格子，总是返回true
         return true;
     }
 
-    /**
-     * 获取配方的输出物品（不包含消耗的输入物品）。
-     *
-     * @param registryManager 动态注册管理器，用于获取物品注册信息
-     * @return 配方输出物品的副本
-     */
     @Override
     public ItemStack getOutput(DynamicRegistryManager registryManager) {
-        return this.output.copy();
+        return OccupyUtil.createAbstractOccupy(output);
     }
 
     @Override
@@ -198,14 +179,11 @@ public class PlatingRecipe implements Recipe<PlatableBlockEntity> {
     }
 
     /**
-     * 获取配方的输出物品。
-     *
-     * <p>返回的是输出物品的副本，确保外部不能修改内部状态。</p>
-     *
-     * @return 输出物品的副本
+     * 获取配方的成品
+     * @return 制作出的菜肴
      */
-    public ItemStack getOutput() {
-        return output.copy();
+    public DishesContent getDishes() {
+        return this.output;
     }
 
     // ==================== 配方匹配辅助方法 ====================

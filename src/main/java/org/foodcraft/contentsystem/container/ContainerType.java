@@ -169,6 +169,36 @@ public abstract class ContainerType {
     public abstract AbstractContent extractContent(ItemStack stack);
 
     /**
+     * 替换或填充容器中的内容物。
+     * <p>
+     * 此方法会修改给定的物品堆栈，将容器的内容物替换为指定的内容物，或者清空容器。
+     * </p>
+     *
+     * @param stack 要修改的容器物品堆栈（必须是空容器或已装有内容物的容器）
+     * @param content 要装入的新内容物类型，为null时清空容器
+     * @return 填充后的物品堆栈。
+     * @throws IllegalArgumentException 如果容器不能装入该内容物或stack不是有效的容器则返回原堆栈并抛出警告
+     */
+    @NotNull
+    public abstract ItemStack replaceContent(@NotNull ItemStack stack, @Nullable AbstractContent content);
+
+    /**
+     * 抛出无效容器异常。
+     * @param stack 无效的容器堆栈
+     */
+    protected void invalidContainer(ItemStack stack) {
+        throw new IllegalArgumentException("Attempted to replace content on invalid container stack: " + stack);
+    }
+
+    /**
+     * 抛出无效内容物异常。
+     * @param content 无效的内容物
+     */
+    protected void invalidContent(AbstractContent content) {
+        throw new IllegalArgumentException("Container " + getId() +" cannot contain content: " + content.getId());
+    }
+
+    /**
      * 创建一个空的该容器类型的物品堆栈。
      *
      * @param amount 物品数量
@@ -181,13 +211,17 @@ public abstract class ContainerType {
 
     /**
      * 创建装有指定内容物的物品堆栈。
+     * <p>默认实现：创建一个空容器，然后用指定内容物填充</p>
      *
      * @param content 要装入的内容物类型
      * @param amount 物品数量
      * @return 装有内容物的物品堆栈
      */
     @NotNull
-    public abstract ItemStack createItemStack(AbstractContent content, int amount);
+    public ItemStack createItemStack(AbstractContent content, int amount) {
+        ItemStack stack = createEmptyItemStack(amount);
+        return replaceContent(stack, content);
+    }
 
     @Override
     public boolean equals(Object obj) {

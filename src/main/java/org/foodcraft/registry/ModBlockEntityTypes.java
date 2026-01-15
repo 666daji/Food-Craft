@@ -29,6 +29,12 @@ public class ModBlockEntityTypes {
                     ModBlocks.CLAY_POTS
             )
     );
+    public static final BlockEntityType<PlateBlockEntity> PLATE = create("plate",
+            BlockEntityType.Builder.create(
+                    PlateBlockEntity::new,
+                    ModBlocks.IRON_PLATE
+            )
+    );
 
     // UpPlaceBlock
     public static final BlockEntityType<HeatResistantSlateBlockEntity> HEAT_RESISTANT_SLATE = create("heat_resistant_slate",
@@ -37,10 +43,10 @@ public class ModBlockEntityTypes {
                     ModBlocks.HEAT_RESISTANT_SLATE
             )
     );
-    public static final BlockEntityType<DishesBlockEntity> DISHES = create("dishes",
+    public static final BlockEntityType<DishesBlockEntity> GARNISH_DISHES = create("dishes",
             BlockEntityType.Builder.create(
                     DishesBlockEntity::new,
-                    ModBlocks.IRON_DISHES
+                    ModBlocks.IRON_GARNISH_DISHES
             )
     );
     public static final BlockEntityType<ShelfBlockEntity> SHELF = create("shelf",

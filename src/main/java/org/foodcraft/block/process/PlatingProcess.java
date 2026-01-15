@@ -90,17 +90,27 @@ public class PlatingProcess<T extends BlockEntity & PlatableBlockEntity> extends
                 return StepResult.continueSameStep(ActionResult.PASS);
             }
 
-            // 获取必要的变量
+            // 操作的方块实体和玩家手持物品
             PlatableBlockEntity plate = context.blockEntity();
             ItemStack heldItem = context.getHeldItemStack();
+
+            // 已放置物品列表
             List<Item> placedItemTypes = plate.getPlacedItemTypes();
-            int currentStep = placedItemTypes.size();
+
+            // 当前已完成的步骤数量
+            int currentStep = plate.getStepCount();
 
             // 如果候选列表未初始化，尝试初始化
             if (!hasInitializedCandidates) {
                 if (!initializeCandidates(context.world(), plate, heldItem)) {
                     // 恢复失败则步骤失败
                     resetCandidateState();
+
+                    // 如果此时放置物品列表为空则重置流程
+                    if (placedItemTypes.isEmpty()) {
+                        reset();
+                    }
+
                     return StepResult.fail(STEP_PLACE_ITEM, ActionResult.FAIL);
                 }
 
