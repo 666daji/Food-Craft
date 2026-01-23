@@ -8,8 +8,8 @@
     "wheat": 3
   },
   "liquids": {
-    "water": 2,
-    "milk": 1
+    "foodcraft:water": 2,
+    "foodcraft:milk": 1
   },
   "extra_items": {
     "items": [

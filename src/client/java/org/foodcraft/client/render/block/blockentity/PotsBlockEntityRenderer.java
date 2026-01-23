@@ -1,5 +1,6 @@
 package org.foodcraft.client.render.block.blockentity;
 
+import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.RenderLayers;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.block.BlockModelRenderer;
@@ -8,28 +9,28 @@ import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
 import net.minecraft.client.render.model.BakedModelManager;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
-import org.foodcraft.FoodCraft;
+import net.minecraft.util.math.random.Random;
 import org.foodcraft.block.entity.PotsBlockEntity;
 import org.foodcraft.block.process.KneadingProcess;
+import org.foodcraft.client.render.model.ModModelLoader;
 
 public class PotsBlockEntityRenderer implements BlockEntityRenderer<PotsBlockEntity> {
     protected final BlockModelRenderer renderer;
     protected final BakedModelManager modelManager;
 
     // 加粉步骤模型
-    private static final Identifier MODEL_ADD_FLOUR_1 = new Identifier(FoodCraft.MOD_ID, "process/knead_add_flour_1");
-    private static final Identifier MODEL_ADD_FLOUR_2 = new Identifier(FoodCraft.MOD_ID, "process/knead_add_flour_2");
-    private static final Identifier MODEL_ADD_FLOUR_3 = new Identifier(FoodCraft.MOD_ID, "process/knead_add_flour_3");
+    private static final Identifier MODEL_ADD_FLOUR_1 = ModModelLoader.createProcessModel("knead_add_flour_1");
+    private static final Identifier MODEL_ADD_FLOUR_2 = ModModelLoader.createProcessModel("knead_add_flour_2");
+    private static final Identifier MODEL_ADD_FLOUR_3 = ModModelLoader.createProcessModel("knead_add_flour_3");
 
     // 加水步骤模型
-    private static final Identifier MODEL_ADD_LIQUID_1 = new Identifier(FoodCraft.MOD_ID, "process/knead_add_liquid_1");
-    private static final Identifier MODEL_ADD_LIQUID_2 = new Identifier(FoodCraft.MOD_ID, "process/knead_add_liquid_2");
-    private static final Identifier MODEL_ADD_LIQUID_3 = new Identifier(FoodCraft.MOD_ID, "process/knead_add_liquid_3");
+    private static final Identifier MODEL_ADD_LIQUID_1 = ModModelLoader.createProcessModel("knead_add_liquid_1");
+    private static final Identifier MODEL_ADD_LIQUID_2 = ModModelLoader.createProcessModel("knead_add_liquid_2");
+    private static final Identifier MODEL_ADD_LIQUID_3 = ModModelLoader.createProcessModel("knead_add_liquid_3");
 
     // 揉面步骤模型
-    private static final Identifier MODEL_KNEAD_1 = new Identifier(FoodCraft.MOD_ID, "process/knead_knead_1");
-    private static final Identifier MODEL_KNEAD_2 = new Identifier(FoodCraft.MOD_ID, "process/knead_knead_3");
-    private static final Identifier MODEL_KNEAD_3 = new Identifier(FoodCraft.MOD_ID, "process/knead_knead_3");
+    private static final Identifier MODEL_KNEAD_1 = ModModelLoader.createProcessModel("knead_knead_1");
+    private static final Identifier MODEL_KNEAD_2 = ModModelLoader.createProcessModel("knead_knead_2");
 
     public PotsBlockEntityRenderer(BlockEntityRendererFactory.Context ctx) {
         renderer = ctx.getRenderManager().getModelRenderer();
@@ -46,7 +47,7 @@ public class PotsBlockEntityRenderer implements BlockEntityRenderer<PotsBlockEnt
             renderer.render(matrices.peek(),
                     vertexConsumers.getBuffer(RenderLayers.getBlockLayer(entity.getCachedState())),
                     null,
-                    modelManager.getModel(MODEL_KNEAD_3),
+                    modelManager.getModel(MODEL_KNEAD_2),
                     1.0f, 1.0f, 1.0f, light, overlay);
             matrices.pop();
             return;
@@ -66,11 +67,15 @@ public class PotsBlockEntityRenderer implements BlockEntityRenderer<PotsBlockEnt
         // 根据渲染状态选择对应的模型
         Identifier modelId = getModelForRenderState(kneadingState);
         if (modelId != null) {
-            renderer.render(matrices.peek(),
-                    vertexConsumers.getBuffer(RenderLayers.getBlockLayer(entity.getCachedState())),
-                    null,
+            renderer.render(
+                    entity.getWorld(),
                     modelManager.getModel(modelId),
-                    1.0f, 1.0f, 1.0f, light, overlay);
+                    entity.getCachedState(), entity.getPos(),
+                    matrices,
+                    vertexConsumers.getBuffer(RenderLayers.getBlockLayer(entity.getCachedState())),
+                    true, Random.create(),
+                    entity.getCachedState().getRenderingSeed(entity.getPos()), OverlayTexture.DEFAULT_UV
+            );
         }
 
         matrices.pop();
@@ -127,9 +132,7 @@ public class PotsBlockEntityRenderer implements BlockEntityRenderer<PotsBlockEnt
                 }
 
                 // 根据揉面次数选择模型
-                if (kneadCount >= 3) {
-                    return MODEL_KNEAD_3;
-                } else if (kneadCount == 2) {
+                if (kneadCount >= 2) {
                     return MODEL_KNEAD_2;
                 } else {
                     return MODEL_KNEAD_1;

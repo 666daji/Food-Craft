@@ -123,11 +123,8 @@ public class ModModelLoader implements ModelLoadingPlugin {
         MODELS_TO_LOAD.add(createProcessModel("knead_add_liquid_2"));
         MODELS_TO_LOAD.add(createProcessModel("knead_add_liquid_3"));
 
-        MODELS_TO_LOAD.add(createProcessModel("knead_add_extra_1"));
-
         MODELS_TO_LOAD.add(createProcessModel("knead_knead_1"));
         MODELS_TO_LOAD.add(createProcessModel("knead_knead_2"));
-        MODELS_TO_LOAD.add(createProcessModel("knead_knead_3"));
     }
 
     // =========== 切割流程 ===========

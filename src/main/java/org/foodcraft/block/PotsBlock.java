@@ -5,6 +5,8 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
+import net.minecraft.sound.BlockSoundGroup;
+import net.minecraft.sound.SoundCategory;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.DirectionProperty;
 import net.minecraft.state.property.Properties;
@@ -18,6 +20,7 @@ import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import org.foodcraft.block.entity.PotsBlockEntity;
+import org.foodcraft.util.FoodCraftUtils;
 import org.jetbrains.annotations.Nullable;
 
 public class PotsBlock extends BlockWithEntity {
@@ -81,6 +84,13 @@ public class PotsBlock extends BlockWithEntity {
             if (!potsBlockEntity.getStack(0).isEmpty()) {
                 ItemStack storedStack = potsBlockEntity.removeStack(0);
                 player.giveItemStack(storedStack);
+
+                BlockSoundGroup sounds = FoodCraftUtils.getSoundGroupFromItem(storedStack);
+                if (sounds != null) {
+                    world.playSound(null, pos,
+                            sounds.getBreakSound(),
+                            SoundCategory.BLOCKS, 0.5F, 1.0F);
+                }
 
                 return ActionResult.SUCCESS;
             }

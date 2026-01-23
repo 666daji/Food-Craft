@@ -21,6 +21,7 @@ public class ModBlockColors {
     public static void registryColors() {
         ColorProviderRegistry.BLOCK.register(ModBlockColors::getFlourSackColor, ModBlocks.FLOUR_SACK);
         ColorProviderRegistry.BLOCK.register((state, world, pos, tintIndex) -> tintIndex != -1? 4159204: -1, AssistedBlocks.CRIPPLED_WATER_BUCKET);
+        ColorProviderRegistry.BLOCK.register((state, world, pos, tintIndex) -> tintIndex != -1? 4159204: -1, ModBlocks.IRON_POTS, ModBlocks.CLAY_POTS);
     }
 
     private static int getFlourSackColor(BlockState state, @Nullable BlockRenderView world, @Nullable BlockPos pos, int tintIndex) {

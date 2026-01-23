@@ -11,6 +11,9 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonHelper;
 import org.foodcraft.item.FlourItem;
 import org.foodcraft.recipe.DoughRecipe;
+import org.foodcraft.contentsystem.content.AbstractContent;
+import org.foodcraft.contentsystem.content.ContentCategories;
+import org.foodcraft.contentsystem.registry.ContentRegistry;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,7 +23,7 @@ import java.util.Map;
  *
  * <ul>
  *   <li>支持面粉类型（FlourType）到数量的映射</li>
- *   <li>支持液体类型到数量的映射</li>
+ *   <li>支持液体内容物（AbstractContent）到数量的映射</li>
  *   <li>支持额外物品的数组格式和旧格式</li>
  *   <li>自动合并相同物品的数量</li>
  * </ul>
@@ -35,14 +38,13 @@ import java.util.Map;
  *     "rice": 1
  *   },
  *   "liquids": {
- *     "water": 1,
- *     "milk": 2
+ *     "foodcraft:water": 1,
+ *     "foodcraft:milk": 2
  *   },
  *   "extra_items": {
  *     "items": [
  *       {"item": "minecraft:sugar", "count": 1},
- *       {"item": "minecraft:egg", "count": 2},
- *       {"item": "minecraft:sugar", "count": 1}  // 会自动合并为count: 2
+ *       {"item": "minecraft:egg", "count": 2}
  *     ]
  *   }
  * }
@@ -53,7 +55,7 @@ import java.util.Map;
  *   <tr><th>字段</th><th>类型</th><th>必选</th><th>描述</th></tr>
  *   <tr><td>output</td><td>object</td><td>是</td><td>输出物品，包含item和count字段</td></tr>
  *   <tr><td>flours</td><td>object</td><td>是</td><td>面粉要求，键为面粉类型，值为数量</td></tr>
- *   <tr><td>liquids</td><td>object</td><td>是</td><td>液体要求，键为液体类型，值为数量</td></tr>
+ *   <tr><td>liquids</td><td>object</td><td>是</td><td>液体要求，键为内容物标识符，值为数量（单位数）</td></tr>
  *   <tr><td>extra_items</td><td>object</td><td>否</td><td>额外物品要求，推荐使用items数组格式</td></tr>
  * </table>
  *
@@ -65,14 +67,6 @@ public class DoughRecipeSerializer implements RecipeSerializer<DoughRecipe> {
 
     /**
      * <h3>从JSON对象读取面团配方</h3>
-     *
-     * <p>该方法解析JSON数据，创建面团配方对象。支持两种额外物品格式：</p>
-     * <ul>
-     *   <li><b>推荐格式（数组）</b>: <code>"items": [{"item": "...", "count": X}, ...]</code></li>
-     *   <li><b>旧格式（对象）</b>: <code>"item_name": {"item": "...", "count": X}</code></li>
-     * </ul>
-     *
-     * <p>数组格式会自动合并相同物品的数量。</p>
      */
     @Override
     public DoughRecipe read(Identifier id, JsonObject json) {
@@ -94,11 +88,27 @@ public class DoughRecipeSerializer implements RecipeSerializer<DoughRecipe> {
             flourRequirements.put(flourType, count);
         }
 
-        // 3. 读取液体要求（液体类型 -> 数量）
-        Map<String, Integer> liquidRequirements = new HashMap<>();
+        // 3. 读取液体要求（内容物标识符 -> 数量）
+        Map<AbstractContent, Integer> liquidRequirements = new HashMap<>();
         JsonObject liquidsObj = JsonHelper.getObject(json, "liquids");
         for (Map.Entry<String, JsonElement> entry : liquidsObj.entrySet()) {
-            liquidRequirements.put(entry.getKey(), entry.getValue().getAsInt());
+            try {
+                Identifier contentId = Identifier.tryParse(entry.getKey());
+                AbstractContent content = ContentRegistry.get(contentId);
+
+                if (content == null) {
+                    throw new JsonSyntaxException("Unknown content identifiers: " + entry.getKey());
+                }
+
+                if (!content.isIn(ContentCategories.BASE_LIQUID)) {
+                    throw new JsonSyntaxException("The liquid contents must belong to the basal liquid grouping: " + entry.getKey());
+                }
+
+                int count = entry.getValue().getAsInt();
+                liquidRequirements.put(content, count);
+            } catch (Exception e) {
+                throw new JsonSyntaxException("Invalid liquid content identifier: " + entry.getKey(), e);
+            }
         }
 
         // 4. 读取额外物品要求
@@ -157,11 +167,15 @@ public class DoughRecipeSerializer implements RecipeSerializer<DoughRecipe> {
 
         // 3. 读取液体要求
         int liquidCount = buf.readVarInt();
-        Map<String, Integer> liquidRequirements = new HashMap<>(liquidCount);
+        Map<AbstractContent, Integer> liquidRequirements = new HashMap<>(liquidCount);
         for (int i = 0; i < liquidCount; i++) {
-            String liquidType = buf.readString();
+            Identifier contentId = buf.readIdentifier();
             int count = buf.readVarInt();
-            liquidRequirements.put(liquidType, count);
+
+            AbstractContent content = ContentRegistry.get(contentId);
+            if (content != null && content.isIn(ContentCategories.BASE_LIQUID)) {
+                liquidRequirements.put(content, count);
+            }
         }
 
         // 4. 读取额外物品要求
@@ -193,8 +207,8 @@ public class DoughRecipeSerializer implements RecipeSerializer<DoughRecipe> {
 
         // 3. 写入液体要求
         buf.writeVarInt(recipe.getLiquidRequirements().size());
-        for (Map.Entry<String, Integer> entry : recipe.getLiquidRequirements().entrySet()) {
-            buf.writeString(entry.getKey());
+        for (Map.Entry<AbstractContent, Integer> entry : recipe.getLiquidRequirements().entrySet()) {
+            buf.writeIdentifier(entry.getKey().getId());
             buf.writeVarInt(entry.getValue());
         }
 

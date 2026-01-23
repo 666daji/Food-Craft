@@ -10,20 +10,24 @@ import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.StringIdentifiable;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.world.World;
+import org.dfood.sound.ModSoundGroups;
 import org.foodcraft.block.process.step.Step;
 import org.foodcraft.block.process.step.StepExecutionContext;
 import org.foodcraft.block.process.step.StepResult;
+import org.foodcraft.contentsystem.api.ContainerContentBinding;
+import org.foodcraft.contentsystem.api.ContainerUtil;
+import org.foodcraft.contentsystem.content.AbstractContent;
+import org.foodcraft.contentsystem.content.ContentCategories;
+import org.foodcraft.contentsystem.registry.ContentRegistry;
 import org.foodcraft.item.FlourItem;
 import org.foodcraft.recipe.DoughRecipe;
 import org.foodcraft.registry.ModItems;
 import org.foodcraft.registry.ModRecipeTypes;
-import org.foodcraft.util.FoodCraftUtils;
 
 import java.util.*;
-import java.util.function.Predicate;
 
 /**
  * 揉面流程实现类，管理所有状态数据。
@@ -50,7 +54,7 @@ public class KneadingProcess<T extends BlockEntity & Inventory> extends Abstract
     private final Map<FlourItem.FlourType, Integer> flourCounts;
 
     /** 液体类型计数 */
-    private final Map<LiquidType, Integer> liquidCounts;
+    private final Map<AbstractContent, Integer> liquidCounts;
 
     /** 揉面次数 */
     private int kneadingCount;
@@ -150,37 +154,39 @@ public class KneadingProcess<T extends BlockEntity & Inventory> extends Abstract
         public StepResult execute(StepExecutionContext<T> context) {
             ItemStack heldStack = context.getHeldItemStack();
 
-            // 检查手持物品是否为可接受的液体
-            Optional<LiquidType> liquidType = LiquidType.fromItem(heldStack);
-            if (liquidType.isEmpty()) {
-                // 不是可接受的液体，步骤失败，回退到当前步骤
+            Optional<ContainerContentBinding> bindingOpt = ContainerUtil.analyze(heldStack);
+            if (bindingOpt.isEmpty()) {
                 return StepResult.fail(STEP_ADD_LIQUID, ActionResult.PASS);
             }
 
+            ContainerContentBinding binding = bindingOpt.get();
+            AbstractContent content = binding.content();
+
+            if (content == null || !isAllowedContent(content)) {
+                return StepResult.fail(STEP_ADD_LIQUID, ActionResult.PASS);
+            }
+
+            // 获取容器的基本容量（每个容器提供的液体单位数）
+            int capacity = binding.container().getBaseCapacity();
+
             // 服务器端执行消耗和记录逻辑
             if (context.isServerSide()) {
-                LiquidType type = liquidType.get();
 
-                // 播放水瓶的声音
-                if (type == LiquidType.WATER) {
-                    context.playSound(SoundEvents.ITEM_BOTTLE_EMPTY);
-                } else if (type == LiquidType.MILK) {
-                    context.playSound(SoundEvents.ENTITY_COW_MILK);
-                }
+                // 播放加入液体的声音
+                context.playSound(context.getItemSounds().getPlaceSound());
 
                 // 消耗1个液体物品
                 if (!context.isCreateMode()) {
                     heldStack.decrement(1);
-                }
 
-                // 返还容器
-                Item containerItem = type.getContainerItem();
-                if (containerItem != null && !containerItem.equals(Items.AIR)) {
-                    context.giveStack(new ItemStack(containerItem));
+                    // 返还空容器
+                    ItemStack remainder = binding.container().remainder();
+                    context.giveStack(remainder);
                 }
 
                 // 记录液体计数（使用LiquidType作为键）
-                liquidCounts.put(type, liquidCounts.getOrDefault(type, 0) + 1);
+                liquidCounts.put(content,
+                        liquidCounts.getOrDefault(content, 0) + capacity);
 
                 // 更新方块实体
                 context.blockEntity().markDirty();
@@ -278,7 +284,7 @@ public class KneadingProcess<T extends BlockEntity & Inventory> extends Abstract
                 return StepResult.fail(STEP_KNEAD, ActionResult.PASS);
             }
 
-            context.playSound(SoundEvents.ENTITY_SLIME_DEATH_SMALL);
+            context.playSound(ModSoundGroups.BREAD.getBreakSound());
 
             // 服务器端执行揉面逻辑
             if (context.isServerSide()) {
@@ -336,6 +342,16 @@ public class KneadingProcess<T extends BlockEntity & Inventory> extends Abstract
         return ItemStack.EMPTY;
     }
 
+    /**
+     * 检查内容物是否是允许添加的液体。
+     *
+     * @param content 要检查的内容物
+     * @return 是否可以在液体步骤中添加的内容
+     */
+    public static boolean isAllowedContent(AbstractContent content) {
+        return content.isIn(ContentCategories.BASE_LIQUID);
+    }
+
     // ============ 状态获取方法 ============
 
     public Map<FlourItem.FlourType, Integer> getFlourCounts() {
@@ -345,19 +361,8 @@ public class KneadingProcess<T extends BlockEntity & Inventory> extends Abstract
     /**
      * 获取液体类型计数
      */
-    public Map<LiquidType, Integer> getLiquidCounts() {
+    public Map<AbstractContent, Integer> getLiquidCounts() {
         return new HashMap<>(liquidCounts);
-    }
-
-    /**
-     * 获取用于配方匹配的液体计数（字符串形式）
-     */
-    public Map<String, Integer> getLiquidCountsForRecipe() {
-        Map<String, Integer> result = new HashMap<>();
-        for (Map.Entry<LiquidType, Integer> entry : liquidCounts.entrySet()) {
-            result.put(entry.getKey().asString(), entry.getValue());
-        }
-        return result;
     }
 
     public List<ItemStack> getExtraItemStacks() {
@@ -437,8 +442,8 @@ public class KneadingProcess<T extends BlockEntity & Inventory> extends Abstract
 
         // 保存液体计数（LiquidType作为键）
         NbtCompound liquidsNbt = new NbtCompound();
-        for (Map.Entry<LiquidType, Integer> entry : liquidCounts.entrySet()) {
-            liquidsNbt.putInt(entry.getKey().asString(), entry.getValue());
+        for (Map.Entry<AbstractContent, Integer> entry : liquidCounts.entrySet()) {
+            liquidsNbt.putInt(entry.getKey().getId().toString(), entry.getValue());
         }
         nbt.put("liquids", liquidsNbt);
 
@@ -473,9 +478,10 @@ public class KneadingProcess<T extends BlockEntity & Inventory> extends Abstract
         if (nbt.contains("liquids")) {
             NbtCompound liquidsNbt = nbt.getCompound("liquids");
             for (String key : liquidsNbt.getKeys()) {
-                LiquidType.fromString(key).ifPresent(liquidType ->
-                        liquidCounts.put(liquidType, liquidsNbt.getInt(key))
-                );
+                AbstractContent content =  ContentRegistry.get(Identifier.tryParse(key));
+                if (content != null && isAllowedContent(content)) {
+                    liquidCounts.put(content, liquidsNbt.getInt(key));
+                }
             }
         }
 
@@ -550,17 +556,13 @@ public class KneadingProcess<T extends BlockEntity & Inventory> extends Abstract
         // 面粉计数详情
         info.append("面粉: ").append(getTotalFlourCount()).append("/3\n");
         if (!flourCounts.isEmpty()) {
-            flourCounts.forEach((type, count) -> {
-                info.append("  - ").append(type.asString()).append(": ").append(count).append("\n");
-            });
+            flourCounts.forEach((type, count) -> info.append("  - ").append(type.asString()).append(": ").append(count).append("\n"));
         }
 
         // 液体计数详情
         info.append("液体: ").append(getTotalLiquidCount()).append("/3\n");
         if (!liquidCounts.isEmpty()) {
-            liquidCounts.forEach((type, count) -> {
-                info.append("  - ").append(type.asString()).append(": ").append(count).append("\n");
-            });
+            liquidCounts.forEach((type, count) -> info.append("  - ").append(type.toString()).append(": ").append(count).append("\n"));
         }
 
         // 额外物品详情
@@ -592,55 +594,6 @@ public class KneadingProcess<T extends BlockEntity & Inventory> extends Abstract
     }
 
     // ============ 液体类型枚举 ============
-
-    public enum LiquidType implements StringIdentifiable {
-        WATER("water", FoodCraftUtils::isWaterPotion, Items.GLASS_BOTTLE),
-        MILK("milk", stack -> stack.isOf(ModItems.MILK_POTION), Items.GLASS_BOTTLE);
-
-        private final String id;
-        private final Predicate<ItemStack> itemChecker;
-        private final Item containerItem;
-
-        LiquidType(String id, Predicate<ItemStack> itemChecker, Item containerItem) {
-            this.id = id;
-            this.itemChecker = itemChecker;
-            this.containerItem = containerItem;
-        }
-
-        @Override
-        public String asString() {
-            return id;
-        }
-
-        public boolean matches(ItemStack stack) {
-            return itemChecker.test(stack);
-        }
-
-        public Item getContainerItem() {
-            return containerItem;
-        }
-
-        public static Optional<LiquidType> fromItem(ItemStack stack) {
-            for (LiquidType type : values()) {
-                if (type.matches(stack)) {
-                    return Optional.of(type);
-                }
-            }
-            return Optional.empty();
-        }
-
-        /**
-         * 根据字符串ID获取液体类型
-         */
-        public static Optional<LiquidType> fromString(String id) {
-            for (LiquidType type : values()) {
-                if (type.id.equals(id)) {
-                    return Optional.of(type);
-                }
-            }
-            return Optional.empty();
-        }
-    }
 
     /**
      * 获取当前流程状态的总和
