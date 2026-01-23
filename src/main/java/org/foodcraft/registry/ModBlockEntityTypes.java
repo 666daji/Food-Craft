@@ -43,7 +43,7 @@ public class ModBlockEntityTypes {
                     ModBlocks.HEAT_RESISTANT_SLATE
             )
     );
-    public static final BlockEntityType<DishesBlockEntity> GARNISH_DISHES = create("dishes",
+    public static final BlockEntityType<DishesBlockEntity> GARNISH_DISHES = create("garnish_dishes",
             BlockEntityType.Builder.create(
                     DishesBlockEntity::new,
                     ModBlocks.IRON_GARNISH_DISHES
@@ -82,12 +82,6 @@ public class ModBlockEntityTypes {
             BlockEntityType.Builder.create(
                     CombustionFirewoodBlockEntity::new,
                     ModBlocks.COMBUSTION_FIREWOOD
-            )
-    );
-    public static final BlockEntityType<BracketBlockEntity> BRACKET = create("bracket",
-            BlockEntityType.Builder.create(
-                    BracketBlockEntity::new,
-                    ModBlocks.BRACKET
             )
     );
 

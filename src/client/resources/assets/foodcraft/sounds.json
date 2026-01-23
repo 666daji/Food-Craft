@@ -14,15 +14,15 @@
   },
   "cut": {
     "sounds": [
-      "foodcraft:block/cut_1",
-      "foodcraft:block/cut_2"
+      "foodcraft:process/cut_1",
+      "foodcraft:process/cut_2"
     ],
     "subtitle": "subtitle.foodcraft.cut"
   },
   "cut_meat": {
     "sounds": [
-      "foodcraft:block/cut_meat_1",
-      "foodcraft:block/cut_meat_2"
+      "foodcraft:process/cut_meat_1",
+      "foodcraft:process/cut_meat_2"
     ],
     "subtitle": "subtitle.foodcraft.cut_meat"
   },

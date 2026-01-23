@@ -8,9 +8,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import org.foodcraft.block.process.step.Step;
-import org.foodcraft.block.process.step.StepExecutionContext;
-import org.foodcraft.block.process.step.StepResult;
+import org.foodcraft.block.process.step.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -304,7 +302,7 @@ public abstract class AbstractProcess<T> {
      *
      * <p>子类可以在此方法中初始化流程状态数据。</p>
      */
-    protected  void onStart(World world, T blockEntit) {}
+    protected void onStart(World world, T blockEntit) {}
 
     /**
      * 当流程完成时调用。
@@ -373,5 +371,105 @@ public abstract class AbstractProcess<T> {
         }
 
         isActive = nbt.getBoolean("is_active");
+    }
+
+    // ============ 状态信息展示方法 ============
+
+    /**
+     * 返回流程状态的字符串表示。
+     * <p>
+     * 输出格式易于阅读，包含流程的基本状态信息。
+     * 子类可以通过重写{@link #shouldShowStepList()}和{@link #getCustomStatusInfo()}
+     * 来定制输出内容。
+     * </p>
+     *
+     * @return 流程状态的字符串表示
+     */
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+
+        // 标题行
+        sb.append("=== Process Status ===\n");
+        sb.append("Class: ").append(getClass().getName()).append("\n");
+        sb.append("Active: ").append(isActive).append("\n");
+        sb.append("Current Step: ").append(currentStepId != null ? currentStepId : "<none>").append("\n");
+        sb.append("Previous Step: ").append(previousStepId != null ? previousStepId : "<none>").append("\n");
+        sb.append("Initial Step: ").append(getInitialStepId()).append("\n");
+        sb.append("Total Registered Steps: ").append(steps.size()).append("\n");
+
+        // 如果子类要求显示步骤列表，则显示
+        if (shouldShowStepList()) {
+            sb.append("Registered Steps: [").append(String.join(", ", steps.keySet())).append("]\n");
+        }
+
+        // 临时上下文数据状态
+        sb.append("Has Context Data: ").append(!stepContext.isEmpty());
+        if (!stepContext.isEmpty()) {
+            sb.append(" (").append(stepContext.size()).append(" entries)");
+        }
+        sb.append("\n");
+
+        // 添加子类自定义状态信息
+        String customInfo = getCustomStatusInfo();
+        if (customInfo != null && !customInfo.trim().isEmpty()) {
+            String[] lines = customInfo.split("\n");
+            for (String line : lines) {
+                if (!line.trim().isEmpty()) {
+                    sb.append(line).append("\n");
+                }
+            }
+        }
+
+        sb.append("======================");
+        return sb.toString();
+    }
+
+    /**
+     * 是否在toString输出中显示已注册的步骤列表。
+     * <p>
+     * 子类可以重写此方法来决定是否显示所有注册的步骤ID。
+     * 默认返回false，不显示步骤列表以保持输出简洁。
+     * </p>
+     *
+     * @return 如果应该显示步骤列表则返回true，默认返回false
+     */
+    protected boolean shouldShowStepList() {
+        return false;
+    }
+
+    /**
+     * 获取子类自定义的状态信息。
+     * <p>
+     * 子类可以重写此方法来添加额外的状态信息到toString输出中。
+     * 返回的字符串应该以多行形式组织，每行代表一个状态条目。
+     * 例如：
+     * <pre>
+     * Ingredient Count: 3
+     * Cooking Time: 120s
+     * Temperature: 150°C
+     * </pre>
+     * </p>
+     *
+     * @return 子类自定义的状态信息字符串，如果没有则返回null或空字符串
+     */
+    protected String getCustomStatusInfo() {
+        return null;
+    }
+
+    /**
+     * 获取简明的状态摘要。
+     * <p>
+     * 比toString更简洁，只显示最关键的信息，适合日志记录。
+     * </p>
+     *
+     * @return 简明的状态摘要
+     */
+    public String getStatusSummary() {
+        return String.format("[%s] Active: %s, Current: %s, Previous: %s",
+                getClass().getSimpleName(),
+                isActive,
+                currentStepId != null ? currentStepId : "<none>",
+                previousStepId != null ? previousStepId : "<none>");
     }
 }

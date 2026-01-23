@@ -1,0 +1,9 @@
+{
+  "type": "foodcraft:plating",
+  "container": "foodcraft:iron_plate",
+  "actions": [
+    "add_item|minecraft:beef",
+    "add_item|minecraft:sweet_berries"
+  ],
+  "result": "foodcraft:beef_berries"
+}

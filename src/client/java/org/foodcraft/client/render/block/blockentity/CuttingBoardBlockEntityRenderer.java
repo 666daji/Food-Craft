@@ -19,7 +19,7 @@ import net.minecraft.util.math.random.Random;
 import org.foodcraft.block.CuttingBoardBlock;
 import org.foodcraft.block.entity.CuttingBoardBlockEntity;
 import org.foodcraft.block.process.CuttingProcess;
-import org.foodcraft.client.render.model.FoodCraftModelLoader;
+import org.foodcraft.client.render.model.ModModelLoader;
 import org.foodcraft.client.util.RenderUtils;
 import org.foodcraft.registry.ModItems;
 import org.foodcraft.util.FoodCraftUtils;
@@ -122,11 +122,11 @@ public class CuttingBoardBlockEntityRenderer extends SimpleUpPlaceBlockEntityRen
      */
     private void renderKitchenKnife(CuttingBoardBlockEntity entity, MatrixStack matrices,
                                     VertexConsumerProvider vertexConsumers, int light) {
-        BakedModel model = modelManager.getModel(FoodCraftModelLoader.BOARD_KITCHEN_KNIFE);
+        BakedModel model = modelManager.getModel(ModModelLoader.BOARD_KITCHEN_KNIFE);
         Direction facing = entity.getCachedState().get(CuttingBoardBlock.FACING);
         BlockState state = FoodCraftUtils.createCountBlockstate(entity.getStack(0), facing);
 
-        renderTransformedModel(entity, model, state, facing, matrices, vertexConsumers, light);
+        renderTransformedModel(entity, model, state, facing, matrices, vertexConsumers);
     }
 
     /**
@@ -140,7 +140,7 @@ public class CuttingBoardBlockEntityRenderer extends SimpleUpPlaceBlockEntityRen
 
         matrices.push();
         ApplyTransformations(entity, matrices);
-        renderTransformedModel(entity, model, state, facing, matrices, vertexConsumers, light);
+        renderTransformedModel(entity, model, state, facing, matrices, vertexConsumers);
         matrices.pop();
     }
 
@@ -149,7 +149,7 @@ public class CuttingBoardBlockEntityRenderer extends SimpleUpPlaceBlockEntityRen
      */
     private void renderTransformedModel(CuttingBoardBlockEntity entity, BakedModel model,
                                         BlockState state, Direction facing,
-                                        MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light) {
+                                        MatrixStack matrices, VertexConsumerProvider vertexConsumers) {
         matrices.push();
         matrices.translate(0.5, 0.5, 0.5);
         matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(-facing.asRotation()));

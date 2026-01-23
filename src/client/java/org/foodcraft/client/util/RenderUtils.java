@@ -7,6 +7,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 import org.foodcraft.FoodCraft;
+import org.foodcraft.client.render.model.ModModelLoader;
 
 public class RenderUtils {
     /**
@@ -56,11 +57,7 @@ public class RenderUtils {
         Identifier itemId = Registries.ITEM.getId(itemStack.getItem());
 
         // 构建切割模型ID
-        // 格式：foodcraft:process/cut_{namespace}_{itemPath}_{cutCount}
-        String modelPath = String.format("cut_%s_%s_%d",
-                itemId.getNamespace(), itemId.getPath(), cutCount);
-        Identifier modelId = new Identifier(FoodCraft.MOD_ID, "process/" + modelPath);
-
+        Identifier modelId = ModModelLoader.createCuttingModel(itemId, cutCount);
         BakedModel model = manager.getModel(modelId);
 
         // 检查是否是有效模型（不是错误模型）
@@ -69,12 +66,5 @@ public class RenderUtils {
         }
 
         return model;
-    }
-
-    /**
-     * 检查指定物品和切割次数是否有对应的切割模型
-     */
-    public static boolean hasCuttingModel(ItemStack itemStack, int cutCount, BakedModelManager manager) {
-        return getCuttingModel(itemStack, cutCount, manager) != null;
     }
 }

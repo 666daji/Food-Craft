@@ -1,0 +1,6 @@
+{
+  "variants": {
+    "is_covered=true": {"model": "foodcraft:block/iron_plate_lib"},
+    "is_covered=false": {"model": "foodcraft:block/iron_plate"}
+  }
+}

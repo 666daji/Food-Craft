@@ -8,13 +8,16 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.world.World;
 import org.foodcraft.block.entity.PlatableBlockEntity;
+import org.foodcraft.block.process.playeraction.PlayerAction;
 import org.foodcraft.contentsystem.content.AbstractContent;
 import org.foodcraft.contentsystem.content.DishesContent;
 import org.foodcraft.contentsystem.occupy.OccupyUtil;
 import org.foodcraft.registry.ModRecipeSerializers;
 import org.foodcraft.registry.ModRecipeTypes;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 摆盘配方类，表示一个完整的摆盘配方。
@@ -22,24 +25,21 @@ import java.util.List;
  * <p>摆盘配方由以下部分组成：</p>
  * <ul>
  *   <li><strong>容器</strong>：配方的承载容器（如铁盘、木盘）</li>
- *   <li><strong>步骤序列</strong>：按顺序放置的物品列表</li>
+ *   <li><strong>操作序列</strong>：按顺序执行的操作列表</li>
  *   <li><strong>输出</strong>：完成摆盘后得到的最终物品</li>
  * </ul>
  *
  * <p><strong>配方匹配规则：</strong></p>
  * <ol>
  *   <li>必须使用正确的容器类型</li>
- *   <li>必须按照步骤序列的顺序放置物品</li>
- *   <li>不允许跳过任何步骤</li>
- *   <li>当所有步骤完成后，使用特定的完成物品触发输出</li>
+ *   <li>必须按照操作序列的顺序执行操作</li>
+ *   <li>不允许跳过任何操作</li>
+ *   <li>当所有操作完成后，使用特定的完成物品触发输出</li>
  * </ol>
- *
- * <p><strong>注意：</strong>摆盘配方不限制步骤数量，完全由配方的定义决定。</p>
- *
- * @see PlatableBlockEntity
- * @see Recipe
  */
 public class PlatingRecipe implements Recipe<PlatableBlockEntity> {
+    /** 基础容器 -> 菜肴 -> 配方列表的映射。用于回溯配方 */
+    private static final Map<Item, Map<DishesContent, PlatingRecipe>> RESTORE = new HashMap<>();
 
     /** 配方ID，用于唯一标识此配方 */
     private final Identifier id;
@@ -47,10 +47,10 @@ public class PlatingRecipe implements Recipe<PlatableBlockEntity> {
     /** 容器物品类型，表示此配方所需的容器（如铁盘） */
     private final Item container;
 
-    /** 步骤序列，按顺序放置的物品列表 */
-    private final List<Item> steps;
+    /** 操作序列，按顺序执行的操作列表 */
+    private final List<PlayerAction> actions;
 
-    /** 配方输出菜肴，完成所有步骤后获得 */
+    /** 配方输出菜肴，完成所有操作后获得 */
     private final DishesContent output;
 
     /**
@@ -58,30 +58,25 @@ public class PlatingRecipe implements Recipe<PlatableBlockEntity> {
      *
      * @param id 配方ID，用于唯一标识此配方
      * @param container 容器物品类型
-     * @param steps 步骤物品列表，列表顺序即为放置顺序
+     * @param actions 操作列表，列表顺序即为执行顺序
      * @param output 配方输出物品
      */
-    public PlatingRecipe(Identifier id, Item container, List<Item> steps, AbstractContent output) {
+    public PlatingRecipe(Identifier id, Item container, List<PlayerAction> actions, AbstractContent output) {
         if (output instanceof DishesContent dishes) {
             this.id = id;
             this.container = container;
-            this.steps = List.copyOf(steps);
+            this.actions = List.copyOf(actions);
             this.output = dishes;
+
+            // 将配方添加到RESTORE映射中，用于回溯
+            Map<DishesContent, PlatingRecipe> containerMap = RESTORE.computeIfAbsent(container, k -> new HashMap<>());
+            // 将当前配方放入映射中，以菜肴内容为键
+            containerMap.put(dishes, this);
         } else {
-            throw new IllegalArgumentException("The product of the recipe for the dish must be plating dishes");
+            throw new IllegalArgumentException("The product of the recipe for the dish must be dishes");
         }
     }
 
-    /**
-     * 检查给定的摆盘方块实体是否匹配此配方。
-     *
-     * <p><strong>注意：</strong>摆盘配方的匹配是实时、逐步进行的。
-     * 此方法仅用于判断是否<b>完全匹配</b>，即当前摆盘状态是否与配方的所有步骤一致。</p>
-     *
-     * @param inventory 摆盘方块实体
-     * @param world 世界，用于获取额外上下文信息（未使用）
-     * @return 如果当前摆放的容器和所有步骤物品都与此配方匹配，则返回true
-     */
     @Override
     public boolean matches(PlatableBlockEntity inventory, World world) {
         // 首先检查容器类型是否匹配
@@ -89,17 +84,17 @@ public class PlatingRecipe implements Recipe<PlatableBlockEntity> {
             return false;
         }
 
-        // 获取当前摆放的物品类型列表
-        List<Item> placedItems = inventory.getPlacedItemTypes();
+        // 获取当前已执行的操作列表
+        List<PlayerAction> performedActions = inventory.getPerformedActions();
 
-        // 检查步骤数量是否匹配
-        if (placedItems.size() != this.steps.size()) {
+        // 检查操作数量是否匹配
+        if (performedActions.size() != this.actions.size()) {
             return false;
         }
 
-        // 检查每个步骤的物品是否匹配
-        for (int i = 0; i < steps.size(); i++) {
-            if (placedItems.get(i) != steps.get(i)) {
+        // 检查每个操作是否匹配
+        for (int i = 0; i < actions.size(); i++) {
+            if (!actions.get(i).matches(performedActions.get(i))) {
                 return false;
             }
         }
@@ -140,42 +135,36 @@ public class PlatingRecipe implements Recipe<PlatableBlockEntity> {
 
     /**
      * 获取配方所需的容器物品类型。
-     *
-     * @return 容器物品类型
      */
     public Item getContainer() {
         return container;
     }
 
     /**
-     * 获取配方的步骤序列。
+     * 获取配方的操作序列。
      *
-     * <p>返回的是步骤序列的不可修改副本，确保外部不能修改内部状态。</p>
-     *
-     * @return 步骤物品列表的不可修改视图
+     * <p>返回的是操作序列的不可修改副本，确保外部不能修改内部状态。</p>
      */
-    public List<Item> getSteps() {
-        return steps;
+    public List<PlayerAction> getActions() {
+        return actions;
     }
 
     /**
-     * 获取配方步骤数量。
-     *
-     * @return 步骤数量
+     * 获取配方操作数量。
      */
-    public int getStepCount() {
-        return steps.size();
+    public int getActionCount() {
+        return actions.size();
     }
 
     /**
-     * 获取指定索引的步骤物品。
+     * 获取指定索引的操作。
      *
-     * @param index 步骤索引（从0开始）
-     * @return 该步骤所需的物品类型
+     * @param index 操作索引（从0开始）
+     * @return 该步骤所需的操作
      * @throws IndexOutOfBoundsException 如果索引超出范围
      */
-    public Item getStepAt(int index) {
-        return steps.get(index);
+    public PlayerAction getActionAt(int index) {
+        return actions.get(index);
     }
 
     /**
@@ -189,22 +178,17 @@ public class PlatingRecipe implements Recipe<PlatableBlockEntity> {
     // ==================== 配方匹配辅助方法 ====================
 
     /**
-     * 检查给定的已放置物品列表是否与配方的所有步骤完全匹配。
-     *
-     * <p>此方法仅比较物品类型，不检查容器类型。用于快速检查而不需要完整的方块实体。</p>
-     *
-     * @param placedItems 已放置的物品类型列表
-     * @return 如果每个步骤的物品类型都匹配，则返回true
+     * 检查给定的已执行操作列表是否与配方的所有操作完全匹配。
      */
-    public boolean matchesSteps(List<Item> placedItems) {
-        // 检查步骤数量是否相同
-        if (placedItems.size() != this.steps.size()) {
+    public boolean matchesActions(List<PlayerAction> performedActions) {
+        // 检查操作数量是否相同
+        if (performedActions.size() != this.actions.size()) {
             return false;
         }
 
-        // 检查每个步骤的物品类型
-        for (int i = 0; i < steps.size(); i++) {
-            if (placedItems.get(i) != steps.get(i)) {
+        // 检查每个操作
+        for (int i = 0; i < actions.size(); i++) {
+            if (!actions.get(i).matches(performedActions.get(i))) {
                 return false;
             }
         }
@@ -213,23 +197,17 @@ public class PlatingRecipe implements Recipe<PlatableBlockEntity> {
     }
 
     /**
-     * 检查给定的已放置物品列表是否是此配方的有效前缀。
-     *
-     * <p>有效前缀意味着已放置的物品序列是配方步骤序列的开头部分，
-     * 且顺序完全一致。用于实时验证玩家是否在正确的配方路径上。</p>
-     *
-     * @param placedItems 已放置的物品类型列表
-     * @return 如果已放置的物品序列是配方步骤序列的前缀，则返回true
+     * 检查给定的已执行操作列表是否是此配方的有效前缀。
      */
-    public boolean matchesPrefix(List<Item> placedItems) {
-        // 如果已放置的物品数量超过配方步骤数量，则不是有效前缀
-        if (placedItems.size() > this.steps.size()) {
+    public boolean matchesPrefix(List<PlayerAction> performedActions) {
+        // 如果已执行的操作数量超过配方操作数量，则不是有效前缀
+        if (performedActions.size() > this.actions.size()) {
             return false;
         }
 
-        // 检查已放置的每个物品是否与对应步骤匹配
-        for (int i = 0; i < placedItems.size(); i++) {
-            if (placedItems.get(i) != steps.get(i)) {
+        // 检查已执行的每个操作是否与对应操作匹配
+        for (int i = 0; i < performedActions.size(); i++) {
+            if (!actions.get(i).matches(performedActions.get(i))) {
                 return false;
             }
         }
@@ -238,75 +216,72 @@ public class PlatingRecipe implements Recipe<PlatableBlockEntity> {
     }
 
     /**
-     * 获取配方所需的输入物品列表。
-     *
-     * <p>此方法返回配方所有步骤所需的物品，用于显示配方需求。
-     * 注意：这不包括容器物品。</p>
-     *
-     * @return 输入物品列表
+     * 获取配方所需的输入物品列表（用于UI显示）。
      */
     public DefaultedList<Ingredient> getIngredients() {
         DefaultedList<Ingredient> ingredients = DefaultedList.of();
 
-        // 将每个步骤的物品转换为Ingredient
-        for (Item stepItem : steps) {
-            ingredients.add(Ingredient.ofItems(stepItem));
+        // 将每个操作转换为Ingredient
+        for (PlayerAction action : actions) {
+            ItemStack stack = action.toItemStack();
+            if (!stack.isEmpty()) {
+                ingredients.add(Ingredient.ofStacks(stack));
+            } else {
+                // 对于没有物品表示的操作，添加空Ingredient
+                ingredients.add(Ingredient.EMPTY);
+            }
         }
 
         return ingredients;
     }
 
-    /**
-     * 检查此配方是否是另一个配方的子集。
-     *
-     * <p>例如，配方A的步骤是[面包, 奶酪]，配方B的步骤是[面包, 奶酪, 火腿]，
-     * 那么配方A就是配方B的子集。用于检测配方冲突。</p>
-     *
-     * @param other 要比较的另一个配方
-     * @return 如果此配方的步骤是另一个配方步骤的前缀，则返回true
-     */
-    public boolean isPrefixOf(PlatingRecipe other) {
-        // 如果此配方的步骤数量大于另一个配方，则不可能是前缀
-        if (this.steps.size() > other.steps.size()) {
-            return false;
-        }
-
-        // 检查容器类型是否相同
-        if (this.container != other.container) {
-            return false;
-        }
-
-        // 检查每个步骤是否匹配
-        for (int i = 0; i < this.steps.size(); i++) {
-            if (this.steps.get(i) != other.steps.get(i)) {
-                return false;
-            }
-        }
-
-        return true;
-    }
+    // ==================== 静态方法 ====================
 
     /**
-     * 获取下一个步骤所需的物品（如果有）。
-     *
-     * @param currentStep 当前已完成的步骤数（0表示还未开始）
-     * @return 下一个步骤所需的物品，如果所有步骤已完成则返回null
+     * 根据可摆盘方块实体的容器和菜肴内容查找对应的配方。
      */
-    public Item getNextStepItem(int currentStep) {
-        if (currentStep < 0 || currentStep >= steps.size()) {
+    public static PlatingRecipe getRecipeFromEntity(PlatableBlockEntity entity) {
+        if (entity == null) {
             return null;
         }
-        return steps.get(currentStep);
+
+        // 获取容器的菜肴内容
+        DishesContent outcome = entity.getOutcome();
+        if (outcome == null) {
+            return null;
+        }
+
+        return getRecipeByContainerAndDishes(entity.getContainerType(), outcome);
     }
 
     /**
-     * 获取配方的描述性名称，用于日志和调试。
-     *
-     * @return 配方的描述性字符串
+     * 根据容器和菜肴内容查找对应的配方。
      */
+    public static PlatingRecipe getRecipeByContainerAndDishes(Item container, DishesContent dishes) {
+        if (container == null || dishes == null) {
+            return null;
+        }
+
+        Map<DishesContent, PlatingRecipe> containerMap = RESTORE.get(container);
+        if (containerMap != null) {
+            return containerMap.get(dishes);
+        }
+        return null;
+    }
+
+    /**
+     * 获取下一个操作（如果有）。
+     */
+    public PlayerAction getNextAction(int currentStep) {
+        if (currentStep < 0 || currentStep >= actions.size()) {
+            return null;
+        }
+        return actions.get(currentStep);
+    }
+
     @Override
     public String toString() {
-        return String.format("PlatingRecipe{id=%s, container=%s, steps=%d, output=%s}",
-                id, container, steps.size(), output);
+        return String.format("PlatingRecipe{id=%s, container=%s, actions=%d, output=%s}",
+                id, container, actions.size(), output);
     }
 }

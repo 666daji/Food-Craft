@@ -1,4 +1,4 @@
-package org.foodcraft.contentsystem.foodcraft;
+package org.foodcraft.contentsystem.content;
 
 public class ContentCategories {
     public static final String SOUP = "soup";

@@ -8,8 +8,8 @@ import net.minecraft.potion.PotionUtil;
 import net.minecraft.potion.Potions;
 import net.minecraft.util.Identifier;
 import org.foodcraft.contentsystem.content.AbstractContent;
-import org.foodcraft.contentsystem.foodcraft.ContentCategories;
-import org.foodcraft.contentsystem.foodcraft.ModContents;
+import org.foodcraft.contentsystem.content.ContentCategories;
+import org.foodcraft.registry.ModContents;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

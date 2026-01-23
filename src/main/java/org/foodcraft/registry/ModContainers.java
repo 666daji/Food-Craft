@@ -1,12 +1,10 @@
-package org.foodcraft.contentsystem.foodcraft;
+package org.foodcraft.registry;
 
 import net.minecraft.item.Items;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Identifier;
 import org.foodcraft.FoodCraft;
 import org.foodcraft.contentsystem.container.*;
-import org.foodcraft.registry.ModItems;
-import org.foodcraft.registry.ModSounds;
 
 public class ModContainers {
     // 碗

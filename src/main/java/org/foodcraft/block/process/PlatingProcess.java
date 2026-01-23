@@ -4,10 +4,11 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.RecipeManager;
-import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.ActionResult;
 import net.minecraft.world.World;
 import org.foodcraft.block.entity.PlatableBlockEntity;
+import org.foodcraft.block.process.playeraction.PlayerAction;
+import org.foodcraft.block.process.playeraction.impl.AddItemPlayerAction;
 import org.foodcraft.block.process.step.Step;
 import org.foodcraft.block.process.step.StepExecutionContext;
 import org.foodcraft.block.process.step.StepResult;
@@ -25,16 +26,14 @@ import java.util.stream.Collectors;
  * <p><strong>设计特点：</strong></p>
  * <ul>
  *   <li>通用候选配方初始化：支持从任意状态恢复流程</li>
- *   <li>简化的状态管理：方块实体只存储物品，流程只管理候选列表</li>
+ *   <li>简化的状态管理：方块实体只存储操作，流程只管理候选列表</li>
  *   <li>无需NBT恢复：退出重进后自动重新初始化候选列表</li>
  *   <li>支持撤销操作：完成物品放置后仍可撤回继续</li>
  * </ul>
- *
- * @param <T> 支持此流程的方块实体类型，必须同时是 {@link BlockEntity} 和 {@link PlatableBlockEntity}
  */
 public class PlatingProcess<T extends BlockEntity & PlatableBlockEntity> extends AbstractProcess<T> {
-    /** 放置物品步骤的ID */
-    public static final String STEP_PLACE_ITEM = "place_item";
+    /** 执行操作步骤的ID */
+    public static final String STEP_PERFORM_ACTION = "perform_action";
     /** 完成流程步骤的ID */
     public static final String STEP_COMPLETE = "complete";
 
@@ -53,36 +52,30 @@ public class PlatingProcess<T extends BlockEntity & PlatableBlockEntity> extends
 
     // ==================== 构造器和初始化 ====================
 
-    /**
-     * 创建摆盘流程实例。
-     */
     public PlatingProcess() {
         registerSteps();
-        setInitialStep(STEP_PLACE_ITEM);
+        setInitialStep(STEP_PERFORM_ACTION);
     }
 
-    /**
-     * 注册流程的所有步骤。
-     */
     private void registerSteps() {
-        registerStep(STEP_PLACE_ITEM, new PlaceItemStep());
+        registerStep(STEP_PERFORM_ACTION, new PerformActionStep());
         registerStep(STEP_COMPLETE, new CompleteStep());
     }
 
     // ==================== 步骤实现类 ====================
 
     /**
-     * 放置物品步骤，处理配方物品的放置。
+     * 执行操作步骤，处理配方操作的执行。
      *
      * <p>此步骤按照严格顺序执行：</p>
      * <ol>
      *   <li>防止重入</li>
      *   <li>如果候选列表未初始化，调用 initializeCandidates 初始化</li>
-     *   <li>如果手持物品为空，返回 PASS（玩家无感知）</li>
-     *   <li>如果手持物品不为空，根据是否已初始化选择不同逻辑</li>
+     *   <li>从上下文创建 PlayerAction</li>
+     *   <li>根据是否已初始化选择不同逻辑</li>
      * </ol>
      */
-    protected class PlaceItemStep implements Step<T> {
+    protected class PerformActionStep implements Step<T> {
         @Override
         public StepResult execute(StepExecutionContext<T> context) {
             // 防止重入逻辑
@@ -90,51 +83,51 @@ public class PlatingProcess<T extends BlockEntity & PlatableBlockEntity> extends
                 return StepResult.continueSameStep(ActionResult.PASS);
             }
 
-            // 操作的方块实体和玩家手持物品
+            // 操作的方块实体
             PlatableBlockEntity plate = context.blockEntity();
-            ItemStack heldItem = context.getHeldItemStack();
 
-            // 已放置物品列表
-            List<Item> placedItemTypes = plate.getPlacedItemTypes();
+            // 从上下文创建预期操作
+            PlayerAction expectedAction = createActionFromContext(context);
 
-            // 当前已完成的步骤数量
+            // 已执行操作列表
+            List<PlayerAction> performedActions = plate.getPerformedActions();
             int currentStep = plate.getStepCount();
 
             // 如果候选列表未初始化，尝试初始化
             if (!hasInitializedCandidates) {
-                if (!initializeCandidates(context.world(), plate, heldItem)) {
-                    // 恢复失败则步骤失败
-                    resetCandidateState();
+                // 使用预期操作（可能为null）初始化候选列表
+                if (!initializeCandidates(context.world(), plate, expectedAction)) {
+                    // 初始化失败，尝试不包含当前操作的初始化
+                    initializeCandidates(context.world(), plate);
 
-                    // 如果此时放置物品列表为空则重置流程
-                    if (placedItemTypes.isEmpty()) {
+                    if (performedActions.isEmpty()) {
+                        // 如果此时操作列表为空则重置流程
                         reset();
                     }
 
-                    return StepResult.fail(STEP_PLACE_ITEM, ActionResult.FAIL);
+                    return StepResult.fail(STEP_PERFORM_ACTION, ActionResult.PASS);
                 }
 
-                // 恢复成功，标记已初始化
-                hasInitializedCandidates = true;
-
-                // 如果手持物品为空，步骤返回 PASS（无感知初始化）
-                if (heldItem.isEmpty()) {
+                // 如果预期操作为null，步骤返回PASS（无感知初始化）
+                if (expectedAction == null) {
                     return StepResult.continueSameStep(ActionResult.PASS);
                 }
             }
             // 候选列表已初始化
             else {
-                // 如果玩家为空手交互，步骤直接返回 PASS
-                if (heldItem.isEmpty()) {
+                // 如果预期操作为null，步骤直接返回PASS
+                if (expectedAction == null) {
                     return StepResult.continueSameStep(ActionResult.PASS);
                 }
 
-                // 手持物品不为空，需要过滤候选列表
-                List<PlatingRecipe> matchingRecipes = filterCandidatesByNextStep(heldItem.getItem(), placedItemTypes);
+                // 使用预期操作过滤候选列表
+                List<PlatingRecipe> matchingRecipes = filterCandidatesByNextAction(
+                        expectedAction, performedActions
+                );
 
                 // 过滤到的列表为空时，步骤失败
                 if (matchingRecipes.isEmpty()) {
-                    return StepResult.fail(STEP_PLACE_ITEM, ActionResult.FAIL);
+                    return StepResult.fail(STEP_PERFORM_ACTION, ActionResult.FAIL);
                 }
 
                 // 更新候选列表
@@ -142,45 +135,47 @@ public class PlatingProcess<T extends BlockEntity & PlatableBlockEntity> extends
                 candidateRecipes.addAll(matchingRecipes);
             }
 
-            // 执行物品放置逻辑
-            return executeItemPlacement(context, plate, heldItem, currentStep);
+            return executeAction(context, plate, expectedAction, currentStep);
+        }
+
+        @Nullable
+        private PlayerAction createActionFromContext(StepExecutionContext<T> context) {
+            ItemStack heldItem = context.getHeldItemStack();
+
+            if (!heldItem.isEmpty()) {
+                // 摆盘流程：手持物品 -> AddItemPlayerAction
+                return new AddItemPlayerAction(heldItem.getItem(), 1);
+            }
+
+            return null;
         }
 
         /**
-         * 执行物品放置逻辑的公共部分。
+         * 执行操作逻辑的公共部分。
          */
-        private StepResult executeItemPlacement(StepExecutionContext<T> context, PlatableBlockEntity plate,
-                                                ItemStack heldItem, int currentStep) {
-            // 在服务器端执行物品放置
+        private StepResult executeAction(StepExecutionContext<T> context, PlatableBlockEntity plate,
+                                         PlayerAction action, int currentStep) {
+            // 在服务器端执行操作
             if (context.isServerSide()) {
-                // 验证是否可以在此步骤放置物品
-                if (!plate.canPlaceItemAtStep(currentStep)) {
+                // 验证是否可以在此步骤执行操作
+                if (!plate.canPerformActionAtStep(currentStep)) {
                     resetCandidateState();
-                    return StepResult.fail(STEP_PLACE_ITEM, ActionResult.FAIL);
+                    return StepResult.fail(STEP_PERFORM_ACTION, ActionResult.FAIL);
                 }
 
-                // 创建要放置的物品副本（数量为1）
-                ItemStack itemToPlace = heldItem.copy();
-                itemToPlace.setCount(1);
-
-                // 尝试放置物品
-                if (!plate.placeItem(currentStep, itemToPlace)) {
+                // 尝试执行操作
+                if (!plate.performAction(currentStep, action)) {
                     resetCandidateState();
-                    return StepResult.fail(STEP_PLACE_ITEM, ActionResult.FAIL);
+                    return StepResult.fail(STEP_PERFORM_ACTION, ActionResult.FAIL);
                 }
 
-                // 如果不是创造模式，消耗玩家物品
-                if (!context.isCreateMode()) {
-                    heldItem.decrement(1);
-                }
-
-                // 播放放置音效
-                context.playSound(SoundEvents.BLOCK_WOOD_PLACE);
+                // 执行操作的消耗逻辑
+                action.consume(context);
                 plate.markDirty();
             }
 
             // 检查是否有完全匹配的配方
-            checkForExactMatch(plate);
+            checkForExactMatch(plate, null);
 
             return StepResult.continueSameStep(ActionResult.SUCCESS);
         }
@@ -197,20 +192,20 @@ public class PlatingProcess<T extends BlockEntity & PlatableBlockEntity> extends
 
             // 检查是否为完成物品
             if (!plate.isCompletionItem(heldItem) || heldItem.isEmpty()) {
-                return StepResult.fail(STEP_PLACE_ITEM, ActionResult.FAIL);
+                return StepResult.fail(STEP_PERFORM_ACTION, ActionResult.FAIL);
             }
 
             // 检查是否有完全匹配的配方
             if (matchedRecipe == null) {
                 // 如果没有匹配的配方，但玩家手持完成物品，尝试重新检查
-                checkForExactMatch(plate);
+                checkForExactMatch(plate, context.world());
                 if (matchedRecipe == null) {
-                    return StepResult.fail(STEP_PLACE_ITEM, ActionResult.FAIL);
+                    return StepResult.fail(STEP_PERFORM_ACTION, ActionResult.FAIL);
                 }
             }
 
             // 执行完成逻辑
-            plate.onPlatingComplete(context.world(), context.pos(), matchedRecipe);
+            plate.onPlatingComplete(context.world(), context.pos(), matchedRecipe, context.player(), context.hand(), context.hit());
 
             return StepResult.complete(ActionResult.SUCCESS);
         }
@@ -221,37 +216,29 @@ public class PlatingProcess<T extends BlockEntity & PlatableBlockEntity> extends
     /**
      * 通用候选配方初始化方法。
      *
-     * <p>此方法根据方块实体的当前状态和玩家手持物品（可能为空）来初始化候选配方列表。
-     * 方法会构建一个临时列表：已放置物品列表 + 手持物品（如果不为空）。
-     * 然后匹配所有容器类型匹配且步骤前缀匹配的配方。</p>
-     *
      * @param world 世界实例
      * @param plate 摆盘方块实体
-     * @param heldItemStack 玩家手持物品堆栈（可能为空）
+     * @param expectedAction 当前要执行的操作（可能为空）
      * @return 如果找到至少一个候选配方返回 {@code true}
      */
-    public boolean initializeCandidates(World world, PlatableBlockEntity plate, @Nullable ItemStack heldItemStack) {
+    public boolean initializeCandidates(World world, PlatableBlockEntity plate, @Nullable PlayerAction expectedAction) {
         isMatchingRecipes = true;
         try {
-            // 获取配方管理器
             RecipeManager recipeManager = world.getRecipeManager();
-
-            // 获取所有摆盘配方
             List<PlatingRecipe> allRecipes = recipeManager.listAllOfType(ModRecipeTypes.PLATING);
+
             if (allRecipes.isEmpty()) {
                 return false;
             }
 
-            // 获取已放置物品列表
-            List<Item> placedItems = plate.getPlacedItemTypes();
+            List<PlayerAction> performedActions = plate.getPerformedActions();
             Item containerType = plate.getContainerType();
 
-            // 构建临时匹配列表：已放置物品 + 手持物品（如果存在）
-            List<Item> tempMatchingList = new ArrayList<>(placedItems);
+            // 构建临时匹配列表：已执行操作 + 预期操作（如果不为null）
+            List<PlayerAction> tempMatchingList = new ArrayList<>(performedActions);
 
-            // 如果手持物品不为空，将其添加到临时列表末尾
-            if (heldItemStack != null && !heldItemStack.isEmpty()) {
-                tempMatchingList.add(heldItemStack.getItem());
+            if (expectedAction != null) {
+                tempMatchingList.add(expectedAction);
             }
 
             // 如果临时列表为空，无法匹配任何配方
@@ -259,99 +246,70 @@ public class PlatingProcess<T extends BlockEntity & PlatableBlockEntity> extends
                 return false;
             }
 
-            // 匹配所有容器类型匹配且步骤前缀匹配的配方
             List<PlatingRecipe> candidates = allRecipes.stream()
                     .filter(recipe -> recipe.getContainer() == containerType)
-                    .filter(recipe -> {
-                        // 检查临时列表是否是配方的有效前缀
-                        if (tempMatchingList.size() > recipe.getStepCount()) {
-                            return false;
-                        }
-
-                        for (int i = 0; i < tempMatchingList.size(); i++) {
-                            if (tempMatchingList.get(i) != recipe.getStepAt(i)) {
-                                return false;
-                            }
-                        }
-                        return true;
-                    })
+                    .filter(recipe -> recipe.matchesPrefix(tempMatchingList))
                     .toList();
 
             if (candidates.isEmpty()) {
                 return false;
             }
 
-            // 更新候选配方列表
             candidateRecipes.clear();
             candidateRecipes.addAll(candidates);
+            hasInitializedCandidates = true;
 
-            // 检查完全匹配（仅针对已放置物品，不包含手持物品）
-            checkForExactMatch(plate);
-
+            // 检查完全匹配
+            checkForExactMatch(plate, world);
             return true;
-
         } finally {
             isMatchingRecipes = false;
         }
     }
 
+    public boolean initializeCandidates(World world, PlatableBlockEntity plate) {
+        return initializeCandidates(world, plate, null);
+    }
+
     /**
-     * 根据下一步物品过滤候选配方。
+     * 根据下一步操作过滤候选配方。
      *
-     * <p>此方法从当前候选配方列表中过滤出下一步与指定物品匹配的配方。
-     * 仅在候选列表已初始化且手持物品不为空时调用。</p>
-     *
-     * @param nextItem 下一步要放置的物品类型
-     * @param placedItems 已放置的物品类型列表
+     * @param nextAction 下一步要执行的操作
+     * @param performedActions 已执行的操作列表
      * @return 过滤后的候选配方列表，只包含下一步匹配的配方
      */
-    private List<PlatingRecipe> filterCandidatesByNextStep(Item nextItem, List<Item> placedItems) {
+    private List<PlatingRecipe> filterCandidatesByNextAction(PlayerAction nextAction, List<PlayerAction> performedActions) {
         return candidateRecipes.stream()
                 .filter(recipe -> {
-                    // 如果已放置物品数量 >= 配方步骤数，不是有效候选
-                    if (placedItems.size() >= recipe.getStepCount()) {
+                    // 如果已执行操作数量 >= 配方操作数量，不是有效候选
+                    if (performedActions.size() >= recipe.getActionCount()) {
                         return false;
                     }
 
-                    // 验证已放置物品与配方前缀匹配
-                    for (int i = 0; i < placedItems.size(); i++) {
-                        if (placedItems.get(i) != recipe.getStepAt(i)) {
-                            return false;
-                        }
+                    // 检查已执行操作是否是配方的有效前缀
+                    if (!recipe.matchesPrefix(performedActions)) {
+                        return false;
                     }
 
                     // 检查下一步是否匹配
-                    return recipe.getStepAt(placedItems.size()) == nextItem;
+                    PlayerAction nextRecipeAction = recipe.getNextAction(performedActions.size());
+                    return nextRecipeAction != null && nextAction.matches(nextRecipeAction);
                 })
                 .collect(Collectors.toList());
     }
 
     /**
      * 检查当前摆盘状态是否有完全匹配的配方。
-     *
-     * @param plate 摆盘方块实体
      */
-    private void checkForExactMatch(PlatableBlockEntity plate) {
-        List<Item> placedItems = plate.getPlacedItemTypes();
-
+    public void checkForExactMatch(PlatableBlockEntity plate, World world) {
         matchedRecipe = candidateRecipes.stream()
-                .filter(recipe -> recipe.getStepCount() == placedItems.size())
-                .filter(recipe -> {
-                    // 验证每个步骤都匹配
-                    for (int i = 0; i < placedItems.size(); i++) {
-                        if (placedItems.get(i) != recipe.getStepAt(i)) {
-                            return false;
-                        }
-                    }
-                    return true;
-                })
+                .filter(recipe -> recipe.matches(plate, world))
                 .findFirst()
                 .orElse(null);
     }
 
     /**
      * 重置候选配方状态。
-     *
      */
     private void resetCandidateState() {
         candidateRecipes.clear();
@@ -375,15 +333,8 @@ public class PlatingProcess<T extends BlockEntity & PlatableBlockEntity> extends
 
         // 检查是否是完成物品
         if (plate.isCompletionItem(heldItem) && !heldItem.isEmpty()) {
-            // 如果候选列表未初始化，尝试初始化
-            if (!hasInitializedCandidates) {
-                if (initializeCandidates(context.world(), plate, null)) {
-                    hasInitializedCandidates = true;
-                }
-            }
-
             // 检查是否有完全匹配的配方
-            checkForExactMatch(plate);
+            checkForExactMatch(plate, context.world());
             if (matchedRecipe != null) {
                 // 跳转到完成步骤
                 jumpToStep(STEP_COMPLETE);
@@ -395,7 +346,7 @@ public class PlatingProcess<T extends BlockEntity & PlatableBlockEntity> extends
 
     @Override
     protected String getInitialStepId() {
-        return STEP_PLACE_ITEM;
+        return STEP_PERFORM_ACTION;
     }
 
     @Override
@@ -437,5 +388,44 @@ public class PlatingProcess<T extends BlockEntity & PlatableBlockEntity> extends
      */
     public boolean isCandidatesInitialized() {
         return hasInitializedCandidates;
+    }
+
+    @Override
+    protected String getCustomStatusInfo() {
+        StringBuilder info = new StringBuilder();
+
+        // 候选配方信息
+        info.append("候选配方数量: ").append(candidateRecipes.size()).append("\n");
+
+        // 匹配的配方信息
+        if (matchedRecipe != null) {
+            info.append("完全匹配的配方: ").append(matchedRecipe.getId().getPath()).append("\n");
+            info.append("配方操作数: ").append(matchedRecipe.getActionCount()).append("\n");
+            info.append("输出菜肴: ").append(matchedRecipe.getDishes()).append("\n");
+        } else {
+            info.append("完全匹配的配方: <无>\n");
+        }
+
+        // 初始化状态
+        info.append("候选列表已初始化: ").append(hasInitializedCandidates).append("\n");
+
+        // 匹配状态
+        info.append("正在匹配配方: ").append(isMatchingRecipes).append("\n");
+
+        // 候选配方详情（仅显示前3个，避免输出过长）
+        if (!candidateRecipes.isEmpty()) {
+            info.append("候选配方列表:\n");
+            int limit = Math.min(candidateRecipes.size(), 3);
+            for (int i = 0; i < limit; i++) {
+                PlatingRecipe recipe = candidateRecipes.get(i);
+                info.append("  ").append(i + 1).append(". ")
+                        .append(recipe.getId().getPath())
+                        .append(" (操作: ").append(recipe.getActionCount()).append(")\n");
+            }
+            if (candidateRecipes.size() > limit) {
+                info.append("  ... 还有").append(candidateRecipes.size() - limit).append("个配方未显示\n");
+            }
+        }
+        return info.toString();
     }
 }

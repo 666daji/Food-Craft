@@ -3,25 +3,33 @@ package org.foodcraft.client.render.model;
 import net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin;
 import net.minecraft.block.Block;
 import net.minecraft.client.util.ModelIdentifier;
+import net.minecraft.item.Item;
+import net.minecraft.item.Items;
 import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 import org.dfood.block.FoodBlocks;
 import org.foodcraft.FoodCraft;
+import org.foodcraft.block.process.playeraction.PlayerAction;
+import org.foodcraft.block.process.playeraction.impl.AddItemPlayerAction;
+import org.foodcraft.contentsystem.content.DishesContent;
+import org.foodcraft.registry.ModContents;
 import org.foodcraft.item.FlourItem;
 import org.foodcraft.registry.ModBlocks;
+import org.foodcraft.registry.ModItems;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
-public class FoodCraftModelLoader implements ModelLoadingPlugin {
+public class ModModelLoader implements ModelLoadingPlugin {
     private static final Logger LOGGER = FoodCraft.LOGGER;
+
     /**
-     * 存储所有需要加载的模型标识符
+     * 存储所有需要加载的模型标识符。
      */
     private static final List<Identifier> MODELS_TO_LOAD = new ArrayList<>();
 
-    /** 菜刀插在案板上的效果 */
+    /** 菜刀插在案板上的效果 。*/
     public static final Identifier BOARD_KITCHEN_KNIFE = new Identifier(FoodCraft.MOD_ID, "other/on_board_kitchen_knife");
 
     @Override
@@ -33,6 +41,8 @@ public class FoodCraftModelLoader implements ModelLoadingPlugin {
         registerAllCookingModels();
         registerDoughKneadingModel();
         registerCuttingModels();
+        registryDishesModels();
+        registerPlatingProcessModels();
         MODELS_TO_LOAD.add(BOARD_KITCHEN_KNIFE);
 
         // 将所有模型添加到加载上下文
@@ -42,7 +52,7 @@ public class FoodCraftModelLoader implements ModelLoadingPlugin {
     // =========== 食物烘烤模型 ===========
 
     /**
-     * 注册所有需要加载烘烤模型的食物方块
+     * 注册所有需要加载烘烤模型的食物方块。
      */
     private void registerAllCookingModels() {
         registerCookingModelsForBlock(FoodBlocks.POTATO, 4);
@@ -57,7 +67,7 @@ public class FoodCraftModelLoader implements ModelLoadingPlugin {
     }
 
     /**
-     * 为指定的FoodBlock注册所有烘烤模型
+     * 为指定的FoodBlock注册所有烘烤模型。
      * @param block FoodBlock实例
      * @param maxFood 最大食物数量
      */
@@ -79,7 +89,7 @@ public class FoodCraftModelLoader implements ModelLoadingPlugin {
     }
 
     /**
-     * 创建烘烤食物模型的标识符
+     * 创建烘烤食物模型的标识符。
      */
     public static Identifier createCookingModel(String blockPath, int foodValue) {
         String modelPath = blockPath + "_cooking_" + foodValue;
@@ -89,7 +99,7 @@ public class FoodCraftModelLoader implements ModelLoadingPlugin {
     // =========== 粉尘袋模型 ===========
 
     /**
-     * 注册所有粉尘袋模型
+     * 注册所有粉尘袋模型。
      */
     private void registerAllFlourSackModels() {
         for (FlourItem flourItem : FlourItem.FLOURS) {
@@ -123,7 +133,7 @@ public class FoodCraftModelLoader implements ModelLoadingPlugin {
     // =========== 切割流程 ===========
 
     /**
-     * 注册所有切割模型
+     * 注册所有切割模型。
      */
     private void registerCuttingModels() {
         registerCuttingModelsForItem(new Identifier("carrot"), 12);
@@ -135,7 +145,7 @@ public class FoodCraftModelLoader implements ModelLoadingPlugin {
     }
 
     /**
-     * 为指定物品注册所有切割模型
+     * 为指定物品注册所有切割模型。
      */
     public static void registerCuttingModelsForItem(Identifier itemId, int maxCuts) {
         if (maxCuts < 1) {
@@ -163,26 +173,111 @@ public class FoodCraftModelLoader implements ModelLoadingPlugin {
         return new Identifier(FoodCraft.MOD_ID, "process/" + modelPath);
     }
 
+    // =========== 摆盘菜肴 ===========
+
+    /**
+     * 注册所有菜肴的放置模型。
+     */
+    private static void registryDishesModels() {
+        // 牛肉浆果菜肴（需要先加牛肉，再加浆果）
+        MODELS_TO_LOAD.add(createDishesModel(ModItems.IRON_PLATE, ModContents.BEEF_BERRIES));
+        MODELS_TO_LOAD.add(createDishesModel(ModItems.IRON_PLATE, ModContents.COOKED_BEEF_BERRIES));
+    }
+
+    /**
+     * 注册摆盘流程模型
+     */
+    private void registerPlatingProcessModels() {
+        registerPlatingSequenceModels(
+                ModItems.IRON_PLATE,
+                Arrays.asList(
+                        new AddItemPlayerAction(Items.BEEF),
+                        new AddItemPlayerAction(Items.SWEET_BERRIES)
+                ),
+                ModContents.BEEF_BERRIES
+        );
+    }
+
+    /**
+     * 注册一个摆盘配方的所有模型（包括所有前缀步骤）
+     *
+     * @param container 容器物品
+     * @param actionSequence 完整的操作序列
+     * @param dish 最终菜肴（可选，用于注册配方映射）
+     */
+    public static void registerPlatingSequenceModels(Item container,
+                                                     List<PlayerAction> actionSequence,
+                                                     @Nullable DishesContent dish) {
+        PlatingModelManager modelManager = PlatingModelManager.getInstance();
+
+        // 如果提供了菜肴，注册配方映射
+        if (dish != null) {
+            modelManager.registerRecipeModel(container, actionSequence, dish);
+        }
+
+        // 生成并注册所有前缀模型
+        List<Identifier> prefixModels = modelManager.generateAllPrefixModels(container, actionSequence);
+
+        for (Identifier modelId : prefixModels) {
+            if (modelId != null && !MODELS_TO_LOAD.contains(modelId)) {
+                MODELS_TO_LOAD.add(modelId);
+            }
+        }
+    }
+
+    /**
+     * 获取已知配方的模型标识符
+     *
+     * <p>这个方法用于在配方加载时获取模型路径，便于在配方JSON中引用。</p>
+     *
+     * @param container 容器物品
+     * @param actionSequence 操作序列
+     * @return 对应的模型标识符
+     */
+    public static Identifier getPlatingModelId(Item container, List<PlayerAction> actionSequence) {
+        return PlatingModelManager.getInstance().getModelForActions(container, actionSequence);
+    }
+
+    /**
+     * 创建菜肴的放置模型标识符。
+     * @param baseContainer 基础容器
+     * @param dishes 菜肴
+     * @return 对应的放置模型标识符
+     */
+    public static Identifier createDishesModel(Item baseContainer, DishesContent dishes) {
+        String containerId = Registries.ITEM.getId(baseContainer).getPath();
+        String dishesId = dishes.getId().getPath();
+
+        return new Identifier(FoodCraft.MOD_ID, "dishes/" + containerId + "_" + dishesId);
+    }
+
     // =========== 辅助方法 ===========
 
     /**
-     * 创建物品模型的标识符
+     * 创建物品模型的标识符。
      */
     public static ModelIdentifier createItemModel(String itemPath) {
         return new ModelIdentifier(new Identifier(FoodCraft.MOD_ID, itemPath), "inventory");
     }
 
     /**
-     * 创建步骤所需的额外模型的标识符
+     * 创建步骤所需的额外模型的标识符。
      */
     public static Identifier createProcessModel(String blockPath) {
         return new Identifier(FoodCraft.MOD_ID, "process/" + blockPath);
     }
 
     /**
-     * 获取已注册的所有模型
+     * 获取已注册的所有模型。
      */
     public static List<Identifier> getRegisteredModels() {
         return new ArrayList<>(MODELS_TO_LOAD);
+    }
+
+    /**
+     * 获取已注册的模型数量。
+     */
+    public static int getRegisteredModelCount() {
+        return MODELS_TO_LOAD.size();
     }
 }

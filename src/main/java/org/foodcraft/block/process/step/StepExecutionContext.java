@@ -3,6 +3,9 @@ package org.foodcraft.block.process.step;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.particle.ItemStackParticleEffect;
+import net.minecraft.particle.ParticleTypes;
+import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Hand;
@@ -10,8 +13,10 @@ import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.foodcraft.block.process.AbstractProcess;
+import org.foodcraft.util.FoodCraftUtils;
 
 import java.util.Map;
+import java.util.Random;
 
 /**
  * 步骤执行上下文，封装了执行步骤所需的所有信息。
@@ -84,22 +89,6 @@ public record StepExecutionContext<T>(AbstractProcess<T> process, T blockEntity,
     }
 
     /**
-     * 在方块的位置播放一段声音。
-     *
-     * @param event 播放的声音事件
-     */
-    public void playSound(SoundEvent event) {
-        world.playSound(
-                null,
-                pos,
-                event,
-                SoundCategory.BLOCKS,
-                0.5F,
-                1.0F
-        );
-    }
-
-    /**
      * 从临时上下文数据中获取值。
      *
      * @param key 数据的键
@@ -141,5 +130,59 @@ public record StepExecutionContext<T>(AbstractProcess<T> process, T blockEntity,
      */
     public boolean isServerSide() {
         return !world.isClient;
+    }
+
+    /**
+     * 获取玩家当前手持物品的方块音效组。
+     * @return 获取的音效组，物品不是方块时返回石头音效组
+     */
+    public BlockSoundGroup getItemSounds() {
+        BlockSoundGroup group = FoodCraftUtils.getSoundGroupFromItem(getHeldItemStack());
+        if (group != null) {
+            return group;
+        }
+
+        return BlockSoundGroup.STONE;
+    }
+
+    /**
+     * 在方块的位置播放一段声音。
+     *
+     * @param event 播放的声音事件
+     */
+    public void playSound(SoundEvent event) {
+        world.playSound(
+                null,
+                pos,
+                event,
+                SoundCategory.BLOCKS,
+                0.5F,
+                1.0F
+        );
+    }
+
+    /**
+     * 在方块位置生成物品粒子效果。
+     *
+     * @param stack 用于粒子效果的物品堆栈
+     */
+    public void spawnItemParticles(ItemStack stack) {
+        Random random = new Random();
+        double x = pos.getX() + 0.5;
+        double y = pos.getY() + 0.05;
+        double z = pos.getZ() + 0.5;
+
+        int particles = 8;
+
+        for (int i = 0; i < particles; i++) {
+            double vx = (random.nextDouble() - 0.5) * 0.4;
+            double vy = random.nextDouble() * 0.3;
+            double vz = (random.nextDouble() - 0.5) * 0.4;
+
+            world.addParticle(
+                    new ItemStackParticleEffect(ParticleTypes.ITEM, stack),
+                    x, y, z, vx, vy, vz
+            );
+        }
     }
 }

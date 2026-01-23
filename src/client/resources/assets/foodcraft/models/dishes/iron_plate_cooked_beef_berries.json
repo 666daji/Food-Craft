@@ -1,0 +1,6 @@
+{
+  "parent": "foodcraft:dishes/iron_plate_beef_berries",
+  "textures": {
+    "beef": "minecraft:block/cooked_beef"
+  }
+}

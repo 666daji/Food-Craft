@@ -4,13 +4,17 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents;
 import org.dfood.shape.Shapes;
 import org.foodcraft.block.multi.MultiBlockManager;
-import org.foodcraft.contentsystem.foodcraft.ModContainers;
-import org.foodcraft.contentsystem.foodcraft.ModContents;
 
 public class RegistryInit {
     public static void init() {
+        // 当前模组注册
         ModContents.registryContents();
         ModContainers.registryContainers();
+        PlayerActions.registerDefaults();
+        multiBlockInit();
+        registerShapes();
+
+        // 原版注册
         ModBlocks.registerModBlocks();
         ModItems.registerModItems();
         ModBlockEntityTypes.registerBlockEntityTypes();
@@ -20,8 +24,6 @@ public class RegistryInit {
         ModSounds.initialize();
         ModScreenHandlerTypes.registerScreenHandlerTypes();
         ModOreGeneration.registerOres();
-        multiBlockInit();
-        registerShapes();
     }
 
     /**

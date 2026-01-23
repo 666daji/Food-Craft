@@ -2,7 +2,6 @@ package org.foodcraft.contentsystem.content;
 
 import net.minecraft.item.FoodComponent;
 import net.minecraft.util.Identifier;
-import org.foodcraft.contentsystem.foodcraft.ContentCategories;
 import org.jetbrains.annotations.NotNull;
 
 public class DishesContent extends FoodContent {

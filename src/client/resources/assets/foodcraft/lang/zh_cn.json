@@ -30,7 +30,7 @@
   "block.foodcraft.small_bread_embryo": "小面包胚",
   "block.foodcraft.small_bread": "小面包",
   "block.foodcraft.cake_embryo": "蛋糕胚",
-  "block.foodcraft.baguette": " 长棍面包",
+  "block.foodcraft.baguette": "长棍面包",
   "block.foodcraft.baguette_embryo": "长棍面包胚",
   "item.foodcraft.toast_dough": "吐司面团",
   "block.foodcraft.toast": "吐司",
@@ -83,6 +83,12 @@
   "content.foodcraft.mushroom_stew": "蘑菇煲",
   "content.foodcraft.beetroot_soup": "甜菜汤",
   "content.foodcraft.rabbit_stew": "兔肉煲",
+
+  "content.foodcraft.water": "水",
+  "content.foodcraft.milk": "牛奶",
+
+  "content.foodcraft.beef_berries": "未烤制的浆果牛排",
+  "content.foodcraft.cooked_beef_berries": "浆果牛排",
 
   "grinding_stone.add.refused": "这东西可不能磨哦",
   "grinding_stone.add.full": "已经满了!",

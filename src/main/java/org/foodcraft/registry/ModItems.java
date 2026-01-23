@@ -16,12 +16,11 @@ import java.util.function.BiFunction;
 
 public class ModItems {
     // 工作方块
-    public static final Item BRACKET = registerItem(ModBlocks.BRACKET);
     public static final Item GRINDING_STONE = registerItem(ModBlocks.GRINDING_STONE);
     public static final Item HEAT_RESISTANT_SLATE = registerItem(ModBlocks.HEAT_RESISTANT_SLATE);
     public static final Item FIREWOOD = registerItem(ModBlocks.FIREWOOD);
     public static final Item POTTERY_TABLE = registerItem(ModBlocks.POTTERY_TABLE);
-    public static final Item IRON_PLATE = registerItem(ModBlocks.IRON_PLATE, new Item.Settings(), DishesItem::new);
+    public static final Item IRON_PLATE = registerItem(ModBlocks.IRON_PLATE);
 
     // 工具
     public static final Item IRON_GARNISH_DISHES = registerItem(ModBlocks.IRON_GARNISH_DISHES);
@@ -97,7 +96,6 @@ public class ModItems {
 
     // 调味料
     public static final Item SALT_CUBES = registerItem("salt_cubes", new Item(new Item.Settings()));
-    public static final Item SALT_SHAKER = registerItem(ModBlocks.SALT_SHAKER);
 
     // 矿物
     public static final Item SALT_ORE = registerItem(ModBlocks.SALT_ORE);

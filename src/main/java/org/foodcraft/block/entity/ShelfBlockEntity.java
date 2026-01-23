@@ -561,7 +561,5 @@ public class ShelfBlockEntity extends UpPlaceBlockEntity {
         CanPlaceItem.add(stack -> stack.getItem() instanceof BlockItem blockItem && blockItem.getBlock() instanceof FlourSackBlock);
         // 花盆
         CanPlaceItem.add(stack -> stack.getItem() instanceof BlockItem blockItem && blockItem.getBlock() instanceof FlowerPotBlock);
-        // 盐罐
-        CanPlaceItem.add(stack -> stack.getItem() == ModItems.SALT_SHAKER);
     }
 }

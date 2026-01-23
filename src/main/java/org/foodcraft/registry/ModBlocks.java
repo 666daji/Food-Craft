@@ -23,10 +23,6 @@ import java.util.function.BiFunction;
 
 public class ModBlocks {
     // 工作方块
-    public static final Block BRACKET = registerBlock("bracket_block",
-            new BracketBlock(AbstractBlock.Settings.create()
-                    .sounds(BlockSoundGroup.WOOD).strength(0.2F)
-                    .nonOpaque().pistonBehavior(PistonBehavior.DESTROY)));
     public static final Block GRINDING_STONE = registerBlock("grinding_stone",
             new GrindingStoneBlock(AbstractBlock.Settings.create()
                     .sounds(BlockSoundGroup.STONE).strength(1.5F, 6.0F).requiresTool()
@@ -234,13 +230,6 @@ public class ModBlocks {
             new MoldBlock(AbstractBlock.Settings.create()
                     .sounds(ModSoundGroups.BUCKET).sounds(BlockSoundGroup.WOOL).strength(0.2F)
                     .nonOpaque().pistonBehavior(PistonBehavior.DESTROY), true));
-
-    // 调味料
-    public static final Block SALT_SHAKER = registerBlock("salt_shaker",
-            new SimpleFoodBlock(AbstractBlock.Settings.create()
-                    .sounds(BlockSoundGroup.STONE).strength(0.2F)
-                    .nonOpaque().pistonBehavior(PistonBehavior.DESTROY),
-                    true, null, false));
 
     // 矿物
     public static final Block SALT_ORE = registerBlock("salt_ore",

@@ -9,6 +9,7 @@ import net.minecraft.item.*;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.potion.PotionUtil;
 import net.minecraft.potion.Potions;
+import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.IntProperty;
 import net.minecraft.state.property.Properties;
@@ -19,6 +20,7 @@ import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
 import org.dfood.block.FoodBlock;
 import org.dfood.item.DoubleBlockItem;
+import org.dfood.util.DFoodUtils;
 import org.foodcraft.FoodCraft;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -45,6 +47,21 @@ public class FoodCraftUtils {
                     .with(foodBlock.NUMBER_OF_FOOD, foodCount);
         }
         return Blocks.AIR.getDefaultState();
+    }
+
+    /**
+     * 获取物品对应方块的声音事件组
+     * @param itemStack 要获取的物品堆栈
+     * @return 获取的声音组，如果物品不是一个
+     */
+    @Nullable
+    public static BlockSoundGroup getSoundGroupFromItem(ItemStack itemStack) {
+        BlockState state = DFoodUtils.getBlockStateFromItem(itemStack.getItem());
+        if (state != null) {
+            return state.getBlock().getSoundGroup(state);
+        }
+
+        return null;
     }
 
     /**

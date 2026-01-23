@@ -23,8 +23,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
-import org.dfood.item.DoubleBlockItem;
 import org.foodcraft.block.UpPlaceBlock;
+import org.foodcraft.util.FoodCraftUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -269,7 +269,7 @@ public abstract class UpPlaceBlockEntity extends BlockEntity implements Inventor
      * @return 对应的放置音效，如果没有合适的音效则返回null
      */
     private SoundEvent getSoundForItem(ItemStack itemStack, boolean isPlaceSound) {
-        BlockSoundGroup soundGroup = getSoundGroupFromItem(itemStack);
+        BlockSoundGroup soundGroup = FoodCraftUtils.getSoundGroupFromItem(itemStack);
 
         if (soundGroup != null) {
             return isPlaceSound ?
@@ -280,22 +280,6 @@ public abstract class UpPlaceBlockEntity extends BlockEntity implements Inventor
         UpPlaceBlock.UpSounds defaultSounds = UpPlaceBlock.UpSounds.DEFAULT;
         return isPlaceSound ?
                 defaultSounds.placeSound() : defaultSounds.fetchSound();
-    }
-
-    private BlockSoundGroup getSoundGroupFromItem(ItemStack itemStack) {
-        Item item = itemStack.getItem();
-
-        if (item instanceof BlockItem blockItem) {
-            return blockItem.getBlock()
-                    .getSoundGroup(blockItem.getBlock().getDefaultState());
-        }
-
-        if (item instanceof DoubleBlockItem doubleBlockItem) {
-            return doubleBlockItem.getSecondBlock()
-                    .getSoundGroup(doubleBlockItem.getSecondBlock().getDefaultState());
-        }
-
-        return null;
     }
 
     /**

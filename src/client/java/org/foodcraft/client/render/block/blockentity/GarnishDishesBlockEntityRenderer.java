@@ -10,10 +10,10 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.math.random.Random;
 import org.foodcraft.block.entity.DishesBlockEntity;
 
-public class DishesBlockEntityRenderer implements BlockEntityRenderer<DishesBlockEntity> {
+public class GarnishDishesBlockEntityRenderer implements BlockEntityRenderer<DishesBlockEntity> {
     private final BlockRenderManager blockRenderManager;
 
-    public DishesBlockEntityRenderer(BlockEntityRendererFactory.Context ctx) {
+    public GarnishDishesBlockEntityRenderer(BlockEntityRendererFactory.Context ctx) {
         this.blockRenderManager = ctx.getRenderManager();
     }
 

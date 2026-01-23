@@ -7,15 +7,12 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.item.SwordItem;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.particle.ItemStackParticleEffect;
-import net.minecraft.particle.ParticleTypes;
 import net.minecraft.recipe.Recipe;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.collection.DefaultedList;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.foodcraft.FoodCraft;
 import org.foodcraft.block.entity.UpPlaceBlockEntity;
@@ -32,7 +29,6 @@ import org.foodcraft.tag.ItemTags;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Random;
 
 /**
  * 切菜流程处理器，支持特定物品在特定切割次数的特殊交互。
@@ -239,7 +235,7 @@ public class CuttingProcess<T extends UpPlaceBlockEntity> extends AbstractProces
             // 播放音效和粒子效果
             SoundEvent cutSound = getCutSoundForItem(inputItem);
             context.playSound(cutSound);
-            spawnCuttingParticles(context.world(), context.pos(), inputItem);
+            context.spawnItemParticles(inputItem);
 
             // 服务器端执行切割逻辑
             if (context.isServerSide()) {
@@ -423,33 +419,6 @@ public class CuttingProcess<T extends UpPlaceBlockEntity> extends AbstractProces
                 }
                 inventory.setStack(i, ItemStack.EMPTY);
             }
-        }
-    }
-
-    /**
-     * 在指定位置生成切割粒子效果。
-     *
-     * @param world 世界实例
-     * @param pos 位置坐标
-     * @param stack 用于粒子效果的物品堆栈
-     */
-    public static void spawnCuttingParticles(World world, BlockPos pos, ItemStack stack) {
-        Random random = new Random();
-        double x = pos.getX() + 0.5;
-        double y = pos.getY() + 0.05;
-        double z = pos.getZ() + 0.5;
-
-        int particles = 8;
-
-        for (int i = 0; i < particles; i++) {
-            double vx = (random.nextDouble() - 0.5) * 0.4;
-            double vy = random.nextDouble() * 0.3;
-            double vz = (random.nextDouble() - 0.5) * 0.4;
-
-            world.addParticle(
-                    new ItemStackParticleEffect(ParticleTypes.ITEM, stack),
-                    x, y, z, vx, vy, vz
-            );
         }
     }
 
@@ -646,6 +615,47 @@ public class CuttingProcess<T extends UpPlaceBlockEntity> extends AbstractProces
         } catch (Exception e) {
             FoodCraft.LOGGER.warn("Ineffective Recipe:{}", recipeId);
         }
+    }
+
+    @Override
+    protected String getCustomStatusInfo() {
+        StringBuilder info = new StringBuilder();
+
+        // 切割进度信息
+        info.append("切割进度: ").append(currentCut).append("/").append(totalCuts).append("\n");
+        info.append("完成度: ").append(String.format("%.1f%%", getProgress() * 100)).append("\n");
+
+        // 配方信息
+        if (currentRecipe != null) {
+            info.append("当前配方: ").append(currentRecipe.getId().getPath()).append("\n");
+            info.append("配方步骤数: ").append(totalCuts).append("\n");
+        } else {
+            info.append("当前配方: <无>\n");
+        }
+
+        // 输入物品信息
+        if (!inputItem.isEmpty()) {
+            info.append("输入物品: ").append(inputItem.getItem().getName().getString());
+            if (inputItem.getCount() > 1) {
+                info.append(" x").append(inputItem.getCount());
+            }
+            info.append("\n");
+        } else {
+            info.append("输入物品: <空>\n");
+        }
+
+        // 特殊步骤信息
+        String specialStepId = checkSpecialStep();
+        if (specialStepId != null) {
+            info.append("待处理特殊步骤: ").append(specialStepId).append("\n");
+        }
+
+        // NBT数据恢复状态
+        if (savedRecipeId != null && !savedRecipeId.isEmpty()) {
+            info.append("保存的配方ID: ").append(savedRecipeId).append("\n");
+        }
+
+        return info.toString();
     }
 
     // ============ 状态管理 ============

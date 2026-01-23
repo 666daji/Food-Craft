@@ -11,7 +11,6 @@ public class ModRenderLayers {
     public static void registryRenderLayer() {
         instance.putBlock(AssistedBlocks.CRIPPLED_SUSPICIOUS_STEW, RenderLayer.getCutout());
         instance.putBlock(ModBlocks.COMBUSTION_FIREWOOD, RenderLayer.getCutout());
-        instance.putBlock(ModBlocks.SALT_SHAKER, RenderLayer.getCutout());
         instance.putBlock(ModBlocks.MILK_POTION, RenderLayer.getCutout());
     }
 }

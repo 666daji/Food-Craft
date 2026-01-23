@@ -97,7 +97,7 @@ public abstract class AbstractContent {
 
     @Override
     public String toString() {
-        return getCategory() + ":{id=" + id + "}";
+        return getCategory() + ": {id=" + id + "}";
     }
 
     /**

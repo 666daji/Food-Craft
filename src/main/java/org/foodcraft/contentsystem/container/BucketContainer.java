@@ -3,7 +3,7 @@ package org.foodcraft.contentsystem.container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
 import org.foodcraft.contentsystem.content.AbstractContent;
-import org.foodcraft.contentsystem.foodcraft.ContentCategories;
+import org.foodcraft.contentsystem.content.ContentCategories;
 
 public class BucketContainer extends AbstractMappedContainer {
     public BucketContainer(Identifier id, ContainerSettings settings) {

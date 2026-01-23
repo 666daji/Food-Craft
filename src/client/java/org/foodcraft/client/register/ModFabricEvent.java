@@ -3,7 +3,7 @@ package org.foodcraft.client.register;
 import net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin;
 import net.fabricmc.fabric.api.client.rendering.v1.TooltipComponentCallback;
 import org.foodcraft.client.render.gui.tooltip.FlourSackTooltipComponent;
-import org.foodcraft.client.render.model.FoodCraftModelLoader;
+import org.foodcraft.client.render.model.ModModelLoader;
 import org.foodcraft.item.FlourSackItem;
 
 public class ModFabricEvent {
@@ -14,6 +14,6 @@ public class ModFabricEvent {
             }
             return null;
         });
-        ModelLoadingPlugin.register(new FoodCraftModelLoader());
+        ModelLoadingPlugin.register(new ModModelLoader());
     }
 }

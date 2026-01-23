@@ -1,131 +1,119 @@
 package org.foodcraft.block.entity;
 
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
+import net.minecraft.network.listener.ClientPlayPacketListener;
+import net.minecraft.network.packet.Packet;
+import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
-import net.minecraft.util.collection.DefaultedList;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.BlockHitResult;
+import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.foodcraft.block.PlateBlock;
 import org.foodcraft.block.process.PlatingProcess;
+import org.foodcraft.block.process.playeraction.PlayerAction;
+import org.foodcraft.contentsystem.content.AbstractContent;
 import org.foodcraft.contentsystem.content.DishesContent;
+import org.foodcraft.contentsystem.registry.ContentRegistry;
 import org.foodcraft.recipe.PlatingRecipe;
 import org.foodcraft.registry.ModBlockEntityTypes;
 import org.foodcraft.registry.ModItems;
+import org.foodcraft.util.PlayerActionListUtil;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 
 public class PlateBlockEntity extends BlockEntity implements PlatableBlockEntity {
-    /** 方块库存的最大容量，同时也是摆盘流程的最大步骤数量 */
+    /** 方块库存的最大容量，同时也是摆盘流程的最大步骤数量。 */
     public static final int MAX_STEPS = 10;
+    private static final String OUTCOME_KEY = "outcome";
+    private static final String ACTIONS_KEY = "actions";
 
     /**
-     * 已放置的物品列表
+     * 已执行的操作列表。
      * <p>当{@linkplain #platingProcess}处于关闭状态时该列表应该为空</p>
      */
-    protected final DefaultedList<ItemStack> placedItems;
+    private final List<PlayerAction> performedActions = new ArrayList<>();
     /** 摆盘流程 */
-    protected final PlatingProcess<PlateBlockEntity> platingProcess;
-    /** 摆盘配方的最终产物。
-     * <p>该值与对应方块的{@link PlateBlock#IS_COMPLETION}属性绑定。
-     * 当该值不为空时，对应的属性为true，反之，对应的属性为false</p>
-     */
+    private final PlatingProcess<PlateBlockEntity> platingProcess;
+    /** 摆盘配方的最终产物 */
     @Nullable
     private DishesContent outcome;
 
     public PlateBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntityTypes.PLATE, pos, state);
-        this.placedItems = DefaultedList.ofSize(MAX_STEPS, ItemStack.EMPTY);
         this.platingProcess = new PlatingProcess<>();
     }
 
-    /**
-     * 尝试摆盘
-     * @param player 摆盘的玩家
-     * @param hand 交互的手
-     * @param hit 交互的上下文
-     * @return 交互的结果
-     */
-    public ActionResult tryPlating(PlayerEntity player, Hand hand, BlockHitResult hit) {
+    // ==================== 操作管理方法 ====================
+
+    @Override
+    public List<PlayerAction> getPerformedActions() {
+        return new ArrayList<>(performedActions);
+    }
+
+    @Override
+    public boolean performAction(int step, PlayerAction action) {
         if (!platingProcess.isActive()) {
-            platingProcess.start(world, this);
-        }
-
-        return platingProcess.executeStep(this, getCachedState(), world, pos, player, hand, hit);
-    }
-
-    @Override
-    public Item getContainerType() {
-        return this.getCachedState().getBlock().asItem();
-    }
-
-    @Override
-    public List<ItemStack> getPlacedItems() {
-        List<ItemStack> result = DefaultedList.of();
-        for (ItemStack stack : placedItems) {
-            if (!stack.isEmpty()) {
-                result.add(stack.copy());
-            } else {
-                // 遇到第一个空位就停止，保持步骤连续性
-                break;
-            }
-        }
-        return result;
-    }
-
-    @Override
-    public boolean placeItem(int step, ItemStack item) {
-        // 验证参数
-        if (step < 0 || step >= MAX_STEPS || item.isEmpty()) {
             return false;
         }
 
-        // 检查步骤连续性：前面的步骤必须有物品
+        // 验证参数
+        if (step < 0 || step >= MAX_STEPS || action == null) {
+            return false;
+        }
+
+        // 检查步骤连续性：前面的步骤必须有操作
         for (int i = 0; i < step; i++) {
-            if (placedItems.get(i).isEmpty()) {
+            if (i >= performedActions.size()) {
                 return false;
             }
         }
 
-        // 检查该步骤是否已有物品
-        if (!placedItems.get(step).isEmpty()) {
+        // 检查该步骤是否已有操作
+        if (step < performedActions.size()) {
             return false;
         }
 
-        // 放置物品（数量为1的副本）
-        ItemStack itemToPlace = item.copy();
-        itemToPlace.setCount(1);
-        placedItems.set(step, itemToPlace);
+        // 确保列表足够大
+        while (performedActions.size() < step) {
+            performedActions.add(null);
+        }
+
+        // 添加操作
+        performedActions.add(action);
 
         // 标记脏状态以保存
         markDirty();
-
         return true;
     }
 
     @Override
-    public ItemStack removeItem(int step) {
+    public @Nullable PlayerAction removeAction(int step) {
         // 验证参数
-        if (step < 0 || step >= placedItems.size()) {
-            return ItemStack.EMPTY;
+        if (step < 0 || step >= performedActions.size()) {
+            return null;
         }
 
-        ItemStack removed = placedItems.get(step);
-        if (removed.isEmpty()) {
-            return ItemStack.EMPTY;
+        PlayerAction removed = performedActions.get(step);
+        if (removed == null) {
+            return null;
         }
 
-        // 移除该步骤及之后的所有物品（保持连续性）
-        for (int i = step; i < placedItems.size(); i++) {
-            placedItems.set(i, ItemStack.EMPTY);
+        // 移除该步骤及之后的所有操作（保持连续性）
+        while (performedActions.size() > step) {
+            performedActions.remove(performedActions.size() - 1);
         }
 
         markDirty();
@@ -133,9 +121,152 @@ public class PlateBlockEntity extends BlockEntity implements PlatableBlockEntity
     }
 
     @Override
-    public void clearPlacedItems() {
-        Collections.fill(placedItems, ItemStack.EMPTY);
+    public void clearPerformedActions() {
+        performedActions.clear();
         markDirty();
+    }
+
+    // ==================== 盖子相关方法 ====================
+
+    /**
+     * 尝试盖上盖子，只有当盘子内拥有完整的菜肴时才会成功。
+     * @return 是否成功盖上盖子
+     */
+    public boolean coverWithLid() {
+        if (outcome == null || world == null) {
+            return false;
+        }
+
+        return world.setBlockState(pos, getCachedState().with(PlateBlock.IS_COVERED, true));
+    }
+
+    /**
+     * 取下盖子并尝试恢复摆盘流程。
+     */
+    public boolean removeCoverAndRestore() {
+        if (world == null) {
+            return false;
+        }
+
+        BlockState currentState = getCachedState();
+        if (!currentState.get(PlateBlock.IS_COVERED)) {
+            return false;
+        }
+
+        // 取下盖子
+        BlockState newState = currentState.with(PlateBlock.IS_COVERED, false);
+        boolean coverRemoved = world.setBlockState(pos, newState, 3);
+
+        if (!coverRemoved) {
+            return false;
+        }
+
+        // 尝试恢复摆盘流程
+        if (outcome != null) {
+            restoreProcess();
+        }
+
+        world.playSound(null, pos, SoundEvents.BLOCK_METAL_PLACE, SoundCategory.BLOCKS, 0.5f, 1.2f);
+        markDirty();
+        return true;
+    }
+
+    /**
+     * 尝试根据当前的{@link #outcome}恢复流程。
+     */
+    public boolean restoreProcess() {
+        if (platingProcess.isActive() || outcome == null || world == null) {
+            return false;
+        }
+
+        // 根据菜肴获取对应的配方
+        PlatingRecipe recipe = PlatingRecipe.getRecipeByContainerAndDishes(getContainerType(), outcome);
+        if (recipe == null) {
+            return false;
+        }
+
+        // 清除当前的菜肴
+        setOutcome(null);
+
+        // 根据配方的操作恢复 performedActions
+        List<PlayerAction> actions = recipe.getActions();
+        performedActions.clear();
+        performedActions.addAll(actions);
+
+        // 启动摆盘流程
+        platingProcess.start(world, this);
+
+        // 初始化候选配方列表
+        boolean initialized = platingProcess.initializeCandidates(world, this);
+        if (!initialized) {
+            // 如果初始化失败，重置状态
+            clearPerformedActions();
+            platingProcess.reset();
+            return false;
+        }
+
+        markDirty();
+        return true;
+    }
+
+    // ==================== 交互方法 ====================
+
+    /**
+     * 尝试摆盘
+     */
+    public ActionResult tryPlating(PlayerEntity player, Hand hand, BlockHitResult hit) {
+        // 已经存在菜肴时不可以开始摆盘
+        if (outcome != null) {
+            return ActionResult.PASS;
+        }
+
+        if (!platingProcess.isActive()) {
+            platingProcess.start(world, this);
+        }
+
+        return platingProcess.executeStep(this, getCachedState(), world, pos, player, hand, hit);
+    }
+
+    // ==================== NBT 序列化 ====================
+
+    @Override
+    public void readNbt(NbtCompound nbt) {
+        super.readNbt(nbt);
+
+        // 清除当前状态
+        this.performedActions.clear();
+        platingProcess.readFromNbt(nbt);
+
+        // 读取菜肴
+        if (nbt.contains(OUTCOME_KEY, NbtElement.STRING_TYPE)) {
+            AbstractContent content = ContentRegistry.get(Identifier.tryParse(nbt.getString(OUTCOME_KEY)));
+            setOutcome((DishesContent) content);
+        } else {
+            // 读取操作列表
+            List<PlayerAction> actions = PlayerActionListUtil.readActionsFromNbt(nbt);
+            performedActions.addAll(actions);
+        }
+    }
+
+    @Override
+    protected void writeNbt(NbtCompound nbt) {
+        super.writeNbt(nbt);
+
+        platingProcess.writeToNbt(nbt);
+
+        if (outcome != null) {
+            nbt.putString(OUTCOME_KEY, outcome.getId().toString());
+        } else {
+            // 写入操作列表
+            PlayerActionListUtil.writeActionsToNbt(nbt, performedActions);
+        }
+    }
+
+    // ==================== PlatableBlockEntity 接口实现 ====================
+
+    @Override
+    public Item getContainerType() {
+        return this.getCachedState().getBlock().asItem();
     }
 
     @Override
@@ -144,8 +275,24 @@ public class PlateBlockEntity extends BlockEntity implements PlatableBlockEntity
     }
 
     @Override
-    public void onPlatingComplete(World world, BlockPos pos, PlatingRecipe recipe) {
+    public void onPlatingComplete(World world, BlockPos pos, PlatingRecipe recipe, PlayerEntity player, Hand hand, HitResult hit) {
+        // 设置菜肴
         setOutcome(recipe.getDishes());
+
+        // 消耗一个完成物品
+        if (!player.isCreative()) {
+            player.getStackInHand(hand).decrement(1);
+        }
+
+        // 盖上盖子
+        if (coverWithLid()) {
+            world.playSound(null, pos, SoundEvents.BLOCK_METAL_PLACE, SoundCategory.BLOCKS, 0.5f, 0.8f);
+        }
+    }
+
+    @Override
+    public @Nullable DishesContent getOutcome() {
+        return outcome;
     }
 
     @Override
@@ -153,44 +300,51 @@ public class PlateBlockEntity extends BlockEntity implements PlatableBlockEntity
         return MAX_STEPS;
     }
 
-    @Override
-    public boolean isEmpty() {
-        return placedItems.isEmpty();
-    }
-
-    @Override
-    public ItemStack getStack(int slot) {
-        return placedItems.get(slot);
-    }
+    // ==================== 访问器方法 ====================
 
     /**
-     * 设置当前的菜肴，这会同时影响{@link PlateBlock#IS_COMPLETION}。
-     * @param outcome 要设置的菜肴，为null时会清空当前的菜肴
+     * 设置当前的菜肴，这会同时清空当前的操作列表。
      */
     public void setOutcome(@Nullable DishesContent outcome) {
         this.outcome = outcome;
 
-        if (world == null) {
-            return;
+        if (outcome != null) {
+            clearPerformedActions();
+            platingProcess.reset();
         }
 
-        BlockState currentState = getCachedState();
-        boolean shouldBeComplete = outcome != null;
-        boolean isCurrentlyComplete = currentState.get(PlateBlock.IS_COMPLETION);
-
-        // 只有当状态确实需要改变时才更新
-        if (shouldBeComplete != isCurrentlyComplete) {
-            BlockState newState = currentState.with(PlateBlock.IS_COMPLETION, shouldBeComplete);
-            world.setBlockState(getPos(), newState, Block.NOTIFY_LISTENERS);
-        }
+        markDirty();
     }
 
     /**
-     * 获取当前的菜肴
-     * @return 当前的菜肴
+     * 获取当前摆盘流程。
      */
-    @Nullable
-    public DishesContent getOutcome() {
-        return outcome;
+    public PlatingProcess<PlateBlockEntity> getPlatingProcess() {
+        return platingProcess;
+    }
+
+    public String getDebugInfo() {
+        return platingProcess.toString() + "\n" + getPerformedActions();
+    }
+
+    // ==================== 网络同步 ====================
+
+    @Override
+    public @Nullable Packet<ClientPlayPacketListener> toUpdatePacket() {
+        return BlockEntityUpdateS2CPacket.create(this);
+    }
+
+    @Override
+    public NbtCompound toInitialChunkDataNbt() {
+        return createNbt();
+    }
+
+    @Override
+    public void markDirty() {
+        super.markDirty();
+
+        if (world != null) {
+            world.updateListeners(pos, getCachedState(), getCachedState(), 3);
+        }
     }
 }

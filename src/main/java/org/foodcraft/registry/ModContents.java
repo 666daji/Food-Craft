@@ -1,8 +1,9 @@
-package org.foodcraft.contentsystem.foodcraft;
+package org.foodcraft.registry;
 
 import net.minecraft.item.FoodComponents;
 import net.minecraft.util.Identifier;
 import org.foodcraft.FoodCraft;
+import org.foodcraft.contentsystem.content.ContentCategories;
 import org.foodcraft.food.ModFoodComponents;
 import org.foodcraft.contentsystem.content.AbstractContent;
 import org.foodcraft.contentsystem.content.DishesContent;
