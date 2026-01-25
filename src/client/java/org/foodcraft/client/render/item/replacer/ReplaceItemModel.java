@@ -10,6 +10,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -33,6 +34,7 @@ public interface ReplaceItemModel {
      * @param item 物品
      * @return 对应的替换器，如果没有则返回null
      */
+    @Nullable
     static ReplaceItemModel getReplace(Item item) {
         return REPLACE.get(item);
     }

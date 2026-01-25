@@ -1,30 +1,23 @@
 package org.foodcraft.client.render.block.blockentity;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.client.render.RenderLayers;
 import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.render.block.BlockRenderManager;
-import net.minecraft.client.render.block.entity.BlockEntityRenderer;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.util.math.random.Random;
 import org.foodcraft.block.entity.DishesBlockEntity;
 
-public class GarnishDishesBlockEntityRenderer implements BlockEntityRenderer<DishesBlockEntity> {
-    private final BlockRenderManager blockRenderManager;
+public class GarnishDishesBlockEntityRenderer extends UpPlaceBlockEntityRenderer<DishesBlockEntity> {
 
     public GarnishDishesBlockEntityRenderer(BlockEntityRendererFactory.Context ctx) {
-        this.blockRenderManager = ctx.getRenderManager();
+        super(ctx);
     }
 
     @Override
     public void render(DishesBlockEntity entity, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay) {
         if (!entity.isEmpty()) {
             matrices.push();
-            BlockState blockState = entity.getInventoryBlockState();
             matrices.translate(0.0, 0.1, 0.0);
-            blockRenderManager.renderBlock(blockState, entity.getPos(), entity.getWorld(), matrices,
-                    vertexConsumers.getBuffer(RenderLayers.getBlockLayer(blockState)), true, Random.create());
+
+            fromStackRender(entity.getStack(0), entity, tickDelta, matrices, vertexConsumers, light, overlay);
             matrices.pop();
         }
     }

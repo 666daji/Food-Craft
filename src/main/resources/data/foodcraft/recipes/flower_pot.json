@@ -1,8 +1,6 @@
 {
   "type": "foodcraft:stove",
-  "ingredient": {
-    "item": "foodcraft:flower_pot_embryo"
-  },
+  "ingredient": "foodcraft:flower_pot_embryo",
   "MaxInputCount": 4,
   "result": "minecraft:flower_pot",
   "stoveTime": 17400

@@ -1,8 +1,6 @@
 {
   "type": "foodcraft:stove",
-  "ingredient": {
-    "item": "foodcraft:dough"
-  },
+  "ingredient": "foodcraft:dough",
   "result": "foodcraft:hard_bread",
   "stoveTime": 21000
 }

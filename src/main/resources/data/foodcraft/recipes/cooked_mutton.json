@@ -1,8 +1,6 @@
 {
   "type": "foodcraft:stove",
-  "ingredient": {
-    "item": "minecraft:mutton"
-  },
+  "ingredient": "minecraft:mutton",
   "MaxInputCount": 2,
   "result": "minecraft:cooked_mutton",
   "stoveTime": 9000

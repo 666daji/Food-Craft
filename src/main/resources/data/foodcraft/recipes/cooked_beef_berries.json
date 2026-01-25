@@ -1,0 +1,6 @@
+{
+  "type": "foodcraft:stove",
+  "ingredient": "content|foodcraft:beef_berries",
+  "result": "content|foodcraft:cooked_beef_berries",
+  "stoveTime": 12000
+}

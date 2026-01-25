@@ -1,40 +1,94 @@
 package org.foodcraft.recipe;
 
+import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.recipe.Ingredient;
+import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeSerializer;
 import net.minecraft.recipe.RecipeType;
+import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.util.Identifier;
-import org.foodcraft.recipe.serializer.StoveRecipeSerializer;
+import net.minecraft.world.World;
+import org.foodcraft.contentsystem.api.ContainerUtil;
+import org.foodcraft.contentsystem.content.AbstractContent;
+import org.foodcraft.contentsystem.occupy.OccupyUtil;
 import org.foodcraft.registry.ModRecipeSerializers;
 import org.foodcraft.registry.ModRecipeTypes;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
 import java.util.Set;
 
-public class StoveRecipe extends SimpleCraftRecipe {
-    public static final Set<StoveRecipe> needOtherModelRecipes = new HashSet<>();
+public class StoveRecipe implements Recipe<Inventory> {
+    public static final Set<StoveRecipe> NEED_OTHER_MODEL_RECIPES = new HashSet<>();
 
+    protected final Identifier id;
+    protected final ItemStack input;
+    protected final ItemStack output;
     protected final int bakingTime;
     protected final int MaxInputCount;
-    /** 基础模具为null时表示该配方无需模具 */
-    @Nullable
-    protected final ItemStack mold;
 
-    public StoveRecipe(Identifier id, Ingredient input, ItemStack output, StoveRecipeSerializer.StoveExtraData data) {
-        super(id, input, output);
-        this.MaxInputCount = data.inputCount();
-        this.bakingTime = data.stoveTime();
-        this.mold = !data.mold().isEmpty() ? data.mold() : null;
+    public StoveRecipe(Identifier id, ItemStack input, ItemStack output, int MaxInputCount, int bakingTime) {
+        this.id = id;
+        this.input = input;
+        this.output = output;
+        this.MaxInputCount = MaxInputCount;
+        this.bakingTime = bakingTime;
 
-        if (MaxInputCount > 1){
-            needOtherModelRecipes.add(this);
+        if (MaxInputCount > 1) {
+            NEED_OTHER_MODEL_RECIPES.add(this);
         }
     }
 
     public int getMaxInputCount() {
         return MaxInputCount;
+    }
+
+    @Override
+    public boolean matches(Inventory inventory, World world) {
+        ItemStack stack = inventory.getStack(0);
+
+        if (OccupyUtil.isOccupy(this.input)) {
+            AbstractContent input = OccupyUtil.getContentFromOccupy(this.input);
+            AbstractContent content = ContainerUtil.extractContent(stack);
+
+            return input != null && input.equals(content);
+        }
+
+        return ItemStack.areItemsEqual(stack, input);
+    }
+
+    @Override
+    public ItemStack craft(Inventory inventory, DynamicRegistryManager registryManager) {
+        ItemStack stack = inventory.getStack(0);
+        int count = Math.min(stack.getCount(), MaxInputCount);
+
+        return OccupyUtil.isOccupy(this.output)?
+            ContainerUtil.replaceContent(stack, OccupyUtil.getContentFromOccupy(this.output)):
+            output.copyWithCount(count);
+    }
+
+    @Override
+    public boolean fits(int width, int height) {
+        return true;
+    }
+
+    @Override
+    public ItemStack getOutput(DynamicRegistryManager registryManager) {
+        return this.output.copy();
+    }
+
+    @Override
+    public Identifier getId() {
+        return this.id;
+    }
+
+    @Override
+    public RecipeSerializer<?> getSerializer() {
+        return ModRecipeSerializers.STOVE;
+    }
+
+    @Override
+    public RecipeType<?> getType() {
+        return ModRecipeTypes.STOVE;
     }
 
     /**
@@ -44,7 +98,7 @@ public class StoveRecipe extends SimpleCraftRecipe {
      * @return 烘烤需要的总时间
      */
     public int getBakingTimeForInput(int count) {
-        if (count <= 0){
+        if (count <= 0) {
             return bakingTime;
         }
         return bakingTime * Math.min(MaxInputCount, count);
@@ -54,26 +108,17 @@ public class StoveRecipe extends SimpleCraftRecipe {
         return bakingTime;
     }
 
-    @Nullable
-    public ItemStack getMold() {
-        return mold;
-    }
-
-    @Override
-    public RecipeSerializer<?> getSerializer() {
-        return ModRecipeSerializers.STOVE;
+    /**
+     * 获取输入物品堆栈
+     */
+    public ItemStack getInput() {
+        return input;
     }
 
     /**
-     * 判断该配方是否需要模具
-     * @return 需要模具返回true，否则返回false
+     * 获取输出物品堆栈
      */
-    public boolean isNeedMold() {
-        return mold != null;
-    }
-
-    @Override
-    public RecipeType<?> getType() {
-        return ModRecipeTypes.STOVE;
+    public ItemStack getOutput() {
+        return output;
     }
 }

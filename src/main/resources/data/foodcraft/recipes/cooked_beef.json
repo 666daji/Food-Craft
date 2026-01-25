@@ -1,8 +1,6 @@
 {
   "type": "foodcraft:stove",
-  "ingredient": {
-    "item": "minecraft:beef"
-  },
+  "ingredient": "minecraft:beef",
   "MaxInputCount": 2,
   "result": "minecraft:cooked_beef",
   "stoveTime": 9000

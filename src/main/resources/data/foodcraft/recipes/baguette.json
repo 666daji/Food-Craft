@@ -1,8 +1,6 @@
 {
   "type": "foodcraft:stove",
-  "ingredient": {
-    "item": "foodcraft:baguette_embryo"
-  },
+  "ingredient": "foodcraft:baguette_embryo",
   "result": "foodcraft:baguette",
   "stoveTime": 18000
 }

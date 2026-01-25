@@ -159,23 +159,25 @@ public class FoodCraftUtils {
      */
     public static BlockState createCountBlockstate(ItemStack stack, Direction facing) {
         Item item = stack.getItem();
+        BlockState blockState = DFoodUtils.getBlockStateFromItem(item);
 
-        // 处理双块物品
-        if (item instanceof DoubleBlockItem doubleBlockItem && doubleBlockItem.getSecondBlock() instanceof FoodBlock) {
-            return FoodCraftUtils.createFoodBlockState(doubleBlockItem.getSecondBlock().getDefaultState(), stack.getCount(), facing);
-        } // 处理食物方块
-        else if (item instanceof BlockItem blockItem && blockItem.getBlock() instanceof FoodBlock) {
-            return FoodCraftUtils.createFoodBlockState(blockItem.getBlock().getDefaultState(), stack.getCount(), facing);
-        } // 处理其他方块物品
-        else if (item instanceof BlockItem blockItem){
-            if (FoodCraftUtils.hasProperty(blockItem.getBlock(), Properties.HORIZONTAL_FACING)){
-                return blockItem.getBlock().getDefaultState()
-                        .with(Properties.HORIZONTAL_FACING, facing);
-            }
-            return blockItem.getBlock().getDefaultState();
+        if (blockState == null) {
+            return Blocks.AIR.getDefaultState();
         }
 
-        return Blocks.AIR.getDefaultState();
+        Block block = blockState.getBlock();
+
+        // 处理FoodBlock（包括DoubleBlockItem中的FoodBlock）
+        if (block instanceof FoodBlock) {
+            return createFoodBlockState(blockState, stack.getCount(), facing);
+        }
+
+        // 处理其他方块，检查是否有水平朝向属性
+        if (blockState.contains(Properties.HORIZONTAL_FACING)) {
+            return blockState.with(Properties.HORIZONTAL_FACING, facing);
+        }
+
+        return blockState;
     }
 
     /**

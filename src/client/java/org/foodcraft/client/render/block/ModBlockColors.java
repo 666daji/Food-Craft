@@ -25,7 +25,6 @@ public class ModBlockColors {
     }
 
     private static int getFlourSackColor(BlockState state, @Nullable BlockRenderView world, @Nullable BlockPos pos, int tintIndex) {
-
         // 检查必要的参数
         if (world == null || pos == null) {
             return -1;
@@ -40,8 +39,7 @@ public class ModBlockColors {
         else if (blockEntity instanceof FlourSackBlockEntity flourSackBlockEntity) {
             // 直接放置的粉尘袋
             return getDirectFlourSackColor(flourSackBlockEntity, tintIndex);
-        }
-        else {
+        } else {
             // 未知的方块实体类型
             return -1;
         }

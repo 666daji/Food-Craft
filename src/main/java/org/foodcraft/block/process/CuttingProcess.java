@@ -674,7 +674,7 @@ public class CuttingProcess<T extends UpPlaceBlockEntity> extends AbstractProces
                 isActive,
                 currentRecipe != null,
                 getProgress(),
-                !inputItem.isEmpty(),
+                inputItem,
                 inputItemType,
                 checkSpecialStep() != null
         );
@@ -704,7 +704,7 @@ public class CuttingProcess<T extends UpPlaceBlockEntity> extends AbstractProces
             boolean isActive,
             boolean hasRecipe,
             float progress,
-            boolean hasInputItem,
+            ItemStack inputStack,
             Item inputItemType,
             boolean hasPendingSpecialStep
     ) {}

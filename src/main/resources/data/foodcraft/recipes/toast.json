@@ -1,8 +1,6 @@
 {
   "type": "foodcraft:stove",
-  "ingredient": {
-    "item": "foodcraft:toast_embryo"
-  },
+  "ingredient": "foodcraft:toast_embryo",
   "mold": "foodcraft:toast_embryo_mold",
   "result": "foodcraft:toast",
   "stoveTime": 12000

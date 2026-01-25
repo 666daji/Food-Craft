@@ -2,6 +2,7 @@ package org.foodcraft.client.register;
 
 import net.minecraft.client.gui.screen.ingame.HandledScreens;
 import org.foodcraft.client.render.block.ModBlockColors;
+import org.foodcraft.client.render.block.stackrenderer.UpPlaceStackRenderers;
 import org.foodcraft.client.render.item.renderer.ItemRenderers;
 import org.foodcraft.client.render.item.replacer.ItemModelReplacers;
 import org.foodcraft.client.render.model.ModModelLayers;
@@ -16,6 +17,7 @@ public class RenderRegistry {
         ModBlockColors.registryColors();
         ModRenderLayers.registryRenderLayer();
         ItemRenderers.registry();
+        UpPlaceStackRenderers.registerAll();
         HandledScreens.register(ModScreenHandlerTypes.POTTERY_TABLE, PotteryTableScreen::new);
     }
 }

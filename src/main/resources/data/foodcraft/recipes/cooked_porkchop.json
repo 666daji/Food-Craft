@@ -1,8 +1,6 @@
 {
   "type": "foodcraft:stove",
-  "ingredient": {
-    "item": "minecraft:porkchop"
-  },
+  "ingredient": "minecraft:porkchop",
   "MaxInputCount": 2,
   "result": "minecraft:cooked_porkchop",
   "stoveTime": 9000

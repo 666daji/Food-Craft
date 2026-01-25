@@ -16,19 +16,16 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
-import org.foodcraft.block.CuttingBoardBlock;
 import org.foodcraft.block.process.CuttingProcess;
 import org.foodcraft.recipe.CutRecipe;
 import org.foodcraft.registry.ModBlockEntityTypes;
 import org.foodcraft.registry.ModItems;
 import org.foodcraft.registry.ModRecipeTypes;
 import org.foodcraft.registry.ModSounds;
-import org.foodcraft.util.FoodCraftUtils;
 
 import java.util.List;
 import java.util.Optional;
@@ -48,16 +45,6 @@ public class CuttingBoardBlockEntity extends UpPlaceBlockEntity {
     @Override
     public VoxelShape getContentShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
         return !isEmpty() ? CONTENT_SHAPE : VoxelShapes.empty();
-    }
-
-    /**
-     * 获取当前物品栏中的物品对应的方块状态
-     */
-    public BlockState getInventoryBlockState() {
-        ItemStack stack = this.inventory.get(0);
-        Direction facing = this.getCachedState().get(CuttingBoardBlock.FACING);
-
-        return FoodCraftUtils.createCountBlockstate(stack, facing);
     }
 
     @Override

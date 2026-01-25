@@ -3,8 +3,6 @@ package org.foodcraft.client.render.block.blockentity;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.render.block.entity.BlockEntityRenderer;
-import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.math.BlockPos;
 import org.foodcraft.block.multi.*;
@@ -14,24 +12,20 @@ import org.foodcraft.block.multi.*;
  * <p>该渲染类会在方块的上方渲染出方块堆的信息便于调试</p>
  * @param <T> 对应的方块实体
  */
-public abstract class MultiBlockDebugRenderer<T extends BlockEntity> implements BlockEntityRenderer<T> {
-    protected final TextRenderer textRenderer;
+public interface MultiBlockDebugRenderer<T extends BlockEntity> {
 
-    public MultiBlockDebugRenderer(BlockEntityRendererFactory.Context ctx) {
-        this.textRenderer = ctx.getTextRenderer();
-    }
+    /**
+     * 获取用于渲染的文本渲染器。
+     *
+     * @return 文本渲染器
+     */
+    TextRenderer getTextRenderer();
 
     /**
      * 获取方块的多方块引用
      * @param entity 对应的方块实体
      */
-    protected abstract MultiBlockReference getReference(T entity);
-
-    /**
-     * 判断当前是否为调试模式
-     * @param entity 对应的方块实体
-     */
-    protected abstract boolean isDebug(T entity);
+    MultiBlockReference getReference(T entity);
 
     /**
      * 进行其他的调试渲染
@@ -40,14 +34,12 @@ public abstract class MultiBlockDebugRenderer<T extends BlockEntity> implements 
      * @param matrices 变换矩阵，注意，此时的矩阵已经被变换到了渲染文字的地方。
      *                 如果需要一个新的矩阵，请再对矩阵进行一次推送
      */
-    protected abstract void otherDebugRender(T entity, MultiBlockReference reference,float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay);
+    default void otherDebugRender(T entity, MultiBlockReference reference,float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay) {}
 
-    @Override
-    public void render(T entity, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay) {
-        if (!isDebug(entity)){
-            return;
-        }
-
+    /**
+     * 渲染多方块调试信息。
+     */
+    default void renderDebugInfo(T entity, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay) {
         // 获取多方块引用
         MultiBlockReference multiBlockRef = getReference(entity);
         if (multiBlockRef == null || multiBlockRef.isDisposed()) {
@@ -90,11 +82,11 @@ public abstract class MultiBlockDebugRenderer<T extends BlockEntity> implements 
             int blue = 0xFF0088FF;
 
             // 计算文本宽度用于居中
-            int masterWidth = textRenderer.getWidth(masterText);
-            int relativeWidth = textRenderer.getWidth(relativeText);
-            int currentWidth = textRenderer.getWidth(currentText);
-            int statusWidth = textRenderer.getWidth(masterStatus);
-            int integrityWidth = textRenderer.getWidth(integrityStatus);
+            int masterWidth = getTextRenderer().getWidth(masterText);
+            int relativeWidth = getTextRenderer().getWidth(relativeText);
+            int currentWidth = getTextRenderer().getWidth(currentText);
+            int statusWidth = getTextRenderer().getWidth(masterStatus);
+            int integrityWidth = getTextRenderer().getWidth(integrityStatus);
 
             int maxWidth = Math.max(Math.max(masterWidth, relativeWidth),
                     Math.max(currentWidth, Math.max(statusWidth, integrityWidth)));
@@ -103,7 +95,7 @@ public abstract class MultiBlockDebugRenderer<T extends BlockEntity> implements 
             var positionMatrix = matrices.peek().getPositionMatrix();
 
             // 渲染主方块坐标（蓝色）
-            textRenderer.draw(
+            getTextRenderer().draw(
                     masterText,
                     -masterWidth / 2f, -40,
                     blue,
@@ -116,7 +108,7 @@ public abstract class MultiBlockDebugRenderer<T extends BlockEntity> implements 
             );
 
             // 渲染相对坐标（黄色）
-            textRenderer.draw(
+            getTextRenderer().draw(
                     relativeText,
                     -relativeWidth / 2f, -30,
                     yellow,
@@ -129,7 +121,7 @@ public abstract class MultiBlockDebugRenderer<T extends BlockEntity> implements 
             );
 
             // 渲染当前坐标（白色）
-            textRenderer.draw(
+            getTextRenderer().draw(
                     currentText,
                     -currentWidth / 2f, -20,
                     white,
@@ -143,7 +135,7 @@ public abstract class MultiBlockDebugRenderer<T extends BlockEntity> implements 
 
             // 渲染主方块状态（绿色表示主方块，白色表示从方块）
             int masterColor = isMaster ? green : white;
-            textRenderer.draw(
+            getTextRenderer().draw(
                     masterStatus,
                     -statusWidth / 2f, -10,
                     masterColor,
@@ -157,7 +149,7 @@ public abstract class MultiBlockDebugRenderer<T extends BlockEntity> implements 
 
             // 渲染完整性状态（绿色表示完整，红色表示损坏）
             int integrityColor = isIntact ? green : red;
-            textRenderer.draw(
+            getTextRenderer().draw(
                     integrityStatus,
                     -integrityWidth / 2f, 0,
                     integrityColor,

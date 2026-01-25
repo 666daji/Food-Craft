@@ -1,8 +1,6 @@
 {
   "type": "foodcraft:stove",
-  "ingredient": {
-    "item": "minecraft:potato"
-  },
+  "ingredient": "minecraft:potato",
   "MaxInputCount": 3,
   "result": "minecraft:baked_potato",
   "stoveTime": 9000

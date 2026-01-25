@@ -21,17 +21,15 @@ import java.util.Map;
 public class CutRecipe implements Recipe<Inventory> {
     private final Identifier id;
     private final Ingredient input;
-    private final ItemStack output;
     private final int totalCuts; // 总共需要切的次数
     private final Map<Integer, DefaultedList<ItemStack>> cutStateMap; // 第几刀对应的库存状态
     private final DefaultedList<ItemStack> defaultState; // 默认库存状态（5个槽位）
 
-    public CutRecipe(Identifier id, Ingredient input, ItemStack output, int totalCuts,
+    public CutRecipe(Identifier id, Ingredient input, int totalCuts,
                      Map<Integer, DefaultedList<ItemStack>> cutStateMap,
                      DefaultedList<ItemStack> defaultState) {
         this.id = id;
         this.input = input;
-        this.output = output;
         this.totalCuts = totalCuts;
         this.cutStateMap = cutStateMap;
         this.defaultState = defaultState;
@@ -45,7 +43,12 @@ public class CutRecipe implements Recipe<Inventory> {
 
     @Override
     public ItemStack craft(Inventory inventory, DynamicRegistryManager registryManager) {
-        return output.copy();
+        // 返回最后一刀时的库存状态第一个物品
+        DefaultedList<ItemStack> finalState = getCutState(totalCuts);
+        if (!finalState.isEmpty() && !finalState.get(0).isEmpty()) {
+            return finalState.get(0).copy();
+        }
+        return ItemStack.EMPTY;
     }
 
     @Override
@@ -55,11 +58,21 @@ public class CutRecipe implements Recipe<Inventory> {
 
     @Override
     public ItemStack getOutput(DynamicRegistryManager registryManager) {
-        return output.copy();
+        // 返回最后一刀时的库存状态第一个物品
+        DefaultedList<ItemStack> finalState = getCutState(totalCuts);
+        if (!finalState.isEmpty() && !finalState.get(0).isEmpty()) {
+            return finalState.get(0).copy();
+        }
+        return ItemStack.EMPTY;
     }
 
     public ItemStack getOutput() {
-        return output.copy();
+        // 返回最后一刀时的库存状态第一个物品
+        DefaultedList<ItemStack> finalState = getCutState(totalCuts);
+        if (!finalState.isEmpty() && !finalState.get(0).isEmpty()) {
+            return finalState.get(0).copy();
+        }
+        return ItemStack.EMPTY;
     }
 
     @Override
@@ -108,6 +121,10 @@ public class CutRecipe implements Recipe<Inventory> {
      * 获取完成切割后的输出数量
      */
     public int getOutputCount() {
-        return output.getCount();
+        DefaultedList<ItemStack> finalState = getCutState(totalCuts);
+        if (!finalState.isEmpty() && !finalState.get(0).isEmpty()) {
+            return finalState.get(0).getCount();
+        }
+        return 0;
     }
 }

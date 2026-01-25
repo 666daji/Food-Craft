@@ -1,8 +1,6 @@
 {
   "type": "foodcraft:stove",
-  "ingredient": {
-    "item": "minecraft:rabbit"
-  },
+  "ingredient": "minecraft:rabbit",
   "result": "minecraft:cooked_rabbit",
   "stoveTime": 19000
 }

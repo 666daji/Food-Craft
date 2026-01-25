@@ -1,8 +1,6 @@
 {
   "type": "foodcraft:stove",
-  "ingredient": {
-    "item": "minecraft:cod"
-  },
+  "ingredient": "minecraft:cod",
   "result": "minecraft:cooked_cod",
   "stoveTime": 12000
 }

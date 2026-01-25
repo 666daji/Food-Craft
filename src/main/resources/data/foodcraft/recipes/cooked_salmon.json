@@ -1,8 +1,6 @@
 {
   "type": "foodcraft:stove",
-  "ingredient": {
-    "item": "minecraft:salmon"
-  },
+  "ingredient": "minecraft:salmon",
   "result": "minecraft:cooked_salmon",
   "stoveTime": 12000
 }

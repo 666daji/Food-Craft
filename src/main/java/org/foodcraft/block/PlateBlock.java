@@ -43,7 +43,7 @@ public class PlateBlock extends SimpleFoodBlock implements BlockEntityProvider {
      * <p>请不要直接更改该属性的值。</p>
      */
     public static final BooleanProperty IS_COVERED = BooleanProperty.of("is_covered");
-    public static final VoxelShape BASE_SHAPE = Block.createCuboidShape(0, 0, 0, 16, 2,16);
+    public static final VoxelShape BASE_SHAPE = Block.createCuboidShape(0.5, 0, 0.5, 15.5, 2,15.5);
     public static final VoxelShape LIB_SHAPE = Block.createCuboidShape(1, 2, 1, 15, 8, 15);
 
     public PlateBlock(Settings settings) {
@@ -54,7 +54,6 @@ public class PlateBlock extends SimpleFoodBlock implements BlockEntityProvider {
     @Override
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
         BlockEntity entity = world.getBlockEntity(pos);
-        ItemStack stack = player.getStackInHand(hand);
 
         if (entity instanceof PlateBlockEntity plateBlockEntity) {
             // 尝试摆盘
@@ -74,6 +73,10 @@ public class PlateBlock extends SimpleFoodBlock implements BlockEntityProvider {
                     player.setStackInHand(hand, new ItemStack(ModItems.PLATE_LID));
                 }
                 return ActionResult.SUCCESS;
+            }
+
+            if (plateBlockEntity.getOutcome() != null) {
+                return ActionResult.PASS;
             }
         }
 

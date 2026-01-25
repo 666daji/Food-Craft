@@ -18,19 +18,16 @@ import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ItemScatterer;
-import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.util.shape.VoxelShape;
-import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import org.foodcraft.block.entity.CombustionFirewoodBlockEntity;
 import org.foodcraft.block.entity.HeatResistantSlateBlockEntity;
 import org.foodcraft.block.entity.UpPlaceBlockEntity;
 import org.foodcraft.block.multi.MultiBlockHelper;
-import org.foodcraft.item.MoldContentItem;
 import org.foodcraft.registry.ModBlockEntityTypes;
 import org.foodcraft.registry.ModItems;
 import org.foodcraft.registry.ModSounds;
@@ -74,22 +71,8 @@ public class HeatResistantSlateBlock extends UpPlaceBlock {
     public void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
         if (!state.isOf(newState.getBlock())) {
             BlockEntity blockEntity = world.getBlockEntity(pos);
-            if (blockEntity instanceof HeatResistantSlateBlockEntity heatResistantSlateBlockEntity) {
-                // 处理定型物品的掉落
-                if (!heatResistantSlateBlockEntity.originalInputStack.isEmpty()) {
-                    // 掉落原始输入物品
-                    DefaultedList<ItemStack> originalInputList = DefaultedList.ofSize(1, ItemStack.EMPTY);
-                    originalInputList.add(heatResistantSlateBlockEntity.originalInputStack);
-                    ItemScatterer.spawn(world, pos, originalInputList);
-                } else {
-                    // 正常掉落主库存物品
-                    ItemScatterer.spawn(world, pos, (Inventory) blockEntity);
-                }
-
-                // 掉落额外库存物品（模具）
-                DefaultedList<ItemStack> otherStack = heatResistantSlateBlockEntity.getOtherStacks();
-                ItemScatterer.spawn(world, pos, otherStack);
-
+            if (blockEntity instanceof Inventory inventory) {
+                ItemScatterer.spawn(world, pos, inventory);
                 world.updateComparators(pos, this);
             }
 
@@ -156,38 +139,13 @@ public class HeatResistantSlateBlock extends UpPlaceBlock {
     }
 
     @Override
-    public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
-        BlockEntity entity = world.getBlockEntity(pos);
-        if (entity instanceof HeatResistantSlateBlockEntity blockEntity && !blockEntity.isOtherEmpty()) {
-            return VoxelShapes.union(getBaseShape(state, world, pos, context), blockEntity.getContentShape(state, world, pos, context));
-        }
-        return super.getOutlineShape(state, world, pos, context);
-    }
-
-    @Override
     public boolean canFetched(UpPlaceBlockEntity blockEntity, ItemStack handStack) {
-        boolean moldFetched = blockEntity.isEmpty() && !(blockEntity instanceof HeatResistantSlateBlockEntity heatResistantSlateBlockEntity
-                && heatResistantSlateBlockEntity.isOtherEmpty());
-        return (!blockEntity.isEmpty() || moldFetched) && handStack.getItem().equals(ModItems.BREAD_SPATULA);
+        return !blockEntity.isEmpty() && handStack.getItem().equals(ModItems.BREAD_SPATULA);
     }
 
     @Override
     public boolean canPlace(UpPlaceBlockEntity blockEntity, ItemStack handStack) {
-        if (blockEntity instanceof HeatResistantSlateBlockEntity) {
-            // 检查是否是装有内容的模具
-            if (handStack.getItem() instanceof MoldContentItem moldContentItem && moldContentItem.hasContent(handStack)) {
-                return true;
-            }
-
-            // 检查是否是空模具
-            if (HeatResistantSlateBlockEntity.isCanPlaceMold(handStack)) {
-                return true;
-            }
-
-            // 检查是否可以作为有效输入
-            return blockEntity.isValidItem(handStack);
-        }
-        return false;
+        return blockEntity.isValidItem(handStack);
     }
 
     @Nullable
