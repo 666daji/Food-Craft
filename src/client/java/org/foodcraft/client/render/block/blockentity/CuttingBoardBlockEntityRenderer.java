@@ -51,20 +51,25 @@ public class CuttingBoardBlockEntityRenderer extends UpPlaceBlockEntityRenderer<
 
         matrices.push();
         matrices.translate(0, 0.1, 0);
+        matrices.translate(0.5, 0, 0.5);
 
         // 物品特定旋转
         if (ITEM_ROTATIONS.containsKey(currentStack.getItem())) {
-            matrices.translate(0.5, 0, 0.5);
-            if (cuttingProcess.isActive()) {
-                Direction facing = entity.getCachedState().get(CuttingBoardBlock.FACING);
-                matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(-facing.asRotation()));
-            }
             matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(ITEM_ROTATIONS.get(currentStack.getItem())));
-            matrices.translate(-0.5, 0, -0.5);
         }
 
+        // 流程模型旋转
+        if (cuttingProcess.isActive()) {
+            Direction facing = entity.getCachedState().get(CuttingBoardBlock.FACING);
+            matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(-facing.asRotation()));
+        }
+
+        matrices.translate(-0.5, 0, -0.5);
+
         // 优先尝试渲染切割模型
-        if (!renderCuttingModel(entity, matrices, vertexConsumers)) {
+        if (cuttingProcess.isActive()) {
+            renderCuttingModel(entity, matrices, vertexConsumers);
+        } else {
             // 如果没有切割模型，渲染默认物品
             fromStackRender(currentStack, entity, tickDelta, matrices, vertexConsumers, light, overlay);
         }
@@ -75,27 +80,27 @@ public class CuttingBoardBlockEntityRenderer extends UpPlaceBlockEntityRenderer<
     /**
      * 渲染切割模型
      */
-    private boolean renderCuttingModel(CuttingBoardBlockEntity entity, MatrixStack matrices, VertexConsumerProvider vertexConsumers) {
+    private void renderCuttingModel(CuttingBoardBlockEntity entity, MatrixStack matrices, VertexConsumerProvider vertexConsumers) {
         CuttingProcess<CuttingBoardBlockEntity> process = entity.getCuttingProcess();
 
         if (process == null || !process.isActive()) {
-            return false;
+            return;
         }
 
         CuttingProcess.CuttingState state = process.getState();
         if (state == null || state.inputStack() == null) {
-            return false;
+            return;
         }
 
         int currentCut = state.currentCut();
         if (currentCut < 1) {
-            return false;
+            return;
         }
 
         BakedModel model = RenderUtils.getCuttingModel(state.inputStack(), currentCut, modelManager);
 
         if (model == null || model == modelManager.getMissingModel()) {
-            return false;
+            return;
         }
 
         // 渲染切割模型
@@ -111,7 +116,5 @@ public class CuttingBoardBlockEntityRenderer extends UpPlaceBlockEntityRenderer<
                 entity.getCachedState().getRenderingSeed(entity.getPos()),
                 OverlayTexture.DEFAULT_UV
         );
-
-        return true;
     }
 }

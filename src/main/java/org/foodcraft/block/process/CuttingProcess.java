@@ -76,9 +76,7 @@ public class CuttingProcess<T extends UpPlaceBlockEntity> extends AbstractProces
     /** 保存的配方ID，用于NBT数据恢复 */
     private String savedRecipeId;
     /** 输入物品堆栈 */
-    private ItemStack inputItem;
-    /** 输入物品类型缓存 */
-    private Item inputItemType;
+    private ItemStack inputStack;
 
     /**
      * 特殊步骤触发条件映射：物品 -> (切割次数 -> 步骤ID)
@@ -125,8 +123,7 @@ public class CuttingProcess<T extends UpPlaceBlockEntity> extends AbstractProces
 
     public CuttingProcess() {
         super();
-        this.inputItem = ItemStack.EMPTY;
-        this.inputItemType = null;
+        this.inputStack = ItemStack.EMPTY;
         this.savedRecipeId = "";
 
         registerSteps();
@@ -233,13 +230,12 @@ public class CuttingProcess<T extends UpPlaceBlockEntity> extends AbstractProces
             }
 
             // 播放音效和粒子效果
-            SoundEvent cutSound = getCutSoundForItem(inputItem);
-            context.playSound(cutSound);
-            context.spawnItemParticles(inputItem);
+            context.playSound(ModSounds.CUT);
+            context.spawnItemParticles(inputStack);
+            currentCut++;
 
             // 服务器端执行切割逻辑
             if (context.isServerSide()) {
-                currentCut++;
                 updateInventory(context.blockEntity(), currentCut);
                 consumeToolDurability(context);
                 context.blockEntity().markDirtyAndSync();
@@ -428,9 +424,7 @@ public class CuttingProcess<T extends UpPlaceBlockEntity> extends AbstractProces
      * @return 特殊步骤ID，如果没有则返回null
      */
     private String checkSpecialStep() {
-        if (inputItemType == null) return null;
-
-        Map<Integer, String> triggers = SPECIAL_STEP_TRIGGERS.get(inputItemType);
+        Map<Integer, String> triggers = SPECIAL_STEP_TRIGGERS.get(inputStack.getItem());
         if (triggers != null) {
             String stepId = triggers.get(currentCut);
             if (stepId != null && steps.containsKey(stepId)) {
@@ -451,16 +445,13 @@ public class CuttingProcess<T extends UpPlaceBlockEntity> extends AbstractProces
     @Override
     protected void onStart(World world, T blockEntity) {
         currentCut = 0;
-        inputItem = blockEntity.getStack(0);
-
-        if (!inputItem.isEmpty()) {
-            inputItemType = inputItem.getItem();
-        }
+        inputStack = blockEntity.getStack(0);
 
         Optional<CutRecipe> recipe = world.getRecipeManager()
                 .getFirstMatch(ModRecipeTypes.CUT, blockEntity, world);
 
         if (recipe.isPresent()) {
+            blockEntity.clear();
             currentRecipe = recipe.get();
             savedRecipeId = currentRecipe.getId().toString();
             totalCuts = currentRecipe.getTotalCuts();
@@ -473,8 +464,7 @@ public class CuttingProcess<T extends UpPlaceBlockEntity> extends AbstractProces
         currentCut = 0;
         totalCuts = 0;
         savedRecipeId = "";
-        inputItem = ItemStack.EMPTY;
-        inputItemType = null;
+        inputStack = ItemStack.EMPTY;
     }
 
     @Override
@@ -500,9 +490,9 @@ public class CuttingProcess<T extends UpPlaceBlockEntity> extends AbstractProces
         nbt.putInt("CurrentCut", currentCut);
         nbt.putInt("TotalCuts", totalCuts);
 
-        if (!inputItem.isEmpty()) {
+        if (!inputStack.isEmpty()) {
             NbtCompound inputNbt = new NbtCompound();
-            inputItem.writeNbt(inputNbt);
+            inputStack.writeNbt(inputNbt);
             nbt.put("InputItem", inputNbt);
         }
 
@@ -521,10 +511,7 @@ public class CuttingProcess<T extends UpPlaceBlockEntity> extends AbstractProces
         totalCuts = nbt.getInt("TotalCuts");
 
         if (nbt.contains("InputItem")) {
-            inputItem = ItemStack.fromNbt(nbt.getCompound("InputItem"));
-            if (!inputItem.isEmpty()) {
-                inputItemType = inputItem.getItem();
-            }
+            inputStack = ItemStack.fromNbt(nbt.getCompound("InputItem"));
         }
 
         if (nbt.contains("RecipeId")) {
@@ -550,19 +537,6 @@ public class CuttingProcess<T extends UpPlaceBlockEntity> extends AbstractProces
      */
     public float getProgress() {
         return totalCuts <= 0 ? 0.0f : Math.min((float) currentCut / totalCuts, 1.0f);
-    }
-
-    /**
-     * 检查指定切割次数是否有特殊步骤。
-     *
-     * @param cutNumber 切割次数
-     * @return 如果有特殊步骤则返回true
-     */
-    public boolean hasSpecialStepAt(int cutNumber) {
-        if (inputItemType == null) return false;
-
-        Map<Integer, String> triggers = SPECIAL_STEP_TRIGGERS.get(inputItemType);
-        return triggers != null && triggers.containsKey(cutNumber);
     }
 
     // ============ 设置器方法 ============
@@ -634,10 +608,10 @@ public class CuttingProcess<T extends UpPlaceBlockEntity> extends AbstractProces
         }
 
         // 输入物品信息
-        if (!inputItem.isEmpty()) {
-            info.append("输入物品: ").append(inputItem.getItem().getName().getString());
-            if (inputItem.getCount() > 1) {
-                info.append(" x").append(inputItem.getCount());
+        if (!inputStack.isEmpty()) {
+            info.append("输入物品: ").append(inputStack.getItem().getName().getString());
+            if (inputStack.getCount() > 1) {
+                info.append(" x").append(inputStack.getCount());
             }
             info.append("\n");
         } else {
@@ -667,15 +641,10 @@ public class CuttingProcess<T extends UpPlaceBlockEntity> extends AbstractProces
      */
     public CuttingState getState() {
         return new CuttingState(
-                currentStepId,
-                previousStepId,
                 currentCut,
                 totalCuts,
                 isActive,
-                currentRecipe != null,
-                getProgress(),
-                inputItem,
-                inputItemType,
+                inputStack,
                 checkSpecialStep() != null
         );
     }
@@ -685,27 +654,16 @@ public class CuttingProcess<T extends UpPlaceBlockEntity> extends AbstractProces
      * <p>
      * 用于封装切割流程的当前状态，便于数据传输和渲染。
      *
-     * @param currentStepId 当前步骤ID
-     * @param previousStepId 上一步骤ID
      * @param currentCut 当前切割次数
      * @param totalCuts 总切割次数
-     * @param isActive 流程是否活跃
      * @param hasRecipe 是否有活跃配方
-     * @param progress 切割进度（0.0-1.0）
-     * @param hasInputItem 是否有输入物品
-     * @param inputItemType 输入物品类型
      * @param hasPendingSpecialStep 是否有待处理的特殊步骤
      */
     public record CuttingState(
-            String currentStepId,
-            String previousStepId,
             int currentCut,
             int totalCuts,
-            boolean isActive,
             boolean hasRecipe,
-            float progress,
             ItemStack inputStack,
-            Item inputItemType,
             boolean hasPendingSpecialStep
     ) {}
 }

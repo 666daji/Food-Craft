@@ -106,9 +106,6 @@ public abstract class UpPlaceBlock extends BlockWithEntity {
         if (blockEntity instanceof UpPlaceBlockEntity upPlaceBlockEntity) {
             // 尝试取出物品
             if (canFetched(upPlaceBlockEntity, handStack)) {
-                if (world.isClient) {
-                    return ActionResult.SUCCESS;
-                }
                 ActionResult fetchResult = upPlaceBlockEntity.tryFetchItem(player);
                 if (upPlaceBlockEntity.isAccepted(fetchResult)) {
                     // 获取此次取出操作成功取出的所有物品
@@ -120,9 +117,6 @@ public abstract class UpPlaceBlock extends BlockWithEntity {
 
             // 尝试放置物品
             if (canPlace(upPlaceBlockEntity, handStack)) {
-                if (world.isClient) {
-                    return ActionResult.SUCCESS;
-                }
                 ActionResult placeResult = upPlaceBlockEntity.tryAddItem(handStack);
                 if (upPlaceBlockEntity.isAccepted(placeResult)) {
                     upPlaceBlockEntity.onPlace(state, world, pos, player, hand, hit, handStack);

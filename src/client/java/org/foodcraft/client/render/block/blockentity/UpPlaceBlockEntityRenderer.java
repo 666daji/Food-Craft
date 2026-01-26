@@ -7,7 +7,6 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 import org.foodcraft.block.UpPlaceBlock;
 import org.foodcraft.block.entity.UpPlaceBlockEntity;
-import org.foodcraft.client.render.block.stackrenderer.UpPlaceStackRenderer;
 
 /**
  * 用于渲染放置在{@link UpPlaceBlock}中的内容的渲染器。

@@ -83,7 +83,7 @@ public class CuttingBoardBlock extends UpPlaceBlock {
         BlockEntity blockEntity = world.getBlockEntity(pos);
 
         if (blockEntity instanceof CuttingBoardBlockEntity cuttingBoard) {
-            // 尝试切割操作（手持剑）
+            // 尝试切割操作
             if (cuttingBoard.tryCutItem(player, handStack, hand, hit).isAccepted()) {
                 return ActionResult.SUCCESS;
             }
