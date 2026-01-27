@@ -5,7 +5,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtList;
 import net.minecraft.network.listener.ClientPlayPacketListener;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
@@ -23,7 +22,6 @@ import org.foodcraft.block.FlourSackBlock;
 import org.foodcraft.block.ShelfBlock;
 import org.foodcraft.item.FlourSackItem;
 import org.foodcraft.registry.ModBlockEntityTypes;
-import org.foodcraft.registry.ModItems;
 import org.foodcraft.util.FoodCraftUtils;
 import org.foodcraft.mixin.FlowerPotBlockAccessor;
 
@@ -33,13 +31,10 @@ import java.util.function.Predicate;
 public class ShelfBlockEntity extends UpPlaceBlockEntity {
     private static final int INVENTORY_SIZE = 2;
     private static final int MAX_STACK_SIZE = 1;
-    private static final String CONTENT_DATA_KEY = "ContentData"; // 重命名
 
-    private static final byte CONTENT_TYPE_EMPTY = 0;
-    private static final byte CONTENT_TYPE_FLOWER = 1;
-    private static final byte CONTENT_TYPE_FLOUR = 2;
-
-    private NbtList contentData; // 重命名
+    // 使用独立的字符串字段存储花信息
+    private String flowerSlot0 = "";  // 槽位0的花ID，空字符串表示没有花
+    private String flowerSlot1 = "";  // 槽位1的花ID，空字符串表示没有花
 
     /**
      * 允许放置在架子上的物品
@@ -49,34 +44,24 @@ public class ShelfBlockEntity extends UpPlaceBlockEntity {
 
     public ShelfBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntityTypes.SHELF, pos, state, INVENTORY_SIZE);
-        this.contentData = new NbtList(); // 重命名
-        // 初始化contentData，确保与库存大小一致
-        for (int i = 0; i < INVENTORY_SIZE; i++) {
-            this.contentData.add(createEmptyContentData());
-        }
     }
 
     @Override
     public void readNbt(NbtCompound nbt) {
         super.readNbt(nbt);
-        if (nbt.contains(CONTENT_DATA_KEY)) {
-            this.contentData = nbt.getList(CONTENT_DATA_KEY, 10);
-            // 确保contentData大小正确
-            while (this.contentData.size() < this.size()) {
-                this.contentData.add(createEmptyContentData());
-            }
-        } else {
-            this.contentData = new NbtList();
-            for (int i = 0; i < this.size(); i++) {
-                this.contentData.add(createEmptyContentData());
-            }
-        }
+
+        // 从NBT中读取花信息
+        this.flowerSlot0 = nbt.getString("Flower0");
+        this.flowerSlot1 = nbt.getString("Flower1");
     }
 
     @Override
     protected void writeNbt(NbtCompound nbt) {
         super.writeNbt(nbt);
-        nbt.put(CONTENT_DATA_KEY, this.contentData);
+
+        // 将花信息写入NBT
+        nbt.putString("Flower0", this.flowerSlot0);
+        nbt.putString("Flower1", this.flowerSlot1);
     }
 
     @Override
@@ -149,12 +134,15 @@ public class ShelfBlockEntity extends UpPlaceBlockEntity {
 
         // 如果是花盆且已插花，返回对应的花盆方块状态
         if (isFlowerPot(stack) && hasFlower(index)) {
-            Block flowerBlock = getFlowerBlock(index);
-            if (flowerBlock != null) {
-                Map<Block, Block> contentToPotted = FlowerPotBlockAccessor.getContentToPotted();
-                Block pottedBlock = contentToPotted.get(flowerBlock);
-                if (pottedBlock != null) {
-                    return pottedBlock.getDefaultState();
+            String flowerId = getFlowerId(index);
+            if (!flowerId.isEmpty()) {
+                Block flowerBlock = Registries.BLOCK.get(new Identifier(flowerId));
+                if (flowerBlock != null) {
+                    Map<Block, Block> contentToPotted = FlowerPotBlockAccessor.getContentToPotted();
+                    Block pottedBlock = contentToPotted.get(flowerBlock);
+                    if (pottedBlock != null) {
+                        return pottedBlock.getDefaultState();
+                    }
                 }
             }
         }
@@ -175,11 +163,6 @@ public class ShelfBlockEntity extends UpPlaceBlockEntity {
     public boolean isValidItem(ItemStack stack) {
         for (Predicate<ItemStack> canItem : CanPlaceItem) {
             if (canItem.test(stack)) {
-                // 如果是粉尘袋，检查是否有内容物
-                if (stack.getItem() instanceof BlockItem blockItem &&
-                        blockItem.getBlock() instanceof FlourSackBlock) {
-                    return FlourSackItem.getBundledStack(stack).isPresent();
-                }
                 return true;
             }
         }
@@ -210,23 +193,12 @@ public class ShelfBlockEntity extends UpPlaceBlockEntity {
             return tryInsertFlower(stack);
         }
 
-        // 放置普通物品
+        // 放置普通物品（包括粉尘袋）
         ItemStack newStack = stack.copy();
         newStack.setCount(1);
         int emptySlot = this.foundSlot();
         if (emptySlot != -1) {
             this.setStack(emptySlot, newStack);
-
-            // 如果是粉尘袋，保存内容物数据
-            if (newStack.getItem() instanceof BlockItem blockItem &&
-                    blockItem.getBlock() instanceof FlourSackBlock) {
-                saveFlourContent(emptySlot, newStack);
-            }
-            // 如果是花盆，初始化花盆数据
-            else if (isFlowerPot(newStack)) {
-                initFlowerPotData(emptySlot);
-            }
-
             this.markDirtyAndSync();
             return ActionResult.SUCCESS;
         }
@@ -242,13 +214,14 @@ public class ShelfBlockEntity extends UpPlaceBlockEntity {
         }
 
         Block flowerBlock = blockItem.getBlock();
+        String flowerId = Registries.BLOCK.getId(flowerBlock).toString();
 
         // 寻找第一个空的或可插入的花盆槽位
         for (int i = 0; i < this.size(); i++) {
             ItemStack slotStack = this.getStack(i);
             if (isFlowerPot(slotStack) && !hasFlower(i)) {
                 // 设置花盆插花数据
-                setFlowerData(i, flowerBlock);
+                setFlowerId(i, flowerId);
                 this.markDirtyAndSync();
                 return ActionResult.SUCCESS;
             }
@@ -280,13 +253,7 @@ public class ShelfBlockEntity extends UpPlaceBlockEntity {
                     return tryFetchFlower(player, i);
                 }
 
-                // 如果是粉尘袋，恢复内容物
-                if (stack.getItem() instanceof BlockItem blockItem &&
-                        blockItem.getBlock() instanceof FlourSackBlock) {
-                    stack = restoreFlourContent(i, stack);
-                }
-
-                // 取出普通物品
+                // 直接取出物品
                 ItemStack extractedStack = stack.copy();
                 extractedStack.setCount(1);
 
@@ -299,8 +266,8 @@ public class ShelfBlockEntity extends UpPlaceBlockEntity {
                 stack.decrement(1);
                 if (stack.isEmpty()) {
                     this.setStack(i, ItemStack.EMPTY);
-                    // 清除内容数据
-                    clearContentData(i);
+                    // 清除花盆数据
+                    clearFlowerId(i);
                 }
 
                 this.markDirtyAndSync();
@@ -312,7 +279,7 @@ public class ShelfBlockEntity extends UpPlaceBlockEntity {
     }
 
     /**
-     * 获取所有掉落物，包括花盆中的花和粉尘袋中的粉尘
+     * 获取所有掉落物，包括花盆中的花
      */
     public DefaultedList<ItemStack> getDroppedStacks() {
         DefaultedList<ItemStack> drops = DefaultedList.of();
@@ -321,17 +288,14 @@ public class ShelfBlockEntity extends UpPlaceBlockEntity {
         for (int i = 0; i < this.size(); i++) {
             ItemStack stack = this.getStack(i);
             if (!stack.isEmpty()) {
-                // 恢复粉尘袋内容物
-                if (stack.getItem() instanceof BlockItem blockItem &&
-                        blockItem.getBlock() instanceof FlourSackBlock) {
-                    stack = restoreFlourContent(i, stack);
-                }
-
                 // 如果是花盆且有花，掉落花
                 if (isFlowerPot(stack) && hasFlower(i)) {
-                    Block flowerBlock = getFlowerBlock(i);
-                    if (flowerBlock != null) {
-                        drops.add(new ItemStack(flowerBlock));
+                    String flowerId = getFlowerId(i);
+                    if (!flowerId.isEmpty()) {
+                        Block flowerBlock = Registries.BLOCK.get(new Identifier(flowerId));
+                        if (flowerBlock != null) {
+                            drops.add(new ItemStack(flowerBlock));
+                        }
                     }
                 }
 
@@ -346,7 +310,12 @@ public class ShelfBlockEntity extends UpPlaceBlockEntity {
      * 尝试从花盆中取出花
      */
     private ActionResult tryFetchFlower(PlayerEntity player, int slot) {
-        Block flowerBlock = getFlowerBlock(slot);
+        String flowerId = getFlowerId(slot);
+        if (flowerId.isEmpty()) {
+            return ActionResult.FAIL;
+        }
+
+        Block flowerBlock = Registries.BLOCK.get(new Identifier(flowerId));
         if (flowerBlock == null) {
             return ActionResult.FAIL;
         }
@@ -361,7 +330,7 @@ public class ShelfBlockEntity extends UpPlaceBlockEntity {
         }
 
         // 清除花盆中的花数据
-        clearFlowerData(slot);
+        clearFlowerId(slot);
         this.markDirtyAndSync();
 
         return ActionResult.SUCCESS;
@@ -375,21 +344,15 @@ public class ShelfBlockEntity extends UpPlaceBlockEntity {
     @Override
     public NbtCompound toInitialChunkDataNbt() {
         NbtCompound nbt = this.createNbt();
-        nbt.put(CONTENT_DATA_KEY, this.contentData);
+        // 确保花信息包含在区块数据中
+        nbt.putString("Flower0", this.flowerSlot0);
+        nbt.putString("Flower1", this.flowerSlot1);
         return nbt;
     }
 
     @Override
     public Packet<ClientPlayPacketListener> toUpdatePacket() {
         return BlockEntityUpdateS2CPacket.create(this);
-    }
-
-    /**
-     * 获取内容数据
-     * @return 当前内容的nbt数据
-     */
-    public NbtList getContentData() {
-        return this.contentData.copy();
     }
 
     /**
@@ -404,131 +367,35 @@ public class ShelfBlockEntity extends UpPlaceBlockEntity {
      * 检查指定槽位的花盆是否有花
      */
     private boolean hasFlower(int slot) {
-        if (slot < 0 || slot >= this.size()) {
-            return false;
-        }
-        NbtCompound content = this.contentData.getCompound(slot);
-        return content.getByte("Type") == CONTENT_TYPE_FLOWER;
+        return !getFlowerId(slot).isEmpty();
     }
 
     /**
-     * 获取指定槽位花盆中的花方块
+     * 获取指定槽位的花ID
      */
-    private Block getFlowerBlock(int slot) {
-        if (slot < 0 || slot >= this.contentData.size()) {
-            return null;
-        }
-        NbtCompound content = this.contentData.getCompound(slot);
-        if (content.getByte("Type") == CONTENT_TYPE_FLOWER && content.contains("flower")) {
-            String flowerId = content.getString("flower");
-            return Registries.BLOCK.get(new Identifier(flowerId));
-        }
-        return null;
+    public String getFlowerId(int slot) {
+        return switch (slot) {
+            case 0 -> this.flowerSlot0;
+            case 1 -> this.flowerSlot1;
+            default -> "";
+        };
     }
 
     /**
-     * 设置花盆插花数据
+     * 设置指定槽位的花ID
      */
-    private void setFlowerData(int slot, Block flowerBlock) {
-        if (slot < 0 || slot >= this.contentData.size()) {
-            return;
-        }
-        NbtCompound content = new NbtCompound();
-        content.putByte("Type", CONTENT_TYPE_FLOWER);
-        String flowerId = Registries.BLOCK.getId(flowerBlock).toString();
-        content.putString("flower", flowerId);
-        this.contentData.set(slot, content);
-    }
-
-    /**
-     * 初始化花盆数据（空花盆）
-     */
-    private void initFlowerPotData(int slot) {
-        if (slot < 0 || slot >= this.contentData.size()) {
-            return;
-        }
-        this.contentData.set(slot, createEmptyContentData());
-    }
-
-    /**
-     * 清除内容数据
-     */
-    private void clearContentData(int slot) {
-        if (slot < 0 || slot >= this.contentData.size()) {
-            return;
-        }
-        this.contentData.set(slot, createEmptyContentData());
-    }
-
-    /**
-     * 清除花盆数据
-     */
-    private void clearFlowerData(int slot) {
-        clearContentData(slot);
-    }
-
-    /**
-     * 保存粉尘袋内容物
-     */
-    private void saveFlourContent(int slot, ItemStack flourSack) {
-        if (slot < 0 || slot >= this.contentData.size()) {
-            return;
-        }
-
-        Optional<ItemStack> flourContent = FlourSackItem.getBundledStack(flourSack);
-        if (flourContent.isPresent()) {
-            NbtCompound content = new NbtCompound();
-            content.putByte("Type", CONTENT_TYPE_FLOUR);
-
-            // 保存完整的物品堆栈NBT到"flour"标签中
-            NbtCompound flourNbt = new NbtCompound();
-            flourContent.get().writeNbt(flourNbt);
-            content.put("flour", flourNbt);
-
-            this.contentData.set(slot, content);
-
-            // 重要：清空粉尘袋物品的NBT，因为内容物已保存到contentData
-            flourSack.removeSubNbt(FlourSackItem.STORED_ITEM_KEY);
+    private void setFlowerId(int slot, String flowerId) {
+        switch (slot) {
+            case 0 -> this.flowerSlot0 = flowerId;
+            case 1 -> this.flowerSlot1 = flowerId;
         }
     }
 
     /**
-     * 恢复粉尘袋内容物
+     * 清除指定槽位的花ID
      */
-    private ItemStack restoreFlourContent(int slot, ItemStack flourSack) {
-        if (slot < 0 || slot >= this.contentData.size()) {
-            return flourSack;
-        }
-
-        NbtCompound content = this.contentData.getCompound(slot);
-        if (content.getByte("Type") == CONTENT_TYPE_FLOUR && content.contains("flour")) {
-            // 从contentData获取保存的物品堆栈NBT
-            NbtCompound flourNbt = content.getCompound("flour");
-
-            // 恢复粉尘袋内容物
-            ItemStack resultSack = flourSack.copy();
-            NbtCompound nbt = resultSack.getOrCreateNbt();
-
-            // 使用新的STORED_ITEM_KEY存储完整的物品堆栈
-            nbt.put(FlourSackItem.STORED_ITEM_KEY, flourNbt);
-            resultSack.setNbt(nbt);
-
-            // 清除contentData
-            clearContentData(slot);
-
-            return resultSack;
-        }
-
-        return flourSack;
-    }
-
-    /**
-     * 创建空的内容数据
-     */
-    private NbtCompound createEmptyContentData() {
-        NbtCompound content = new NbtCompound();
-        content.putByte("Type", CONTENT_TYPE_EMPTY);
-        return content;
+    private void clearFlowerId(int slot) {
+        setFlowerId(slot, "");
     }
 
     /**
@@ -558,7 +425,7 @@ public class ShelfBlockEntity extends UpPlaceBlockEntity {
 
     static {
         // 粉尘袋
-        CanPlaceItem.add(stack -> stack.getItem() instanceof BlockItem blockItem && blockItem.getBlock() instanceof FlourSackBlock);
+        CanPlaceItem.add(stack -> stack.getItem() instanceof FlourSackItem && FlourSackItem.getBundledStack(stack).isPresent());
         // 花盆
         CanPlaceItem.add(stack -> stack.getItem() instanceof BlockItem blockItem && blockItem.getBlock() instanceof FlowerPotBlock);
     }

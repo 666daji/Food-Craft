@@ -25,7 +25,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 /**
- * 是专门用于存放{@linkplain FlourItem}的袋子。
+ * 专门用于存放 {@linkplain FlourItem} 的袋子。
  */
 public class FlourSackItem extends BlockItem {
     public static final String STORED_ITEM_KEY = "StoredFlour";  // 存储完整物品堆栈
@@ -35,6 +35,8 @@ public class FlourSackItem extends BlockItem {
     public FlourSackItem(Block block, Settings settings) {
         super(block, settings);
     }
+
+    /* ========== 方块交互方法 ========== */
 
     @Override
     public ActionResult useOnBlock(ItemUsageContext context) {
@@ -48,6 +50,8 @@ public class FlourSackItem extends BlockItem {
         return super.useOnBlock(context);
     }
 
+    /* ========== 物品栏交互方法 ========== */
+
     @Override
     public boolean onStackClicked(ItemStack stack, Slot slot, ClickType clickType, PlayerEntity player) {
         if (clickType != ClickType.RIGHT) {
@@ -55,24 +59,36 @@ public class FlourSackItem extends BlockItem {
         }
 
         ItemStack slotStack = slot.getStack();
-        if (slotStack.isEmpty()) {
-            handleRemoveFromBundle(stack, slot, player);
-        } else if (canAcceptItem(slotStack)) {
-            handleAddToBundle(stack, slot, slotStack, player);
+
+        // 如果右键点击空槽位，且手持粉尘袋，则取出一个粉尘
+        if (slotStack.isEmpty() && canRemoveOne(stack)) {
+            handleRemoveOneFromBundle(stack, slot, player);
+            return true;
         }
 
-        return true;
+        // 如果槽位有粉尘物品，且手持粉尘袋，则添加一个粉尘
+        if (canAcceptItem(slotStack)) {
+            handleAddOneToBundle(stack, slot, slotStack, player);
+            return true;
+        }
+
+        return false;
     }
 
     @Override
     public boolean onClicked(ItemStack stack, ItemStack otherStack, Slot slot, ClickType clickType, PlayerEntity player, StackReference cursorStackReference) {
         if (clickType == ClickType.RIGHT && slot.canTakePartial(player)) {
-            if (otherStack.isEmpty()) {
-                handleRemoveToCursor(stack, cursorStackReference, player);
-            } else if (canAcceptItem(otherStack)) {
-                handleAddFromCursor(stack, otherStack, cursorStackReference, player);
+            // 如果手持粉尘袋，右键空光标，取出所有粉尘到光标
+            if (otherStack.isEmpty() && canRemoveAll(stack)) {
+                handleRemoveAllToCursor(stack, cursorStackReference, player);
+                return true;
             }
-            return true;
+
+            // 如果手持粉尘物品，右键粉尘袋，尽可能装满粉尘袋
+            if (canAcceptItem(otherStack)) {
+                handleFillFromCursor(stack, otherStack, cursorStackReference, player);
+                return true;
+            }
         }
         return false;
     }
@@ -80,6 +96,8 @@ public class FlourSackItem extends BlockItem {
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
         ItemStack itemStack = user.getStackInHand(hand);
+
+        // 在世界中使用粉尘袋时，丢弃所有内容物
         if (dropAllBundledItems(itemStack, user)) {
             playDropContentsSound(user);
             user.incrementStat(Stats.USED.getOrCreateStat(this));
@@ -88,6 +106,8 @@ public class FlourSackItem extends BlockItem {
             return TypedActionResult.fail(itemStack);
         }
     }
+
+    /* ========== 视觉和工具提示方法 ========== */
 
     @Override
     public boolean isItemBarVisible(ItemStack stack) {
@@ -130,6 +150,77 @@ public class FlourSackItem extends BlockItem {
             ItemUsage.spawnItemContents(entity, contents);
         }
     }
+
+    /* ========== 物品交互处理方法 ========== */
+
+    /**
+     * 从粉尘袋取出一个粉尘到槽位
+     */
+    private void handleRemoveOneFromBundle(ItemStack stack, Slot slot, PlayerEntity player) {
+        playRemoveOneSound(player);
+        removeSomeStack(stack, 1).ifPresent(removedStack -> {
+            ItemStack remaining = slot.insertStack(removedStack);
+            if (!remaining.isEmpty()) {
+                // 如果有剩余，尝试放回粉尘袋
+                addToBundle(stack, remaining);
+            }
+        });
+    }
+
+    /**
+     * 向粉尘袋添加一个粉尘
+     */
+    private void handleAddOneToBundle(ItemStack stack, Slot slot, ItemStack slotStack, PlayerEntity player) {
+        int availableSpace = MAX_STORAGE - getBundleOccupancy(stack);
+
+        // 如果有剩余空间，尝试添加一个粉尘
+        if (availableSpace > 0) {
+            // 只取一个物品
+            ItemStack toAdd = slot.takeStackRange(1, 1, player);
+            int actuallyAdded = addToBundle(stack, toAdd);
+            if (actuallyAdded > 0) {
+                playInsertSound(player);
+            } else {
+                // 如果添加失败，把物品放回原处
+                slot.insertStack(toAdd);
+            }
+        }
+    }
+
+    /**
+     * 从粉尘袋取出所有粉尘到光标
+     */
+    private void handleRemoveAllToCursor(ItemStack stack, StackReference cursorStackReference, PlayerEntity player) {
+        playRemoveAllSound(player);
+        removeAllStack(stack).ifPresent(cursorStackReference::set);
+    }
+
+    /**
+     * 从光标添加粉尘（尽可能装满粉尘袋）
+     */
+    private void handleFillFromCursor(ItemStack stack, ItemStack otherStack, StackReference cursorStackReference, PlayerEntity player) {
+        int availableSpace = MAX_STORAGE - getBundleOccupancy(stack);
+
+        // 如果没有剩余空间，直接返回
+        if (availableSpace <= 0) {
+            return;
+        }
+
+        // 计算可以添加的数量，取剩余空间和光标中粉尘数量的较小值
+        int maxToAdd = Math.min(otherStack.getCount(), availableSpace);
+
+        if (maxToAdd > 0) {
+            ItemStack toAdd = otherStack.copyWithCount(maxToAdd);
+            int actuallyAdded = addToBundle(stack, toAdd);
+
+            if (actuallyAdded > 0) {
+                playInsertSound(player);
+                otherStack.decrement(actuallyAdded);
+            }
+        }
+    }
+
+    /* ========== 辅助方法 ========== */
 
     /**
      * 获取粉尘袋的填充比例（0.0 - 1.0）
@@ -175,6 +266,20 @@ public class FlourSackItem extends BlockItem {
      */
     private static boolean canAcceptItem(ItemStack stack) {
         return !stack.isEmpty() && stack.getItem() instanceof FlourItem;
+    }
+
+    /**
+     * 检查是否可以移除一个粉尘
+     */
+    private static boolean canRemoveOne(ItemStack stack) {
+        return getBundleOccupancy(stack) > 0;
+    }
+
+    /**
+     * 检查是否可以移除所有粉尘
+     */
+    private static boolean canRemoveAll(ItemStack stack) {
+        return getBundleOccupancy(stack) > 0;
     }
 
     /**
@@ -292,65 +397,7 @@ public class FlourSackItem extends BlockItem {
         return false;
     }
 
-    /**
-     * 处理从粉尘袋取出物品
-     */
-    private void handleRemoveFromBundle(ItemStack stack, Slot slot, PlayerEntity player) {
-        playRemoveOneSound(player);
-        removeSomeStack(stack, 1).ifPresent(removedStack -> {
-            ItemStack remaining = slot.insertStack(removedStack);
-            if (!remaining.isEmpty()) {
-                // 如果有剩余，尝试放回粉尘袋
-                addToBundle(stack, remaining);
-            }
-        });
-    }
-
-    /**
-     * 处理向粉尘袋添加物品
-     */
-    private void handleAddToBundle(ItemStack stack, Slot slot, ItemStack slotStack, PlayerEntity player) {
-        int availableSpace = MAX_STORAGE - getBundleOccupancy(stack);
-        int maxToAdd = Math.min(slotStack.getCount(), availableSpace);
-
-        if (maxToAdd > 0) {
-            ItemStack toAdd = slot.takeStackRange(slotStack.getCount(), maxToAdd, player);
-            int actuallyAdded = addToBundle(stack, toAdd);
-            if (actuallyAdded > 0) {
-                playInsertSound(player);
-            } else {
-                // 如果添加失败（例如类型不同），把物品放回原处
-                slot.insertStack(toAdd);
-            }
-        }
-    }
-
-    /**
-     * 处理取出物品到光标
-     */
-    private void handleRemoveToCursor(ItemStack stack, StackReference cursorStackReference, PlayerEntity player) {
-        removeSomeStack(stack, 1).ifPresent(itemStack -> {
-            playRemoveOneSound(player);
-            cursorStackReference.set(itemStack);
-        });
-    }
-
-    /**
-     * 处理从光标添加物品
-     */
-    private void handleAddFromCursor(ItemStack stack, ItemStack otherStack, StackReference cursorStackReference, PlayerEntity player) {
-        int availableSpace = MAX_STORAGE - getBundleOccupancy(stack);
-        int maxToAdd = Math.min(otherStack.getCount(), availableSpace);
-
-        if (maxToAdd > 0) {
-            ItemStack toAdd = otherStack.copyWithCount(maxToAdd);
-            int actuallyAdded = addToBundle(stack, toAdd);
-            if (actuallyAdded > 0) {
-                playInsertSound(player);
-                otherStack.decrement(actuallyAdded);
-            }
-        }
-    }
+    /* ========== 工具提示辅助方法 ========== */
 
     private void appendCapacityTooltip(ItemStack stack, List<Text> tooltip) {
         int occupancy = getBundleOccupancy(stack);
@@ -376,8 +423,15 @@ public class FlourSackItem extends BlockItem {
                 .formatted(Formatting.ITALIC, Formatting.DARK_GRAY));
     }
 
+    /* ========== 音效方法 ========== */
+
     private void playRemoveOneSound(Entity entity) {
         entity.playSound(SoundEvents.ITEM_BUNDLE_REMOVE_ONE, 0.8F,
+                0.8F + entity.getWorld().getRandom().nextFloat() * 0.4F);
+    }
+
+    private void playRemoveAllSound(Entity entity) {
+        entity.playSound(SoundEvents.ITEM_BUNDLE_DROP_CONTENTS, 0.8F,
                 0.8F + entity.getWorld().getRandom().nextFloat() * 0.4F);
     }
 

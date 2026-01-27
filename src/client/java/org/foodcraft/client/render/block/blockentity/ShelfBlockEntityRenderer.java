@@ -4,7 +4,6 @@ import net.minecraft.block.BlockState;
 import net.minecraft.client.render.RenderLayers;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.block.BlockRenderManager;
-import net.minecraft.client.render.block.entity.BlockEntityRenderer;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.math.random.Random;
@@ -14,10 +13,11 @@ import org.foodcraft.block.entity.ShelfBlockEntity;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.RotationAxis;
 
-public class ShelfBlockEntityRenderer implements BlockEntityRenderer<ShelfBlockEntity> {
+public class ShelfBlockEntityRenderer extends UpPlaceBlockEntityRenderer<ShelfBlockEntity> {
     private final BlockRenderManager blockRenderManager;
 
     public ShelfBlockEntityRenderer(BlockEntityRendererFactory.Context ctx) {
+        super(ctx);
         this.blockRenderManager = ctx.getRenderManager();
     }
 
@@ -95,7 +95,7 @@ public class ShelfBlockEntityRenderer implements BlockEntityRenderer<ShelfBlockE
 
         // 根据槽位应用偏移（左侧或右侧）
         float xOffset = slot == 0 ? -0.25f : 0.25f;
-        matrices.translate(xOffset, 0, -0.20);
+        matrices.translate(xOffset, 0, -0.25);
 
         // 移回原点
         matrices.translate(-0.5, 0, -0.5);

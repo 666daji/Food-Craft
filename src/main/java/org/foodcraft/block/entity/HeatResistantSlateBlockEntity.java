@@ -167,8 +167,7 @@ public class HeatResistantSlateBlockEntity extends UpPlaceBlockEntity implements
 
     @Override
     public VoxelShape getContentShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
-        VoxelShape itemShape = getBlockShape(this.getInventoryBlockState(), world, pos);
-        return itemShape;
+        return getBlockShape(this.getInventoryBlockState(), world, pos);
     }
 
     private VoxelShape getBlockShape(BlockState blockState, BlockView world, BlockPos pos) {

@@ -5,8 +5,6 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.BlockRenderView;
 import org.foodcraft.block.FlourSackBlock;
@@ -14,14 +12,17 @@ import org.foodcraft.block.entity.FlourSackBlockEntity;
 import org.foodcraft.block.entity.ShelfBlockEntity;
 import org.foodcraft.integration.dfood.AssistedBlocks;
 import org.foodcraft.item.FlourItem;
+import org.foodcraft.item.FlourSackItem;
 import org.foodcraft.registry.ModBlocks;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Optional;
 
 public class ModBlockColors {
     public static void registryColors() {
         ColorProviderRegistry.BLOCK.register(ModBlockColors::getFlourSackColor, ModBlocks.FLOUR_SACK);
-        ColorProviderRegistry.BLOCK.register((state, world, pos, tintIndex) -> tintIndex != -1? 4159204: -1, AssistedBlocks.CRIPPLED_WATER_BUCKET);
-        ColorProviderRegistry.BLOCK.register((state, world, pos, tintIndex) -> tintIndex != -1? 4159204: -1, ModBlocks.IRON_POTS, ModBlocks.CLAY_POTS);
+        ColorProviderRegistry.BLOCK.register((state, world, pos, tintIndex) -> tintIndex != -1 ? 4159204 : -1, AssistedBlocks.CRIPPLED_WATER_BUCKET);
+        ColorProviderRegistry.BLOCK.register((state, world, pos, tintIndex) -> tintIndex != -1 ? 4159204 : -1, ModBlocks.IRON_POTS, ModBlocks.CLAY_POTS);
     }
 
     private static int getFlourSackColor(BlockState state, @Nullable BlockRenderView world, @Nullable BlockPos pos, int tintIndex) {
@@ -54,17 +55,17 @@ public class ModBlockColors {
 
         // 检查该槽位是否有粉尘袋
         if (shelfIndex < 0 || shelfIndex >= shelfBlockEntity.size()) {
-            return -1;
+            return FlourSackBlockEntity.DEFAULT_FLOUR_COLOR;
         }
 
         ItemStack shelfStack = shelfBlockEntity.getStack(shelfIndex);
         if (shelfStack.isEmpty() || !(shelfStack.getItem() instanceof BlockItem blockItem) ||
                 !(blockItem.getBlock() instanceof FlourSackBlock)) {
-            return -1;
+            return FlourSackBlockEntity.DEFAULT_FLOUR_COLOR;
         }
 
-        // 从架子的内容数据中获取粉尘颜色
-        return getFlourColorFromShelf(shelfBlockEntity, shelfIndex, tintIndex);
+        // 直接从物品堆栈的NBT中获取粉尘颜色
+        return getFlourColorFromItemStack(shelfStack, tintIndex);
     }
 
     private static int getDirectFlourSackColor(FlourSackBlockEntity flourSackBlockEntity, int tintIndex) {
@@ -76,25 +77,19 @@ public class ModBlockColors {
         }
 
         // 如果tintIndex超出范围
-        return -1;
+        return FlourSackBlockEntity.DEFAULT_FLOUR_COLOR;
     }
 
-    private static int getFlourColorFromShelf(ShelfBlockEntity shelfBlockEntity, int shelfIndex, int tintIndex) {
+    private static int getFlourColorFromItemStack(ItemStack flourSackStack, int tintIndex) {
         try {
-            NbtList contentData = shelfBlockEntity.getContentData();
-            if (contentData == null || shelfIndex >= contentData.size()) {
-                return FlourSackBlockEntity.DEFAULT_FLOUR_COLOR;
-            }
+            // 获取粉尘袋中存储的物品
+            Optional<ItemStack> flourStackOptional = FlourSackItem.getBundledStack(flourSackStack);
 
-            NbtCompound content = contentData.getCompound(shelfIndex);
-            if (content.getByte("Type") == 2) { // CONTENT_TYPE_FLOUR
-                if (content.contains("flour")) {
-                    NbtCompound flourNbt = content.getCompound("flour");
-                    ItemStack flourStack = ItemStack.fromNbt(flourNbt);
+            if (flourStackOptional.isPresent()) {
+                ItemStack flourStack = flourStackOptional.get();
 
-                    if (!flourStack.isEmpty() && flourStack.getItem() instanceof FlourItem flourItem) {
-                        return flourItem.getColor();
-                    }
+                if (!flourStack.isEmpty() && flourStack.getItem() instanceof FlourItem flourItem) {
+                    return flourItem.getColor();
                 }
             }
 
