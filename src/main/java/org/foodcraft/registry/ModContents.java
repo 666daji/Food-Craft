@@ -3,11 +3,8 @@ package org.foodcraft.registry;
 import net.minecraft.item.FoodComponents;
 import net.minecraft.util.Identifier;
 import org.foodcraft.FoodCraft;
-import org.foodcraft.contentsystem.content.ContentCategories;
+import org.foodcraft.contentsystem.content.*;
 import org.foodcraft.food.ModFoodComponents;
-import org.foodcraft.contentsystem.content.AbstractContent;
-import org.foodcraft.contentsystem.content.DishesContent;
-import org.foodcraft.contentsystem.content.FoodContent;
 
 public class ModContents {
     // 汤
@@ -21,11 +18,11 @@ public class ModContents {
             createModId("rabbit_stew"), ContentCategories.SOUP, FoodComponents.RABBIT_STEW);
 
     // 基础液体
-    public static final AbstractContent WATER = AbstractContent.createSimpleContent(
-            createModId("water"), ContentCategories.BASE_LIQUID);
+    public static final AbstractContent WATER = new BaseLiquidContent(
+            createModId("water"), 4159204);
 
-    public static final AbstractContent MILK = AbstractContent.createSimpleContent(
-            createModId("milk"), ContentCategories.BASE_LIQUID);
+    public static final AbstractContent MILK = new BaseLiquidContent(
+            createModId("milk"), 0xFFF8E1);
 
     // 菜肴
     public static final DishesContent BEEF_BERRIES = new DishesContent(
