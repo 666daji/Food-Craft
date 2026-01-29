@@ -75,7 +75,7 @@ public class PlateBlock extends SimpleFoodBlock implements BlockEntityProvider {
                 return ActionResult.SUCCESS;
             }
 
-            if (plateBlockEntity.getOutcome() != null) {
+            if (plateBlockEntity.getOutcome() != null && !state.get(IS_COVERED)) {
                 return ActionResult.PASS;
             }
         }

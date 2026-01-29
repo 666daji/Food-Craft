@@ -1,0 +1,6 @@
+{
+  "type": "foodcraft:stove",
+  "ingredient": "content|foodcraft:fry_salmon_cubes",
+  "result": "content|foodcraft:cooked_fry_salmon_cubes",
+  "stoveTime": 12000
+}

@@ -225,11 +225,11 @@ public class ModBlocks {
     public static final Block CAKE_EMBRYO_MOLD = registerBlock("cake_embryo_mold",
             new MoldBlock(AbstractBlock.Settings.create()
                     .sounds(ModSoundGroups.BUCKET).strength(0.2F)
-                    .nonOpaque().pistonBehavior(PistonBehavior.DESTROY), true));
+                    .nonOpaque().pistonBehavior(PistonBehavior.DESTROY)));
     public static final Block TOAST_EMBRYO_MOLD = registerBlock("toast_embryo_mold",
             new MoldBlock(AbstractBlock.Settings.create()
                     .sounds(ModSoundGroups.BUCKET).sounds(BlockSoundGroup.WOOL).strength(0.2F)
-                    .nonOpaque().pistonBehavior(PistonBehavior.DESTROY), true));
+                    .nonOpaque().pistonBehavior(PistonBehavior.DESTROY)));
 
     // 矿物
     public static final Block SALT_ORE = registerBlock("salt_ore",

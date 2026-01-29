@@ -30,7 +30,7 @@ public class PotionContainer extends AbstractMappedContainer {
 
     @Override
     public boolean canContain(AbstractContent content) {
-        return content.isIn(ContentCategories.BASE_LIQUID);
+        return content.isIn(ContentCategories.BASE_LIQUID) || content.isIn(ContentCategories.SYRUP);
     }
 
     @Override

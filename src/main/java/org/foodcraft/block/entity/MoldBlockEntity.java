@@ -1,78 +1,46 @@
 package org.foodcraft.block.entity;
 
-import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.ShapeContext;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.Inventory;
-import net.minecraft.inventory.SidedInventory;
-import net.minecraft.inventory.SimpleInventory;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
+import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
 import net.minecraft.network.listener.ClientPlayPacketListener;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
-import net.minecraft.recipe.*;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.shape.VoxelShape;
-import net.minecraft.world.BlockView;
-import net.minecraft.world.World;
-import org.foodcraft.block.MoldBlock;
-import org.foodcraft.recipe.MoldRecipe;
+import org.foodcraft.contentsystem.content.AbstractContent;
+import org.foodcraft.contentsystem.content.ShapedDoughContent;
+import org.foodcraft.contentsystem.registry.ContentRegistry;
 import org.foodcraft.registry.ModBlockEntityTypes;
-import org.foodcraft.registry.ModRecipeTypes;
-import org.foodcraft.util.FoodCraftUtils;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
+public class MoldBlockEntity extends BlockEntity{
+    private static final String CONTENT_KEY = "shaped_dough";
 
-public class MoldBlockEntity extends UpPlaceBlockEntity implements SidedInventory, RecipeUnlocker, RecipeInputProvider {
-    protected static final int MAX_STACK_SIZE = 1;
-
-    /** 输入模具的物品堆栈 */
-    @Nullable
-    protected ItemStack inputStack;
-    protected final Object2IntOpenHashMap<Identifier> recipesUsed = new Object2IntOpenHashMap<>();
-    protected final RecipeManager.MatchGetter<Inventory, ? extends MoldRecipe> matchGetter;
-    @Nullable
-    protected Recipe<?> lastRecipe;
+    /** 当前模具中的定型面团 */
+    @Nullable protected ShapedDoughContent shapedDough;
 
     public MoldBlockEntity(BlockPos pos, BlockState state) {
-        super(ModBlockEntityTypes.MOLD, pos, state, 1);
-        this.matchGetter = RecipeManager.createCachedMatchGetter(ModRecipeTypes.MOLD);
+        super(ModBlockEntityTypes.MOLD, pos, state);
     }
 
     @Override
     public void writeNbt(NbtCompound nbt) {
-        super.writeNbt(nbt);
-        // 保存输入物品到NBT
-        if (inputStack != null) {
-            NbtCompound inputNbt = new NbtCompound();
-            inputStack.writeNbt(inputNbt);
-            nbt.put("Input", inputNbt);
+        if (shapedDough != null) {
+            nbt.putString(CONTENT_KEY, shapedDough.getId().toString());
         }
     }
 
     @Override
     public void readNbt(NbtCompound nbt) {
-        super.readNbt(nbt);
-        // 从NBT加载输入物品
-        if (nbt.contains("Input")) {
-            this.inputStack = ItemStack.fromNbt(nbt.getCompound("Input"));
+        if (nbt.contains(CONTENT_KEY, NbtElement.STRING_TYPE)) {
+            AbstractContent content = ContentRegistry.get(Identifier.tryParse(nbt.getString(CONTENT_KEY)));
+            if (content instanceof ShapedDoughContent dough) {
+                this.shapedDough = dough;
+            }
         }
-    }
-
-    @Override
-    public VoxelShape getContentShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
-        return Block.createCuboidShape(0, 0, 0, 0, 0, 0);
     }
 
     /**
@@ -85,140 +53,50 @@ public class MoldBlockEntity extends UpPlaceBlockEntity implements SidedInventor
             return false;
         }
 
-        Inventory tempInventory = new SimpleInventory(stack);
-
-        MoldRecipe recipe = this.matchGetter.getFirstMatch(tempInventory, this.world).orElse(null);
-        if (recipe != null && recipe.getBaseMoldItem() instanceof BlockItem blockItem){
-            return blockItem.getBlock() == this.getCachedState().getBlock();
-        }
-
-        return false;
-    }
-
-    public BlockState getInventoryBlockState() {
-        ItemStack stack = this.getStack(0);
-        Direction facing = this.getCachedState().get(MoldBlock.FACING);
-
-        return FoodCraftUtils.createCountBlockstate(stack, facing);
-    }
-
-    @Override
-    public boolean isValidItem(ItemStack stack) {
-        Item item = Item.BLOCK_ITEMS.get(getCachedState().getBlock());
-        if (item != null && MoldRecipe.isCanPlace(item, stack)) {
-             return true;
-        }
-
-        return isValidMoldInput(stack);
-    }
-
-    @Override
-    public void onPlace(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit, ItemStack placeStack) {
-        tryCraft();
-        super.onPlace(state, world, pos, player, hand, hit, placeStack);
-    }
-
-    public void tryCraft(){
-        MoldRecipe recipe = this.matchGetter.getFirstMatch(this, this.world).orElse(null);
-        this.inputStack = this.getStack(0).copy();
-
-        if (recipe == null) {
-            return;
-        }
-        craftRecipe(recipe);
-    }
-
-    @Override
-    public ActionResult tryAddItem(ItemStack stack) {
-        if (stack.isEmpty() || !isValidItem(stack)) {
-            return ActionResult.FAIL;
-        }
-
-        ItemStack newStack = stack.copy();
-        newStack.setCount(1);
-
-        if (isEmpty()){
-            this.setStack(0, newStack);
-            this.markDirtyAndSync();
-            return ActionResult.SUCCESS;
-        }
-        return ActionResult.FAIL;
-    }
-
-    @Override
-    public ActionResult tryFetchItem(PlayerEntity player) {
-        if (!isEmpty() && inputStack != null) {
-            removeStack(0, 1);
-            this.fetchStacks = List.of(inputStack.copy());
-
-            // 将输入物品原封不动地返还
-            if (!player.isCreative() && !player.giveItemStack(inputStack)) {
-                player.dropItem(inputStack, false); // 背包满时掉落
-            }
-
-            inputStack = null;
-            markDirtyAndSync();
-            return ActionResult.SUCCESS;
-        }
-        return ActionResult.FAIL;
+        return ShapedDoughContent.fromBaseGet(stack, getCachedState()) != null;
     }
 
     /**
-     * 使用指定的模具配方进行制作
-     * @param recipe 要使用的模具配方
+     * 尝试向模具中添加一个面团。
+     *
+     * @param stack 要添加的堆栈
+     * @return 是否添加成功，堆栈不是合适的面团或者模具已经拥有定型面团时则失败。
      */
-    protected void craftRecipe(MoldRecipe recipe) {
-        ItemStack output = recipe.craft(this, null);
-        setStack(0, output);
-
-        setLastRecipe(recipe);
-        recipesUsed.addTo(recipe.getId(), 1);
-
-        markDirtyAndSync();
-    }
-
-    public @Nullable ItemStack getInputStack() {
-        if (inputStack != null) {
-            return inputStack.copy();
+    public boolean addDough(ItemStack stack) {
+        if (shapedDough != null) {
+            return false;
         }
-        return null;
-    }
 
-    @Override
-    public int[] getAvailableSlots(Direction side) {
-        return new int[]{0};
-    }
-
-    @Override
-    public boolean canInsert(int slot, ItemStack stack, @Nullable Direction dir) {
-        return slot == 0;
-    }
-
-    @Override
-    public boolean canExtract(int slot, ItemStack stack, Direction dir) {
-        return slot == 0;
-    }
-
-    @Override
-    public void provideRecipeInputs(RecipeMatcher finder) {
-        for (ItemStack stack : this.inventory) {
-            finder.addInput(stack);
+        ShapedDoughContent content = ShapedDoughContent.fromBaseGet(stack, getCachedState());
+        if (content == null) {
+            return false;
         }
+
+        setShapedDough(content);
+        return true;
     }
 
-    @Override
-    public void setLastRecipe(@Nullable Recipe<?> recipe) {
-        this.lastRecipe = recipe;
+    /**
+     * 清空当前模具中的面团并返回原始物品。
+     *
+     * @return 当前定型面团的原始堆栈，当不存在定型面团时返回空物品堆栈
+     */
+    public ItemStack getAndClearResultStack() {
+        if (shapedDough != null) {
+            ItemStack res = shapedDough.getOriginalDough().getDefaultStack();
+            shapedDough = null;
+            return res;
+        }
+
+        return ItemStack.EMPTY;
     }
 
-    @Override
-    public @Nullable Recipe<?> getLastRecipe() {
-        return null;
+    public void setShapedDough(@Nullable ShapedDoughContent shapedDough) {
+        this.shapedDough = shapedDough;
     }
 
-    @Override
-    public int getMaxCountPerStack() {
-        return MAX_STACK_SIZE;
+    public @Nullable ShapedDoughContent getShapedDough() {
+        return shapedDough;
     }
 
     @Override

@@ -2,6 +2,7 @@ package org.foodcraft.client.render.block.blockentity;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.client.render.model.BakedModel;
+import net.minecraft.client.render.model.json.ModelTransformationMode;
 import net.minecraft.item.Items;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.RotationAxis;
@@ -9,6 +10,7 @@ import org.dfood.block.FoodBlock;
 import org.foodcraft.block.EmptyBreadBoatBlock;
 import org.foodcraft.block.PlateBlock;
 import org.foodcraft.block.entity.HeatResistantSlateBlockEntity;
+import org.foodcraft.client.render.item.renderer.MoldItemRenderer;
 import org.foodcraft.client.render.model.ModModelLoader;
 import org.foodcraft.contentsystem.api.ContainerUtil;
 import org.foodcraft.contentsystem.container.BreadBoatContainer;
@@ -68,6 +70,16 @@ public class UpPlaceStackRenderers {
             }
 
             context.renderBlockStateOrItem(state);
+        });
+
+        // 模具
+        UpPlaceStackRenderer.register(ModItems.TOAST_EMBRYO_MOLD, context -> {
+            MoldItemRenderer.renderMold(context.stack(), ModelTransformationMode.GUI, context.matrices(),
+                    context.vertexConsumers(), context.light(), context.overlay());
+        });
+        UpPlaceStackRenderer.register(ModItems.CAKE_EMBRYO_MOLD, context -> {
+            MoldItemRenderer.renderMold(context.stack(), ModelTransformationMode.GUI,
+                    context.matrices(), context.vertexConsumers(), context.light(), context.overlay());
         });
     }
 

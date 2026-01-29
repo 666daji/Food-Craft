@@ -10,8 +10,10 @@ import net.minecraft.util.Identifier;
 import org.dfood.block.FoodBlocks;
 import org.foodcraft.FoodCraft;
 import org.foodcraft.block.process.playeraction.PlayerAction;
+import org.foodcraft.block.process.playeraction.impl.AddContentPlayerAction;
 import org.foodcraft.block.process.playeraction.impl.AddItemPlayerAction;
 import org.foodcraft.contentsystem.content.DishesContent;
+import org.foodcraft.contentsystem.content.ShapedDoughContent;
 import org.foodcraft.registry.ModContents;
 import org.foodcraft.item.FlourItem;
 import org.foodcraft.registry.ModBlocks;
@@ -43,6 +45,7 @@ public class ModModelLoader implements ModelLoadingPlugin {
         registerCuttingModels();
         registryDishesModels();
         registerPlatingProcessModels();
+        registerShapedDoughAll();
         MODELS_TO_LOAD.add(BOARD_KITCHEN_KNIFE);
 
         // 将所有模型添加到加载上下文
@@ -176,9 +179,16 @@ public class ModModelLoader implements ModelLoadingPlugin {
      * 注册所有菜肴的放置模型。
      */
     private static void registryDishesModels() {
-        // 牛肉浆果菜肴（需要先加牛肉，再加浆果）
         MODELS_TO_LOAD.add(createDishesModel(ModItems.IRON_PLATE, ModContents.BEEF_BERRIES));
         MODELS_TO_LOAD.add(createDishesModel(ModItems.IRON_PLATE, ModContents.COOKED_BEEF_BERRIES));
+        MODELS_TO_LOAD.add(createDishesModel(ModItems.IRON_PLATE, ModContents.ROASTED_MUSHROOMS));
+        MODELS_TO_LOAD.add(createDishesModel(ModItems.IRON_PLATE, ModContents.COOKED_ROASTED_MUSHROOMS));
+        MODELS_TO_LOAD.add(createDishesModel(ModItems.IRON_PLATE, ModContents.HONEY_ROASTED_BEEF));
+        MODELS_TO_LOAD.add(createDishesModel(ModItems.IRON_PLATE, ModContents.COOKED_HONEY_ROASTED_BEEF));
+        MODELS_TO_LOAD.add(createDishesModel(ModItems.IRON_PLATE, ModContents.FRY_SALMON_CUBES));
+        MODELS_TO_LOAD.add(createDishesModel(ModItems.IRON_PLATE, ModContents.COOKED_FRY_SALMON_CUBES));
+        MODELS_TO_LOAD.add(createDishesModel(ModItems.IRON_PLATE, ModContents.GRILLED_FISH_POTATOES));
+        MODELS_TO_LOAD.add(createDishesModel(ModItems.IRON_PLATE, ModContents.COOKED_GRILLED_FISH_POTATOES));
     }
 
     /**
@@ -191,8 +201,51 @@ public class ModModelLoader implements ModelLoadingPlugin {
                         new AddItemPlayerAction(Items.BEEF),
                         new AddItemPlayerAction(Items.SWEET_BERRIES)
                 ),
-                ModContents.BEEF_BERRIES
-        );
+                ModContents.BEEF_BERRIES);
+
+        registerPlatingSequenceModels(
+                ModItems.IRON_PLATE,
+                Arrays.asList(
+                        new AddItemPlayerAction(Items.RED_MUSHROOM),
+                        new AddItemPlayerAction(Items.BROWN_MUSHROOM),
+                        new AddItemPlayerAction(Items.BROWN_MUSHROOM),
+                        new AddItemPlayerAction(Items.BROWN_MUSHROOM),
+                        new AddItemPlayerAction(ModItems.SALT_FLOUR)
+                ),
+                ModContents.ROASTED_MUSHROOMS);
+
+        registerPlatingSequenceModels(
+                ModItems.IRON_PLATE,
+                Arrays.asList(
+                        new AddItemPlayerAction(Items.BEEF),
+                        new AddItemPlayerAction(ModItems.SALT_FLOUR),
+                        new AddContentPlayerAction(ModContents.HONEY),
+                        new AddItemPlayerAction(ModItems.CARROT_SLICES),
+                        new AddItemPlayerAction(ModItems.CARROT_SLICES)
+                ),
+                ModContents.HONEY_ROASTED_BEEF);
+
+        registerPlatingSequenceModels(
+                ModItems.IRON_PLATE,
+                Arrays.asList(
+                        new AddItemPlayerAction(ModItems.SALMON_CUBES),
+                        new AddItemPlayerAction(ModItems.SALMON_CUBES),
+                        new AddItemPlayerAction(ModItems.SALT_FLOUR),
+                        new AddItemPlayerAction(Items.GLOW_BERRIES),
+                        new AddItemPlayerAction(Items.GLOW_BERRIES),
+                        new AddItemPlayerAction(Items.GLOW_BERRIES),
+                        new AddItemPlayerAction(Items.GLOW_BERRIES)
+                ),
+                ModContents.FRY_SALMON_CUBES);
+
+        registerPlatingSequenceModels(
+                ModItems.IRON_PLATE,
+                Arrays.asList(
+                        new AddItemPlayerAction(ModItems.POTATO_CUBES),
+                        new AddItemPlayerAction(ModItems.POTATO_CUBES),
+                        new AddItemPlayerAction(Items.COD)
+                ),
+                ModContents.GRILLED_FISH_POTATOES);
     }
 
     /**
@@ -223,19 +276,6 @@ public class ModModelLoader implements ModelLoadingPlugin {
     }
 
     /**
-     * 获取已知配方的模型标识符
-     *
-     * <p>这个方法用于在配方加载时获取模型路径，便于在配方JSON中引用。</p>
-     *
-     * @param container 容器物品
-     * @param actionSequence 操作序列
-     * @return 对应的模型标识符
-     */
-    public static Identifier getPlatingModelId(Item container, List<PlayerAction> actionSequence) {
-        return PlatingModelManager.getInstance().getModelForActions(container, actionSequence);
-    }
-
-    /**
      * 创建菜肴的放置模型标识符。
      * @param baseContainer 基础容器
      * @param dishes 菜肴
@@ -246,6 +286,25 @@ public class ModModelLoader implements ModelLoadingPlugin {
         String dishesId = dishes.getId().getPath();
 
         return new Identifier(FoodCraft.MOD_ID, "dishes/" + containerId + "_" + dishesId);
+    }
+
+    // =========== 定型面团 ===========
+
+    public static void registerShapedDoughAll() {
+        MODELS_TO_LOAD.add(createShapedDoughModel(ModContents.TOAST_EMBRYO));
+        MODELS_TO_LOAD.add(createShapedDoughModel(ModContents.TOAST));
+        MODELS_TO_LOAD.add(createShapedDoughModel(ModContents.CAKE_EMBRYO));
+        MODELS_TO_LOAD.add(createShapedDoughModel(ModContents.BAKED_CAKE_EMBRYO));
+    }
+
+    /**
+     * 创建定型面团的模型标识符。
+     *
+     * @param content 定型面团
+     * @return 对应的模型标识符
+     */
+    public static Identifier createShapedDoughModel(ShapedDoughContent content) {
+        return new Identifier(content.getId().getNamespace(), "block/" + content.getId().getPath());
     }
 
     // =========== 辅助方法 ===========

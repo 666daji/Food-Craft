@@ -1,0 +1,12 @@
+{
+  "type": "foodcraft:plating",
+  "container": "foodcraft:iron_plate",
+  "actions": [
+    "add_item|minecraft:beef",
+    "add_item|foodcraft:salt_flour",
+    "add_content|foodcraft:honey",
+    "add_item|foodcraft:carrot_slices",
+    "add_item|foodcraft:carrot_slices"
+  ],
+  "result": "foodcraft:honey_roasted_beef"
+}

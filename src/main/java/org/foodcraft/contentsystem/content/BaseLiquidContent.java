@@ -4,7 +4,7 @@ import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 public class BaseLiquidContent extends AbstractContent{
-    private final int color;
+    protected final int color;
 
     public BaseLiquidContent(Identifier id, int color) {
         super(id);

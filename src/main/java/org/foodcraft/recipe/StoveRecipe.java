@@ -10,7 +10,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
 import org.foodcraft.contentsystem.api.ContainerUtil;
 import org.foodcraft.contentsystem.content.AbstractContent;
-import org.foodcraft.contentsystem.occupy.OccupyUtil;
+import org.foodcraft.contentsystem.api.OccupyUtil;
 import org.foodcraft.registry.ModRecipeSerializers;
 import org.foodcraft.registry.ModRecipeTypes;
 

@@ -1,7 +1,6 @@
 {
   "type": "foodcraft:stove",
-  "ingredient": "foodcraft:cake_embryo",
-  "mold": "foodcraft:cake_embryo_mold",
-  "result": "foodcraft:baked_cake_embryo",
+  "ingredient": "content|foodcraft:cake_embryo",
+  "result": "content|foodcraft:baked_cake_embryo",
   "stoveTime": 16000
 }

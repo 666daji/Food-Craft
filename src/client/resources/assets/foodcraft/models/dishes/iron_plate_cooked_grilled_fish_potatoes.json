@@ -1,0 +1,7 @@
+{
+  "parent": "foodcraft:dishes/iron_plate_grilled_fish_potatoes",
+  "textures": {
+    "cod": "minecraft:block/cooked_cod",
+    "potato": "foodcraft:block/baked_potato_cubes"
+  }
+}

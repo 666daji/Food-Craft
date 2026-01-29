@@ -20,6 +20,8 @@ public class ItemRenderers {
     public static void registry() {
         registrySimpleBlockEntityRenderer(ModItems.GRINDING_STONE, GrindingStoneBlockEntity::new);
         registrySimpleBlockEntityRenderer(ModItems.POTTERY_TABLE, PotteryTableBlockEntity::new);
+        INSTANCE.register(ModItems.TOAST_EMBRYO_MOLD, MoldItemRenderer::renderMold);
+        INSTANCE.register(ModItems.CAKE_EMBRYO_MOLD, MoldItemRenderer::renderMold);
     }
 
     /**

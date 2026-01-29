@@ -1,4 +1,4 @@
-package org.foodcraft.contentsystem.occupy;
+package org.foodcraft.contentsystem.api;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
@@ -8,7 +8,7 @@ import org.foodcraft.registry.ModItems;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * <p>占位堆栈是用于适应原版的</p>
+ * <p>占位堆栈是用于适应原版的{@linkplain ItemStack}。</p>
  */
 public class OccupyUtil {
     public static final String OCCUPY_KEY = "o_content";

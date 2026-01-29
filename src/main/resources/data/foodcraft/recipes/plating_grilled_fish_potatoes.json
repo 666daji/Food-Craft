@@ -1,0 +1,10 @@
+{
+  "type": "foodcraft:plating",
+  "container": "foodcraft:iron_plate",
+  "actions": [
+    "add_item|foodcraft:potato_cubes",
+    "add_item|foodcraft:potato_cubes",
+    "add_item|minecraft:cod"
+  ],
+  "result": "foodcraft:grilled_fish_potatoes"
+}

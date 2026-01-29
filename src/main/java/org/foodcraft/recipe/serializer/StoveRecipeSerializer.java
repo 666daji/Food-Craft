@@ -8,7 +8,7 @@ import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonHelper;
 import org.foodcraft.contentsystem.content.AbstractContent;
-import org.foodcraft.contentsystem.occupy.OccupyUtil;
+import org.foodcraft.contentsystem.api.OccupyUtil;
 import org.foodcraft.contentsystem.registry.ContentRegistry;
 import org.foodcraft.recipe.StoveRecipe;
 

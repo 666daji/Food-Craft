@@ -1,0 +1,14 @@
+{
+  "type": "foodcraft:plating",
+  "container": "foodcraft:iron_plate",
+  "actions": [
+    "add_item|foodcraft:salmon_cubes",
+    "add_item|foodcraft:salmon_cubes",
+    "add_item|foodcraft:salt_flour",
+    "add_item|minecraft:glow_berries",
+    "add_item|minecraft:glow_berries",
+    "add_item|minecraft:glow_berries",
+    "add_item|minecraft:glow_berries"
+  ],
+  "result": "foodcraft:fry_salmon_cubes"
+}

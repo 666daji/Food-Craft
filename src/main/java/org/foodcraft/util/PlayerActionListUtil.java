@@ -51,7 +51,7 @@ public class PlayerActionListUtil {
                     actions.add(action);
                 } catch (Exception e) {
                     // 记录错误但继续处理其他操作
-                    FoodCraft.LOGGER.warn("无法解析操作字符串: {}", actionStr, e);
+                    FoodCraft.LOGGER.warn("Unable to resolve the operation string: {}", actionStr, e);
                 }
             }
         }

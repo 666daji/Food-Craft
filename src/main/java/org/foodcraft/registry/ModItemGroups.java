@@ -88,8 +88,6 @@ public class ModItemGroups {
                             //模具
                             entries.add(ModItems.CAKE_EMBRYO_MOLD);
                             entries.add(ModItems.TOAST_EMBRYO_MOLD);
-                            entries.add(ModItems.CAKE_DOUGH_CAKE_EMBRYO_MOLD);
-                            entries.add(ModItems.TOAST_DOUGH_TOAST_EMBRYO_MOLD);
 
                             // 调味料
                             entries.add(ModItems.SALT_CUBES);

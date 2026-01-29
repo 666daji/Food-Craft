@@ -1,0 +1,6 @@
+{
+  "parent": "foodcraft:dishes/iron_plate_honey_roasted_beef",
+  "textures": {
+    "beef": "minecraft:block/cooked_beef"
+  }
+}

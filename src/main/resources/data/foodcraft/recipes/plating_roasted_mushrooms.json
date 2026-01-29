@@ -1,0 +1,12 @@
+{
+  "type": "foodcraft:plating",
+  "container": "foodcraft:iron_plate",
+  "actions": [
+    "add_item|minecraft:red_mushroom",
+    "add_item|minecraft:brown_mushroom",
+    "add_item|minecraft:brown_mushroom",
+    "add_item|minecraft:brown_mushroom",
+    "add_item|foodcraft:salt_flour"
+  ],
+  "result": "foodcraft:roasted_mushrooms"
+}

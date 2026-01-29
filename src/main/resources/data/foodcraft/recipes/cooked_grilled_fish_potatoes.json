@@ -1,0 +1,6 @@
+{
+  "type": "foodcraft:stove",
+  "ingredient": "content|foodcraft:grilled_fish_potatoes",
+  "result": "content|foodcraft:cooked_grilled_fish_potatoes",
+  "stoveTime": 12000
+}

@@ -63,10 +63,8 @@ public class ModItems {
     public static final Item BAGUETTE = registerItem(ModBlocks.BAGUETTE, new Item.Settings().food(ModFoodComponents.BAGUETTE));
     public static final Item BAGUETTE_EMBRYO = registerItem(ModBlocks.BAGUETTE_EMBRYO);
     public static final Item TOAST_DOUGH = registerItem("toast_dough", new Item(new Item.Settings()));
-    public static final Item TOAST_EMBRYO = registerItem(ModBlocks.TOAST_EMBRYO);
     public static final Item TOAST = registerItem(ModBlocks.TOAST, new Item.Settings().food(ModFoodComponents.TOAST));
     public static final Item CAKE_DOUGH = registerItem("cake_dough", new Item(new Item.Settings()));
-    public static final Item CAKE_EMBRYO = registerItem(ModBlocks.CAKE_EMBRYO);
     public static final Item BAKED_CAKE_EMBRYO = registerItem(ModBlocks.BAKED_CAKE_EMBRYO);
     public static final Item HARD_BREAD_BOAT = registerItem(ModBlocks.HARD_BREAD_BOAT,
             new Item.Settings().food(ModFoodComponents.HARD_BREAD_BOAT), BreadBoatItem::new);
@@ -87,12 +85,8 @@ public class ModItems {
     public static final Item KITCHEN_WASTE = registerItem("kitchen_waste", new Item(new Item.Settings()));
 
     // 模具
-    public static final Item CAKE_DOUGH_CAKE_EMBRYO_MOLD = registerItem("cake_dough_cake_embryo_mold",
-            new MoldContentItem(ModBlocks.CAKE_EMBRYO_MOLD, new Item.Settings(), CAKE_DOUGH));
-    public static final Item TOAST_DOUGH_TOAST_EMBRYO_MOLD = registerItem("toast_dough_toast_embryo_mold",
-            new MoldContentItem(ModBlocks.TOAST_EMBRYO_MOLD, new Item.Settings(), TOAST_DOUGH));
-    public static final Item CAKE_EMBRYO_MOLD = registerItem(ModBlocks.CAKE_EMBRYO_MOLD);
-    public static final Item TOAST_EMBRYO_MOLD = registerItem(ModBlocks.TOAST_EMBRYO_MOLD);
+    public static final Item CAKE_EMBRYO_MOLD = registerItem(ModBlocks.CAKE_EMBRYO_MOLD, new Item.Settings(), MoldItem::new);
+    public static final Item TOAST_EMBRYO_MOLD = registerItem(ModBlocks.TOAST_EMBRYO_MOLD, new Item.Settings(), MoldItem::new);
 
     // 调味料
     public static final Item SALT_CUBES = registerItem("salt_cubes", new Item(new Item.Settings()));

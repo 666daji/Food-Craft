@@ -14,11 +14,13 @@
   "block.foodcraft.heat_resistant_slate": "耐热石板",
   "block.foodcraft.firewood": "柴火",
   "block.foodcraft.pottery_table": "陶艺台",
+  "block.foodcraft.iron_plate": "铁盘",
 
   "block.foodcraft.iron_garnish_dishes": "铁饰餐盘",
   "block.foodcraft.wooden_shelf": "木架子",
   "block.foodcraft.cutting_board": "案板",
   "block.foodcraft.iron_pots": "铁盆",
+  "item.foodcraft.plate_lib": "盘子盖",
 
   "item.foodcraft.bread_spatula": "面包铲",
   "item.foodcraft.kitchen_knife": "菜刀",
@@ -55,8 +57,8 @@
 
   "block.foodcraft.cake_embryo_mold": "蛋糕胚模具",
   "block.foodcraft.toast_embryo_mold": "吐司模具",
-  "item.foodcraft.cake_dough_cake_embryo_mold": "装有蛋糕面团的蛋糕胚模具",
-  "item.foodcraft.toast_dough_toast_embryo_mold": "装有吐司面团的土司胚模具",
+  "block.foodcraft.cake_embryo_mold.dough": "装有%s的蛋糕胚模具",
+  "block.foodcraft.toast_embryo_mold.dough": "装有%s的土司胚模具",
 
   "block.foodcraft.salt_ore": "盐矿石",
   "block.foodcraft.deepslate_salt_ore": "深板岩盐矿石",
@@ -89,6 +91,24 @@
 
   "content.foodcraft.beef_berries": "未烤制的浆果牛排",
   "content.foodcraft.cooked_beef_berries": "浆果牛排",
+  "content.foodcraft.roasted_mushrooms": "未烤制的蘑菇",
+  "content.foodcraft.cooked_roasted_mushrooms": "烤蘑菇",
+  "content.foodcraft.honey_roasted_beef": "未烤制的蜂蜜牛排",
+  "content.foodcraft.cooked_honey_roasted_beef": "蜜烤牛排",
+  "content.foodcraft.fry_salmon_cubes": "未烤制的鲑鱼块",
+  "content.foodcraft.cooked_fry_salmon_cubes": "香煎鲑鱼块",
+  "content.foodcraft.grilled_fish_potatoes": "未烤制的鱼和土豆",
+  "content.foodcraft.cooked_grilled_fish_potatoes": "烤鱼和土豆",
+
+  "content.foodcraft.toast_embryo": "吐司胚",
+  "content.foodcraft.toast": "吐司",
+  "content.foodcraft.cake_embryo": "蛋糕胚",
+  "content.foodcraft.baked_cake_embryo": "烤熟的蛋糕胚",
+
+  "content.foodcraft.honey": "蜂蜜",
+
+  "player_action.add_content": "添加%s",
+  "player_action.add_item": "添加%s",
 
   "grinding_stone.add.refused": "这东西可不能磨哦",
   "grinding_stone.add.full": "已经满了!",

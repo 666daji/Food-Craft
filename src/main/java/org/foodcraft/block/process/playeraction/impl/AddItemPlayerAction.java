@@ -8,16 +8,21 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.foodcraft.block.process.playeraction.PlayerAction;
 import org.foodcraft.block.process.step.StepExecutionContext;
+import org.foodcraft.registry.ModItems;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 /**
- * 添加物品操作，代表玩家向容器中添加一个物品。
+ * 添加物品操作。
  *
  * <p>这是原物品系统的直接对应。</p>
  */
 public class AddItemPlayerAction extends PlayerAction {
     public static final String TYPE = "add_item";
+    /** 物品路径编码重映射，用于解决编码冲突 */
+    public static final Map<Item, String> REMAPPING = new HashMap<>();
 
     private final Item item;
     private final int count;
@@ -152,7 +157,9 @@ public class AddItemPlayerAction extends PlayerAction {
 
         // 3. 物品路径前3位（不足补'_'）
         String path = itemId.getPath();
-        if (path.length() >= 3) {
+        if (REMAPPING.containsKey(item)) {
+            code.append(REMAPPING.get(item));
+        } else if (path.length() >= 3) {
             code.append(path, 0, 3);
         } else {
             code.append(path).append("_".repeat(3 - path.length()));
@@ -182,5 +189,9 @@ public class AddItemPlayerAction extends PlayerAction {
 
     public int getCount() {
         return count;
+    }
+
+    static {
+        REMAPPING.put(ModItems.SALMON_CUBES, "msa");
     }
 }

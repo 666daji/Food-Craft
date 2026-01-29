@@ -11,7 +11,7 @@ import org.foodcraft.block.entity.PlatableBlockEntity;
 import org.foodcraft.block.process.playeraction.PlayerAction;
 import org.foodcraft.contentsystem.content.AbstractContent;
 import org.foodcraft.contentsystem.content.DishesContent;
-import org.foodcraft.contentsystem.occupy.OccupyUtil;
+import org.foodcraft.contentsystem.api.OccupyUtil;
 import org.foodcraft.registry.ModRecipeSerializers;
 import org.foodcraft.registry.ModRecipeTypes;
 

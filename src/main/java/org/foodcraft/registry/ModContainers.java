@@ -37,6 +37,17 @@ public class ModContainers {
             new ContainerType.ContainerSettings(ModItems.IRON_PLATE)
                     .setUseSound(SoundEvents.ITEM_BUCKET_EMPTY)
     );
+    //模具
+    public static final MoldContainer TOAST_EMBRYO_MOLD = new MoldContainer(
+            createModId("toast_embryo_mold"),
+            new ContainerType.ContainerSettings(ModItems.TOAST_EMBRYO_MOLD)
+                    .setUseSound(SoundEvents.ENTITY_SLIME_DEATH_SMALL)
+    );
+    public static final MoldContainer CAKE_EMBRYO_MOLD = new MoldContainer(
+            createModId("cake_embryo_mold"),
+            new ContainerType.ContainerSettings(ModItems.CAKE_EMBRYO_MOLD)
+                    .setUseSound(SoundEvents.ENTITY_SLIME_DEATH_SMALL)
+    );
 
     private static Identifier createModId(String path) {
         return new Identifier(FoodCraft.MOD_ID, path);
@@ -79,5 +90,8 @@ public class ModContainers {
     private static void initializePotion() {
         // 牛奶瓶
         POTION.registerContentMapping(ModContents.MILK, ModItems.MILK_POTION);
+
+        // 蜂蜜瓶
+        POTION.registerContentMapping(ModContents.HONEY, Items.HONEY_BOTTLE);
     }
 }

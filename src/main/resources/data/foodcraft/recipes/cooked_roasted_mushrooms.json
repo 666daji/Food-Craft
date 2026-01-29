@@ -1,0 +1,6 @@
+{
+  "type": "foodcraft:stove",
+  "ingredient": "content|foodcraft:roasted_mushrooms",
+  "result": "content|foodcraft:cooked_roasted_mushrooms",
+  "stoveTime": 12000
+}

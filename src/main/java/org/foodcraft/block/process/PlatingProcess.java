@@ -6,12 +6,16 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.RecipeManager;
 import net.minecraft.util.ActionResult;
 import net.minecraft.world.World;
+import org.foodcraft.FoodCraft;
 import org.foodcraft.block.entity.PlatableBlockEntity;
 import org.foodcraft.block.process.playeraction.PlayerAction;
+import org.foodcraft.block.process.playeraction.impl.AddContentPlayerAction;
 import org.foodcraft.block.process.playeraction.impl.AddItemPlayerAction;
 import org.foodcraft.block.process.step.Step;
 import org.foodcraft.block.process.step.StepExecutionContext;
 import org.foodcraft.block.process.step.StepResult;
+import org.foodcraft.contentsystem.api.ContainerUtil;
+import org.foodcraft.contentsystem.content.AbstractContent;
 import org.foodcraft.recipe.PlatingRecipe;
 import org.foodcraft.registry.ModRecipeTypes;
 import org.jetbrains.annotations.Nullable;
@@ -141,9 +145,13 @@ public class PlatingProcess<T extends BlockEntity & PlatableBlockEntity> extends
         @Nullable
         private PlayerAction createActionFromContext(StepExecutionContext<T> context) {
             ItemStack heldItem = context.getHeldItemStack();
+            AbstractContent content = ContainerUtil.extractContent(heldItem);
+
+            if (content != null) {
+                return AddContentPlayerAction.fromContext(context).orElseThrow();
+            }
 
             if (!heldItem.isEmpty()) {
-                // 摆盘流程：手持物品 -> AddItemPlayerAction
                 return new AddItemPlayerAction(heldItem.getItem(), 1);
             }
 
@@ -193,6 +201,11 @@ public class PlatingProcess<T extends BlockEntity & PlatableBlockEntity> extends
             // 检查是否为完成物品
             if (!plate.isCompletionItem(heldItem) || heldItem.isEmpty()) {
                 return StepResult.fail(STEP_PERFORM_ACTION, ActionResult.FAIL);
+            }
+
+            // 如果候选列表未初始化，尝试初始化
+            if (!hasInitializedCandidates) {
+                initializeCandidates(context.world(), plate);
             }
 
             // 检查是否有完全匹配的配方
@@ -333,8 +346,6 @@ public class PlatingProcess<T extends BlockEntity & PlatableBlockEntity> extends
 
         // 检查是否是完成物品
         if (plate.isCompletionItem(heldItem) && !heldItem.isEmpty()) {
-            // 检查是否有完全匹配的配方
-            checkForExactMatch(plate, context.world());
             if (matchedRecipe != null) {
                 // 跳转到完成步骤
                 jumpToStep(STEP_COMPLETE);

@@ -16,7 +16,6 @@ import net.minecraft.recipe.Ingredient;
 import net.minecraft.resource.featuretoggle.FeatureSet;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.Lazy;
 import net.minecraft.world.World;
 import org.dfood.item.HaveBlock;
 import org.dfood.util.DFoodUtils;
@@ -105,16 +104,16 @@ public class ModSharpKitchenwareItem extends SwordItem implements HaveBlock {
         private final int itemDurability;
         private final float miningSpeed;
         private final int attackDamage;
-        private final int enchantability;
-        private final Lazy<Ingredient> repairIngredient;
+        private final int enchantAbility;
+        private final Supplier<Ingredient> repairIngredient;
 
-        SpatulaMaterials(int miningLevel, int itemDurability, float miningSpeed, int attackDamage, int enchantability, Supplier<Ingredient> repairIngredient) {
+        SpatulaMaterials(int miningLevel, int itemDurability, float miningSpeed, int attackDamage, int enchantAbility, Supplier<Ingredient> repairIngredient) {
             this.miningLevel = miningLevel;
             this.itemDurability = itemDurability;
             this.miningSpeed = miningSpeed;
             this.attackDamage = attackDamage;
-            this.enchantability = enchantability;
-            this.repairIngredient = new Lazy<>(repairIngredient);
+            this.enchantAbility = enchantAbility;
+            this.repairIngredient = repairIngredient;
         }
 
         @Override
@@ -139,7 +138,7 @@ public class ModSharpKitchenwareItem extends SwordItem implements HaveBlock {
 
         @Override
         public int getEnchantability() {
-            return this.enchantability;
+            return this.enchantAbility;
         }
 
         @Override

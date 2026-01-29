@@ -1,8 +1,0 @@
-{
-  "type": "foodcraft:mold",
-  "ingredient": {
-    "item": "foodcraft:cake_dough"
-  },
-  "baseMold": "foodcraft:cake_embryo_mold",
-  "result": "foodcraft:cake_embryo"
-}
